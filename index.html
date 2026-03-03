@@ -35,8 +35,6 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-
-/* NAV — strong glass */
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;background:rgba(4,4,6,0.6);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-bottom:1px solid var(--glass-border);}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:0.5rem;}
 .logo .mark{width:8px;height:26px;background:var(--amber);display:inline-block;transform:skewX(-14deg);box-shadow:0 0 20px var(--amber-glow);}
@@ -51,8 +49,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .btn-green:hover{background:#4ade80;box-shadow:0 12px 40px var(--green-glow);}
 .mobile-menu{display:none;cursor:pointer;}
 .mobile-menu span{display:block;width:22px;height:2px;background:var(--white);margin:5px 0;}
-
-/* HERO — heavy glassmorphism */
 .hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2.5rem 4rem;position:relative;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(4,4,6,0.92) 25%,rgba(4,4,6,0.75) 70%),url('https://cdn.prod.website-files.com/62571f58fea7bbc10a367876/62d0435d404de51e6c9ee2f0_Heavy-Duty%20Diesel%20Truck%20Collision%20Repair%20-%20Step%20By%20Step%20Process.jpg') center/cover no-repeat;}
 .hero-glow1{position:absolute;top:-15%;right:-5%;width:55%;height:75%;background:radial-gradient(ellipse,rgba(245,158,11,0.35),transparent 65%);pointer-events:none;filter:blur(40px);}
@@ -64,17 +60,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .hero h1 .hl{color:var(--amber);text-shadow:0 0 80px rgba(245,158,11,0.5);}
 .hero-sub{font-size:1.1rem;font-weight:300;color:var(--gray);max-width:460px;margin-bottom:2.5rem;line-height:1.85;opacity:0;animation:fadeUp 0.6s 0.5s forwards;}
 .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp 0.6s 0.65s forwards;}
-
-/* Hero stats — strong glass panel */
 .hero-stats{opacity:0;animation:fadeUp 0.8s 0.8s forwards;}
-.stats-panel{
-background:rgba(255,255,255,0.07);
-backdrop-filter:blur(30px) saturate(150%);
--webkit-backdrop-filter:blur(30px) saturate(150%);
-border:1px solid rgba(255,255,255,0.14);
-border-radius:14px;padding:2.5rem;position:relative;overflow:hidden;
-box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);
-}
+.stats-panel{background:rgba(255,255,255,0.07);backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:2.5rem;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);}
 .stats-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.5),transparent);}
 .stats-panel h3{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:2rem;}
 .stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.06);}
@@ -83,18 +70,8 @@ box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);
 .stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--amber);text-shadow:0 0 20px rgba(245,158,11,0.3);}
 .stat-val.wh{color:var(--white);text-shadow:none;}
 .stats-note{margin-top:1.5rem;font-size:0.75rem;color:var(--gray-dark);text-align:center;font-style:italic;}
-
-/* GLASS CARD mixin */
-.gc{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-border:1px solid rgba(255,255,255,0.1);border-radius:10px;
-box-shadow:0 4px 24px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.05);
-transition:all 0.35s;
-}
+.gc{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.05);transition:all 0.35s;}
 .gc:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);}
-
-/* IMAGE STRIPS */
 .img-wrap{padding:0;overflow:hidden;position:relative;}
 .img-wrap::before,.img-wrap::after{content:'';position:absolute;left:0;right:0;height:80px;z-index:2;pointer-events:none;}
 .img-wrap::before{top:0;background:linear-gradient(to bottom,var(--bg),transparent);}
@@ -106,12 +83,8 @@ transition:all 0.35s;
 .img-i{height:260px;background-size:cover;background-position:center;filter:grayscale(25%) brightness(0.6) contrast(1.1);transition:all 0.5s;position:relative;}
 .img-i::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(4,4,6,0.7));}
 .img-i:hover{filter:grayscale(0%) brightness(0.75);transform:scale(1.03);z-index:1;}
-
-/* SECTIONS */
 .stag{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--amber);margin-bottom:1rem;}
 .stitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4.5vw,3.5rem);line-height:1;color:var(--white);margin-bottom:1.5rem;letter-spacing:1px;}
-
-/* PROBLEM */
 .problem{padding:7rem 2.5rem;}
 .problem-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:0.4fr 0.6fr;gap:4rem;align-items:start;}
 .problem-text p{font-size:1.05rem;color:var(--gray);margin-bottom:1rem;font-weight:300;line-height:1.85;}
@@ -119,8 +92,6 @@ transition:all 0.35s;
 .pain-list{display:grid;gap:0.6rem;margin-top:1.5rem;}
 .pain{display:flex;align-items:center;gap:1rem;font-size:0.95rem;color:var(--gray);padding:1rem 1.4rem;border-left:3px solid var(--red);border-radius:0 8px 8px 0;}
 .pain .x{color:var(--red);font-weight:700;flex-shrink:0;}
-
-/* RECRUITING */
 .recruiting{padding:7rem 2.5rem;background:var(--dark);position:relative;overflow:hidden;}
 .recruiting::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.5),transparent);}
 .rec-glow{position:absolute;top:0;right:-15%;width:45%;height:100%;background:radial-gradient(ellipse,rgba(34,197,94,0.2),transparent 65%);pointer-events:none;filter:blur(40px);}
@@ -141,8 +112,6 @@ transition:all 0.35s;
 .rs:hover{border-color:rgba(34,197,94,0.3) !important;}
 .rs-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--green);line-height:1;text-shadow:0 0 30px rgba(34,197,94,0.35);}
 .rs-label{font-size:0.78rem;color:var(--gray-dark);margin-top:0.4rem;line-height:1.4;}
-
-/* FOUNDER */
 .founder{padding:5rem 2.5rem;position:relative;}
 .founder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.4),transparent);}
 .founder-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;}
@@ -154,8 +123,6 @@ transition:all 0.35s;
 .fb:hover{border-color:rgba(245,158,11,0.3) !important;transform:translateX(4px);}
 .fb-icon{font-size:1.3rem;}
 .fb-txt{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);}
-
-/* SERVICES */
 .services{padding:7rem 2.5rem;background:var(--dark);position:relative;}
 .services::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);}
 .svc-inner{max-width:1200px;margin:0 auto;}
@@ -170,8 +137,6 @@ transition:all 0.35s;
 .svc h3{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--white);margin-bottom:0.7rem;}
 .svc p{font-size:0.88rem;color:var(--gray);line-height:1.7;font-weight:300;}
 .svc.newtag::after{content:'NEW';position:absolute;top:0.8rem;right:0.8rem;font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:2px;background:var(--green);color:var(--bg);padding:0.2rem 0.6rem;border-radius:3px;}
-
-/* PROCESS */
 .process{padding:7rem 2.5rem;}
 .process-inner{max-width:1200px;margin:0 auto;}
 .process-header{text-align:center;margin-bottom:4rem;}
@@ -182,18 +147,14 @@ transition:all 0.35s;
 .step:hover .step-dot{border-color:var(--amber) !important;background:rgba(245,158,11,0.1);box-shadow:0 0 40px var(--amber-glow);}
 .step h4{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:0.4rem;}
 .step p{font-size:0.82rem;color:var(--gray-dark);max-width:180px;margin:0 auto;line-height:1.5;}
-
-/* PROOF */
 .proof-sec{padding:5rem 2.5rem;background:var(--dark);}
 .proof-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
 .pcard{border-radius:10px;padding:2rem;}
 .pcard:hover{border-color:rgba(245,158,11,0.2) !important;}
 .pcard .qt{font-size:0.95rem;font-weight:300;font-style:italic;color:var(--gray);margin-bottom:1.5rem;line-height:1.75;}
-.pcard .qt::before{content:'"';font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);display:block;line-height:1;margin-bottom:0.4rem;text-shadow:0 0 20px rgba(245,158,11,0.3);}
+.pcard .qt::before{content:'\201C';font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);display:block;line-height:1;margin-bottom:0.4rem;text-shadow:0 0 20px rgba(245,158,11,0.3);}
 .pcard .pa{font-family:'Barlow Condensed',sans-serif;font-weight:600;color:var(--white);font-size:0.88rem;text-transform:uppercase;letter-spacing:1px;}
 .pcard .pr{font-size:0.78rem;color:var(--gray-dark);}
-
-/* PRICING */
 .pricing{padding:7rem 2.5rem;position:relative;}
 .pricing::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);}
 .pricing-inner{max-width:1000px;margin:0 auto;}
@@ -216,7 +177,6 @@ transition:all 0.35s;
 .fl li .ck{font-weight:700;flex-shrink:0;}
 .prc.ft .ck{color:var(--amber);}
 .prc.ao .ck{color:var(--green);}
-
 .bundle{background:linear-gradient(135deg,var(--amber-soft),var(--green-soft));border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:1.5rem 2rem;margin-top:2rem;text-align:center;}
 .bundle-price{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--white);}
 .bundle-price span{font-family:'Barlow',sans-serif;font-size:1rem;color:var(--gray);font-weight:300;}
@@ -225,22 +185,24 @@ transition:all 0.35s;
 .roi{margin-top:1.5rem;padding:1.2rem 1.5rem;background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;}
 .roi p{font-size:0.85rem;color:var(--gray);line-height:1.7;}
 .roi strong{color:var(--amber);}
-
-/* CTA */
 .cta{padding:7rem 2.5rem;text-align:center;background:var(--dark);position:relative;overflow:hidden;}
 .cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:55%;height:80%;background:radial-gradient(ellipse,rgba(245,158,11,0.2),transparent 65%);pointer-events:none;filter:blur(30px);}
 .cta-inner{max-width:700px;margin:0 auto;position:relative;z-index:2;}
 .cta .stitle{font-size:clamp(2.5rem,5vw,4rem);margin-bottom:1rem;}
 .cta p{font-size:1.1rem;color:var(--gray);font-weight:300;margin-bottom:2.5rem;max-width:520px;margin-left:auto;margin-right:auto;}
 .cta .btn{font-size:0.95rem;padding:1rem 3rem;}
-
-footer{padding:3rem 2.5rem;border-top:1px solid var(--border);text-align:center;}
+.contact-row{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;}
+.contact-row a{color:var(--gray);text-decoration:none;font-size:0.95rem;font-weight:400;transition:color 0.3s;}
+.contact-row a:hover{color:var(--amber);}
+footer{padding:3rem 2.5rem;border-top:1px solid var(--border);}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
 footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;text-transform:uppercase;}
-
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{color:var(--gray-dark);text-decoration:none;font-size:0.78rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;transition:color 0.3s;}
+.footer-links a:hover{color:var(--amber);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(25px);}to{opacity:1;transform:translateY(0);}}
 .reveal{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.22,1,0.36,1);}
 .reveal.visible{opacity:1;transform:translateY(0);}
-
 @media(max-width:900px){
 .hero-content{grid-template-columns:1fr;}.hero-stats{display:none;}
 .problem-inner,.founder-inner,.recruiting-inner{grid-template-columns:1fr;}
@@ -250,11 +212,13 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .nav-links{display:none;}.mobile-menu{display:block;}
 .img-strip,.img-strip.four{grid-template-columns:repeat(2,1fr);}.img-i{height:170px;}
 .fbadges{flex-direction:row;flex-wrap:wrap;}
+.footer-inner{flex-direction:column;text-align:center;}.footer-links{flex-direction:column;gap:0.5rem;align-items:center;}
 }
 @media(max-width:600px){
 .hero{padding:7rem 1.5rem 3rem;}.hero h1{font-size:3rem;}
 .steps{grid-template-columns:1fr;}nav{padding:0.8rem 1.5rem;}
 .prc{padding:2rem;}.pa{font-size:3rem;}
+.contact-row{flex-direction:column;gap:0.8rem;}
 }
 </style>
 </head>
@@ -271,7 +235,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="mobile-menu"><span></span><span></span><span></span></div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
 <div class="hero-bg"></div>
 <div class="hero-glow1"></div>
@@ -299,7 +262,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- STRIP 1 — ALL verified truck mechanic photos -->
 <section class="img-wrap">
 <div class="img-strip">
 <div class="img-i" style="background-image:url('https://cdn.prod.website-files.com/640f9c32df5af39f9287a40a/69713634501fb409db3d1d64_trailer-repair-block-diesel.webp')"></div>
@@ -310,7 +272,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- PROBLEM -->
 <section class="problem">
 <div class="problem-inner">
 <div class="reveal">
@@ -331,7 +292,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- RECRUITING -->
 <section class="recruiting" id="recruiting">
 <div class="rec-glow"></div>
 <div class="recruiting-inner">
@@ -357,7 +317,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- FOUNDER -->
 <section class="founder">
 <div class="founder-inner reveal">
 <div>
@@ -377,7 +336,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- STRIP 2 — same verified photos, different crops/order -->
 <section class="img-wrap dark-bot">
 <div class="img-strip four">
 <div class="img-i" style="background-image:url('https://jmcautomotiveequipment.com/product_images/uploaded_images/shutterstock-25137751-1-.jpg');background-position:top;"></div>
@@ -387,7 +345,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- SERVICES -->
 <section class="services" id="services">
 <div class="svc-inner">
 <div class="svc-header reveal">
@@ -406,7 +363,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- STRIP 3 -->
 <section class="img-wrap dark-top">
 <div class="img-strip four">
 <div class="img-i" style="background-image:url('https://static.wixstatic.com/media/5f228d_0bbde27fb5f74144a81160806fd6ed12~mv2.jpg/v1/fill/w_762,h_842,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/5f228d_0bbde27fb5f74144a81160806fd6ed12~mv2.jpg');background-position:right;"></div>
@@ -416,7 +372,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- PROCESS -->
 <section class="process">
 <div class="process-inner">
 <div class="process-header reveal">
@@ -432,16 +387,14 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- PROOF -->
 <section class="proof-sec">
 <div class="proof-grid reveal">
 <div class="pcard gc"><div class="qt">First month — 18 new fleet accounts. Paid for itself ten times over. I was skeptical. Not anymore.</div><div class="pa">Mike R.</div><div class="pr">Owner, Big Rig Diesel — Houston, TX</div></div>
-<div class="pcard gc"><div class="qt">They got me a list of every trucking company within 50 miles. I don't touch anything. Best money I spend every month.</div><div class="pa">Jon M.</div><div class="pr">Owner, Superior Equipment Repair — Lincoln,CA </div></div>
+<div class="pcard gc"><div class="qt">They got me a list of every trucking company within 50 miles. I don't touch anything. Best money I spend every month.</div><div class="pa">Jon M.</div><div class="pr">Owner, Superior Equipment Repair — Lincoln, CA</div></div>
 <div class="pcard gc"><div class="qt">Couldn't find techs for 6 months. They ran recruiting ads on Instagram — hired two guys in 3 weeks. Game changer.</div><div class="pa">Carlos M.</div><div class="pr">Owner, Iron Horse Diesel — Phoenix, AZ</div></div>
 </div>
 </section>
 
-<!-- PRICING -->
 <section class="pricing" id="pricing">
 <div class="pricing-inner">
 <div class="pricing-header reveal">
@@ -491,7 +444,6 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<!-- CTA -->
 <section class="cta" id="cta">
 <div class="cta-glow"></div>
 <div class="cta-inner reveal">
@@ -499,10 +451,22 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="stitle">STOP LOSING JOBS AND TECHS TO THE SHOP DOWN THE ROAD.</div>
 <p>15-minute call. We'll show you how many fleet customers are in your area and how to start attracting the next generation of techs.</p>
 <a href="https://calendly.com/torqueleads/30min" class="btn" target="_blank">Book Free Call — 15 Minutes</a>
+<div class="contact-row">
+<a href="mailto:TorqueLeads@outlook.com">TorqueLeads@outlook.com</a>
+<a href="tel:9252979107">(925) 297-9107</a>
+</div>
 </div>
 </section>
 
-<footer><p>© 2026 TorqueLeads. All Rights Reserved.</p></footer>
+<footer>
+<div class="footer-inner">
+<p>&copy; 2026 TorqueLeads. All Rights Reserved.</p>
+<div class="footer-links">
+<a href="mailto:TorqueLeads@outlook.com">TorqueLeads@outlook.com</a>
+<a href="tel:9252979107">(925) 297-9107</a>
+</div>
+</div>
+</footer>
 
 <script>
 const o=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
