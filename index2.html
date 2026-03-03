@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TorqueLeads — Fill Your Diesel Shop With Customers & Techs</title>
+<meta name="description" content="Done-for-you ads, social media, lead generation, and tech recruiting for heavy-duty diesel repair shops.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#040406;--dark:#09090e;--surface:rgba(255,255,255,0.03);
+--glass:rgba(255,255,255,0.05);--glass-strong:rgba(255,255,255,0.08);--glass-border:rgba(255,255,255,0.1);--glass-border-strong:rgba(255,255,255,0.15);
+--amber:#f59e0b;--amber-soft:rgba(245,158,11,0.1);--amber-glow:rgba(245,158,11,0.25);
+--red:#ef4444;--green:#22c55e;--green-soft:rgba(34,197,94,0.1);--green-glow:rgba(34,197,94,0.25);
+--white:#f0f0f5;--gray:#9ca3af;--gray-dark:#6b7280;--border:rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:'Barlow',sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* NAV — strong glass */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;background:rgba(4,4,6,0.6);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-bottom:1px solid var(--glass-border);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:0.5rem;}
+.logo .mark{width:8px;height:26px;background:var(--amber);display:inline-block;transform:skewX(-14deg);box-shadow:0 0 20px var(--amber-glow);}
+.nav-links{display:flex;align-items:center;gap:2rem;}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--amber);}
+.btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;padding:0.75rem 2rem;background:var(--amber);color:var(--bg);border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.3s;border-radius:4px;}
+.btn:hover{background:#fbbf24;transform:translateY(-2px);box-shadow:0 12px 40px var(--amber-glow);}
+.btn-outline{background:transparent;border:1.5px solid var(--amber);color:var(--amber);}
+.btn-outline:hover{background:var(--amber);color:var(--bg);}
+.btn-green{background:var(--green);}
+.btn-green:hover{background:#4ade80;box-shadow:0 12px 40px var(--green-glow);}
+.mobile-menu{display:none;cursor:pointer;}
+.mobile-menu span{display:block;width:22px;height:2px;background:var(--white);margin:5px 0;}
+
+/* HERO — heavy glassmorphism */
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2.5rem 4rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(4,4,6,0.92) 25%,rgba(4,4,6,0.55) 70%),url('https://images.pexels.com/photos/7541360/pexels-photo-7541360.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;}
+.hero-glow1{position:absolute;top:-15%;right:-5%;width:55%;height:75%;background:radial-gradient(ellipse,rgba(245,158,11,0.35),transparent 65%);pointer-events:none;filter:blur(40px);}
+.hero-glow2{position:absolute;bottom:-25%;left:-10%;width:45%;height:55%;background:radial-gradient(ellipse,rgba(34,197,94,0.18),transparent 65%);pointer-events:none;filter:blur(50px);}
+.hero-content{max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:2;display:grid;grid-template-columns:1.1fr 0.9fr;gap:4rem;align-items:center;}
+.hero-tag{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem;opacity:0;animation:fadeUp 0.6s 0.2s forwards;}
+.hero-tag::before{content:'';width:30px;height:1.5px;background:var(--amber);}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,7vw,6.5rem);line-height:0.92;letter-spacing:2px;color:var(--white);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.6s 0.35s forwards;}
+.hero h1 .hl{color:var(--amber);text-shadow:0 0 80px rgba(245,158,11,0.5);}
+.hero-sub{font-size:1.1rem;font-weight:300;color:var(--gray);max-width:460px;margin-bottom:2.5rem;line-height:1.85;opacity:0;animation:fadeUp 0.6s 0.5s forwards;}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp 0.6s 0.65s forwards;}
+
+/* Hero stats — strong glass panel */
+.hero-stats{opacity:0;animation:fadeUp 0.8s 0.8s forwards;}
+.stats-panel{
+background:rgba(255,255,255,0.07);
+backdrop-filter:blur(30px) saturate(150%);
+-webkit-backdrop-filter:blur(30px) saturate(150%);
+border:1px solid rgba(255,255,255,0.14);
+border-radius:14px;padding:2.5rem;position:relative;overflow:hidden;
+box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.stats-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.5),transparent);}
+.stats-panel h3{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:2rem;}
+.stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.stat-row:last-child{border-bottom:none;}
+.stat-label{font-size:0.88rem;color:var(--gray);}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--amber);text-shadow:0 0 20px rgba(245,158,11,0.3);}
+.stat-val.wh{color:var(--white);text-shadow:none;}
+.stats-note{margin-top:1.5rem;font-size:0.75rem;color:var(--gray-dark);text-align:center;font-style:italic;}
+
+/* GLASS CARD mixin */
+.gc{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,0.1);border-radius:10px;
+box-shadow:0 4px 24px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.05);
+transition:all 0.35s;
+}
+.gc:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);}
+
+/* IMAGE STRIPS */
+.img-wrap{padding:0;overflow:hidden;position:relative;}
+.img-wrap::before,.img-wrap::after{content:'';position:absolute;left:0;right:0;height:80px;z-index:2;pointer-events:none;}
+.img-wrap::before{top:0;background:linear-gradient(to bottom,var(--bg),transparent);}
+.img-wrap::after{bottom:0;background:linear-gradient(to top,var(--bg),transparent);}
+.img-wrap.dark-top::before{background:linear-gradient(to bottom,var(--dark),transparent);}
+.img-wrap.dark-bot::after{background:linear-gradient(to top,var(--dark),transparent);}
+.img-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;}
+.img-strip.four{grid-template-columns:repeat(4,1fr);}
+.img-i{height:260px;background-size:cover;background-position:center;filter:grayscale(25%) brightness(0.6) contrast(1.1);transition:all 0.5s;position:relative;}
+.img-i::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(4,4,6,0.7));}
+.img-i:hover{filter:grayscale(0%) brightness(0.75);transform:scale(1.03);z-index:1;}
+
+/* SECTIONS */
+.stag{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--amber);margin-bottom:1rem;}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4.5vw,3.5rem);line-height:1;color:var(--white);margin-bottom:1.5rem;letter-spacing:1px;}
+
+/* PROBLEM */
+.problem{padding:7rem 2.5rem;}
+.problem-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:0.4fr 0.6fr;gap:4rem;align-items:start;}
+.problem-text p{font-size:1.05rem;color:var(--gray);margin-bottom:1rem;font-weight:300;line-height:1.85;}
+.problem-text strong{color:var(--white);font-weight:600;}
+.pain-list{display:grid;gap:0.6rem;margin-top:1.5rem;}
+.pain{display:flex;align-items:center;gap:1rem;font-size:0.95rem;color:var(--gray);padding:1rem 1.4rem;border-left:3px solid var(--red);border-radius:0 8px 8px 0;}
+.pain .x{color:var(--red);font-weight:700;flex-shrink:0;}
+
+/* RECRUITING */
+.recruiting{padding:7rem 2.5rem;background:var(--dark);position:relative;overflow:hidden;}
+.recruiting::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.5),transparent);}
+.rec-glow{position:absolute;top:0;right:-15%;width:45%;height:100%;background:radial-gradient(ellipse,rgba(34,197,94,0.2),transparent 65%);pointer-events:none;filter:blur(40px);}
+.recruiting-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:2;}
+.recruiting .stag{color:var(--green);}
+.recruiting .stitle{font-size:clamp(2.5rem,5vw,3.8rem);}
+.recruiting .stitle span{color:var(--green);text-shadow:0 0 50px rgba(34,197,94,0.4);}
+.rec-sub{color:var(--gray);font-size:1.05rem;font-weight:300;line-height:1.85;margin-bottom:0.5rem;}
+.rec-sub strong{color:var(--white);font-weight:600;}
+.rec-feats{display:grid;gap:0.8rem;margin-top:2rem;}
+.rf{display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.3rem;border-radius:8px;}
+.rf:hover{border-color:rgba(34,197,94,0.3) !important;}
+.rf-icon{font-size:1.2rem;flex-shrink:0;margin-top:0.15rem;}
+.rf h4{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:0.15rem;}
+.rf p{font-size:0.82rem;color:var(--gray-dark);line-height:1.6;}
+.rec-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.rs{border-radius:10px;padding:2rem;text-align:center;}
+.rs:hover{border-color:rgba(34,197,94,0.3) !important;}
+.rs-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--green);line-height:1;text-shadow:0 0 30px rgba(34,197,94,0.35);}
+.rs-label{font-size:0.78rem;color:var(--gray-dark);margin-top:0.4rem;line-height:1.4;}
+
+/* FOUNDER */
+.founder{padding:5rem 2.5rem;position:relative;}
+.founder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.4),transparent);}
+.founder-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;}
+.founder-story p{font-size:1.05rem;color:var(--gray);margin-bottom:1rem;font-weight:300;line-height:1.85;}
+.founder-story strong{color:var(--white);font-weight:600;}
+.fcta{color:var(--amber);font-weight:500;font-size:1.1rem;margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border);}
+.fbadges{display:flex;flex-direction:column;gap:0.8rem;}
+.fb{border-radius:8px;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:1rem;white-space:nowrap;}
+.fb:hover{border-color:rgba(245,158,11,0.3) !important;transform:translateX(4px);}
+.fb-icon{font-size:1.3rem;}
+.fb-txt{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);}
+
+/* SERVICES */
+.services{padding:7rem 2.5rem;background:var(--dark);position:relative;}
+.services::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);}
+.svc-inner{max-width:1200px;margin:0 auto;}
+.svc-header{text-align:center;margin-bottom:4rem;}
+.svc-header p{color:var(--gray);font-size:1.05rem;font-weight:300;max-width:520px;margin:0 auto;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.svc{border-radius:10px;padding:2.2rem;position:relative;overflow:hidden;}
+.svc:hover{border-color:rgba(245,158,11,0.3) !important;transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.svc .num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(255,255,255,0.03);position:absolute;top:0.8rem;right:1.2rem;line-height:1;}
+.svc:hover .num{color:var(--amber-soft);}
+.svc-ico{width:44px;height:44px;background:var(--amber-soft);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1.3rem;font-size:1.2rem;}
+.svc h3{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--white);margin-bottom:0.7rem;}
+.svc p{font-size:0.88rem;color:var(--gray);line-height:1.7;font-weight:300;}
+.svc.newtag::after{content:'NEW';position:absolute;top:0.8rem;right:0.8rem;font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:2px;background:var(--green);color:var(--bg);padding:0.2rem 0.6rem;border-radius:3px;}
+
+/* PROCESS */
+.process{padding:7rem 2.5rem;}
+.process-inner{max-width:1200px;margin:0 auto;}
+.process-header{text-align:center;margin-bottom:4rem;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;}
+.steps::before{content:'';position:absolute;top:40px;left:12.5%;right:12.5%;height:1.5px;background:linear-gradient(90deg,var(--amber),var(--green));opacity:0.4;}
+.step{text-align:center;position:relative;z-index:1;}
+.step-dot{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--amber);}
+.step:hover .step-dot{border-color:var(--amber) !important;background:rgba(245,158,11,0.1);box-shadow:0 0 40px var(--amber-glow);}
+.step h4{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:0.4rem;}
+.step p{font-size:0.82rem;color:var(--gray-dark);max-width:180px;margin:0 auto;line-height:1.5;}
+
+/* PROOF */
+.proof-sec{padding:5rem 2.5rem;background:var(--dark);}
+.proof-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.pcard{border-radius:10px;padding:2rem;}
+.pcard:hover{border-color:rgba(245,158,11,0.2) !important;}
+.pcard .qt{font-size:0.95rem;font-weight:300;font-style:italic;color:var(--gray);margin-bottom:1.5rem;line-height:1.75;}
+.pcard .qt::before{content:'"';font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);display:block;line-height:1;margin-bottom:0.4rem;text-shadow:0 0 20px rgba(245,158,11,0.3);}
+.pcard .pa{font-family:'Barlow Condensed',sans-serif;font-weight:600;color:var(--white);font-size:0.88rem;text-transform:uppercase;letter-spacing:1px;}
+.pcard .pr{font-size:0.78rem;color:var(--gray-dark);}
+
+/* PRICING */
+.pricing{padding:7rem 2.5rem;position:relative;}
+.pricing::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);}
+.pricing-inner{max-width:1000px;margin:0 auto;}
+.pricing-header{text-align:center;margin-bottom:2rem;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
+.prc{border-radius:12px;padding:3rem;position:relative;overflow:hidden;}
+.prc.ft{border-color:rgba(245,158,11,0.3) !important;}
+.prc.ft::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--red));border-radius:12px 12px 0 0;}
+.prc.ao{border-color:rgba(34,197,94,0.2) !important;}
+.prc.ao::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#3b82f6);border-radius:12px 12px 0 0;}
+.pn{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;margin-bottom:0.5rem;}
+.prc.ft .pn{color:var(--amber);}
+.prc.ao .pn{color:var(--green);}
+.pa{font-family:'Bebas Neue',sans-serif;font-size:4rem;line-height:1;color:var(--white);margin-bottom:0.3rem;}
+.pa span{font-family:'Barlow',sans-serif;font-size:1rem;font-weight:300;color:var(--gray);}
+.psub{font-size:0.82rem;color:var(--gray-dark);margin-bottom:2rem;}
+.fl{list-style:none;padding:0;margin-bottom:2rem;}
+.fl li{display:flex;align-items:center;gap:0.7rem;font-size:0.88rem;color:var(--gray);padding:0.45rem 0;border-bottom:1px solid var(--border);}
+.fl li:last-child{border-bottom:none;}
+.fl li .ck{font-weight:700;flex-shrink:0;}
+.prc.ft .ck{color:var(--amber);}
+.prc.ao .ck{color:var(--green);}
+
+.bundle{background:linear-gradient(135deg,var(--amber-soft),var(--green-soft));border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:1.5rem 2rem;margin-top:2rem;text-align:center;}
+.bundle-price{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--white);}
+.bundle-price span{font-family:'Barlow',sans-serif;font-size:1rem;color:var(--gray);font-weight:300;}
+.bundle p{font-size:0.88rem;color:var(--gray);margin-top:0.3rem;}
+.bundle strong{color:var(--amber);}
+.roi{margin-top:1.5rem;padding:1.2rem 1.5rem;background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;}
+.roi p{font-size:0.85rem;color:var(--gray);line-height:1.7;}
+.roi strong{color:var(--amber);}
+
+/* CTA */
+.cta{padding:7rem 2.5rem;text-align:center;background:var(--dark);position:relative;overflow:hidden;}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:55%;height:80%;background:radial-gradient(ellipse,rgba(245,158,11,0.2),transparent 65%);pointer-events:none;filter:blur(30px);}
+.cta-inner{max-width:700px;margin:0 auto;position:relative;z-index:2;}
+.cta .stitle{font-size:clamp(2.5rem,5vw,4rem);margin-bottom:1rem;}
+.cta p{font-size:1.1rem;color:var(--gray);font-weight:300;margin-bottom:2.5rem;max-width:520px;margin-left:auto;margin-right:auto;}
+.cta .btn{font-size:0.95rem;padding:1rem 3rem;}
+
+footer{padding:3rem 2.5rem;border-top:1px solid var(--border);text-align:center;}
+footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;text-transform:uppercase;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s cubic-bezier(0.22,1,0.36,1);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+.hero-content{grid-template-columns:1fr;}.hero-stats{display:none;}
+.problem-inner,.founder-inner,.recruiting-inner{grid-template-columns:1fr;}
+.svc-grid{grid-template-columns:1fr;}.proof-grid{grid-template-columns:1fr;}
+.pgrid{grid-template-columns:1fr;}
+.steps{grid-template-columns:repeat(2,1fr);gap:2rem;}.steps::before{display:none;}
+.nav-links{display:none;}.mobile-menu{display:block;}
+.img-strip,.img-strip.four{grid-template-columns:repeat(2,1fr);}.img-i{height:170px;}
+.fbadges{flex-direction:row;flex-wrap:wrap;}
+}
+@media(max-width:600px){
+.hero{padding:7rem 1.5rem 3rem;}.hero h1{font-size:3rem;}
+.steps{grid-template-columns:1fr;}nav{padding:0.8rem 1.5rem;}
+.prc{padding:2rem;}.pa{font-size:3rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="#" class="logo"><span class="mark"></span>TORQUELEADS</a>
+<div class="nav-links">
+<a href="#services">Services</a>
+<a href="#recruiting">Recruiting</a>
+<a href="#pricing">Pricing</a>
+<a href="#cta" class="btn">Get Started</a>
+</div>
+<div class="mobile-menu"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-bg"></div>
+<div class="hero-glow1"></div>
+<div class="hero-glow2"></div>
+<div class="hero-content">
+<div>
+<div class="hero-tag">Built for diesel shops</div>
+<h1>YOUR PHONE<br>SHOULD BE<br><span class="hl">RINGING MORE.</span></h1>
+<p class="hero-sub">Built by a shop owner who got tired of empty bays and bad marketing agencies. We run your ads, deliver fleet customers, and recruit your next tech — so you can stay in the bay.</p>
+<div class="hero-actions">
+<a href="#cta" class="btn">Book a Free Call</a>
+<a href="#services" class="btn btn-outline">See What We Do</a>
+</div>
+</div>
+<div class="hero-stats">
+<div class="stats-panel">
+<h3>Why Diesel Shops Choose Us</h3>
+<div class="stat-row"><span class="stat-label">Avg. Repair Ticket</span><span class="stat-val">$1,800</span></div>
+<div class="stat-row"><span class="stat-label">New Customers / Mo</span><span class="stat-val wh">12–30</span></div>
+<div class="stat-row"><span class="stat-label">ROI for Clients</span><span class="stat-val">8–15×</span></div>
+<div class="stat-row"><span class="stat-label">You Touch</span><span class="stat-val wh">Nothing.</span></div>
+<p class="stats-note">One new customer covers the entire monthly cost.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- STRIP 1 — ALL verified truck mechanic photos -->
+<section class="img-wrap">
+<div class="img-strip">
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7564861/pexels-photo-7564861.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019372/pexels-photo-7019372.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019378/pexels-photo-7019378.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/4481942/pexels-photo-4481942.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/2760343/pexels-photo-2760343.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
+</div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+<div class="problem-inner">
+<div class="reveal">
+<div class="stag">The Problem</div>
+<div class="stitle">YOU DIDN'T OPEN A SHOP TO POST ON FACEBOOK.</div>
+</div>
+<div class="problem-text reveal">
+<p>You got into diesel repair because you're damn good at it. But right now, you're losing jobs to shops with worse techs and better marketing — and you can't find good help to keep up.</p>
+<p><strong>Sound familiar?</strong></p>
+<div class="pain-list">
+<div class="pain gc"><span class="x">✕</span> Empty bays that should be full of trucks</div>
+<div class="pain gc"><span class="x">✕</span> Relying 100% on word of mouth</div>
+<div class="pain gc"><span class="x">✕</span> Marketing agencies that don't understand diesel</div>
+<div class="pain gc"><span class="x">✕</span> Dead or nonexistent social media</div>
+<div class="pain gc"><span class="x">✕</span> Can't find qualified techs anywhere</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- RECRUITING -->
+<section class="recruiting" id="recruiting">
+<div class="rec-glow"></div>
+<div class="recruiting-inner">
+<div class="recruiting-content reveal">
+<div class="stag">Can't Find Good Help?</div>
+<div class="stitle">YOUR NEXT TECH ISN'T ON INDEED.<br><span>THEY'RE ON INSTAGRAM.</span></div>
+<p class="rec-sub">Every shop owner says the same thing: <strong>"I can get the work. I just can't find the people."</strong></p>
+<p class="rec-sub">The next generation of diesel techs grew up on Instagram and TikTok — not job boards. We put your shop in their feed, make you look like the place they want to work, and send applications straight to your phone.</p>
+<div class="rec-feats">
+<div class="rf gc"><div class="rf-icon">📱</div><div><h4>Social-First Recruiting</h4><p>Targeted ads on IG, FB & TikTok aimed at trade school grads and young techs</p></div></div>
+<div class="rf gc"><div class="rf-icon">🎬</div><div><h4>Shop Culture Content</h4><p>Posts showing what it's actually like to work at your shop — builds, team, culture</p></div></div>
+<div class="rf gc"><div class="rf-icon">🎯</div><div><h4>Precision Targeting</h4><p>UTI grads, Lincoln Tech alumni, diesel programs within commute distance</p></div></div>
+<div class="rf gc"><div class="rf-icon">⚡</div><div><h4>Double the Value</h4><p>Every recruiting post also markets your shop to customers. Two birds, one wrench.</p></div></div>
+</div>
+<a href="#cta" class="btn btn-green" style="margin-top:1.5rem;">Start Recruiting Techs →</a>
+</div>
+<div class="rec-stats reveal">
+<div class="rs gc"><div class="rs-num">76%</div><div class="rs-label">of diesel shops report<br>tech shortages</div></div>
+<div class="rs gc"><div class="rs-num">92%</div><div class="rs-label">of Gen Z job seekers<br>use social media</div></div>
+<div class="rs gc"><div class="rs-num">$0</div><div class="rs-label">is what most shops spend<br>on recruiting ads</div></div>
+<div class="rs gc"><div class="rs-num">2×</div><div class="rs-label">value — recruiting posts<br>also attract customers</div></div>
+</div>
+</div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder">
+<div class="founder-inner reveal">
+<div>
+<div class="stag">Why Us</div>
+<div class="stitle">BUILT BY A SHOP OWNER.<br>FOR SHOP OWNERS.</div>
+<div class="founder-story">
+<p>Our founder <strong>owned and operated a heavy-duty diesel repair shop.</strong> Empty bays, clueless agencies, techs impossible to find — he lived it. So he built what he wished existed.</p>
+<p class="fcta">We speak your language because we've lived your business. Let us prove it.</p>
+</div>
+<a href="#cta" class="btn" style="margin-top:1rem;">Book a Free Call →</a>
+</div>
+<div class="fbadges">
+<div class="fb gc"><span class="fb-icon">🔧</span><span class="fb-txt">Former Shop Owner</span></div>
+<div class="fb gc"><span class="fb-icon">🛻</span><span class="fb-txt">Diesel-Only. Period.</span></div>
+<div class="fb gc"><span class="fb-icon">🤝</span><span class="fb-txt">We Get Your Business</span></div>
+</div>
+</div>
+</section>
+
+<!-- STRIP 2 — same verified photos, different crops/order -->
+<section class="img-wrap dark-bot">
+<div class="img-strip four">
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019378/pexels-photo-7019378.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:top;"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7564861/pexels-photo-7564861.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:left;"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/2760343/pexels-photo-2760343.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:center;"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019372/pexels-photo-7019372.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:bottom;"></div>
+</div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+<div class="svc-inner">
+<div class="svc-header reveal">
+<div class="stag">What You Get</div>
+<div class="stitle">YOUR ENTIRE DIGITAL PRESENCE. HANDLED.</div>
+<p>We don't teach you marketing. We do it for you. Completely.</p>
+</div>
+<div class="svc-grid">
+<div class="svc gc reveal"><div class="num">01</div><div class="svc-ico">📋</div><h3>Fleet Lead Lists</h3><p>Every fleet company, trucking outfit, and commercial vehicle owner in your area. Names, numbers, emails — ready to close.</p></div>
+<div class="svc gc reveal"><div class="num">02</div><div class="svc-ico">📣</div><h3>Meta Ad Campaigns</h3><p>Custom Facebook & Instagram ads for diesel repair. We create, run, and optimize. You answer the phone.</p></div>
+<div class="svc gc reveal"><div class="num">03</div><div class="svc-ico">📱</div><h3>Social Media</h3><p>30 posts/month on FB & IG. Shop content, tips, before-and-afters. Active, professional pages.</p></div>
+<div class="svc gc reveal"><div class="num">04</div><div class="svc-ico">📍</div><h3>Google Business</h3><p>Show up for "diesel repair near me." Posts, photos, review management — all covered.</p></div>
+<div class="svc gc reveal"><div class="num">05</div><div class="svc-ico">🎨</div><h3>Ad Creatives</h3><p>4–6 fresh designs monthly. Real, gritty creative diesel customers respond to.</p></div>
+<div class="svc gc reveal newtag"><div class="num">06</div><div class="svc-ico">👨‍🔧</div><h3>Tech Recruiting</h3><p>Targeted campaigns on IG & TikTok to attract the next generation of diesel techs.</p></div>
+</div>
+</div>
+</section>
+
+<!-- STRIP 3 -->
+<section class="img-wrap dark-top">
+<div class="img-strip four">
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/4481942/pexels-photo-4481942.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:right;"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7541360/pexels-photo-7541360.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:center;"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019372/pexels-photo-7019372.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:top;"></div>
+<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019378/pexels-photo-7019378.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:left;"></div>
+</div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+<div class="process-inner">
+<div class="process-header reveal">
+<div class="stag">How It Works</div>
+<div class="stitle">UP AND RUNNING IN 72 HOURS.</div>
+</div>
+<div class="steps reveal">
+<div class="step"><div class="step-dot gc">01</div><h4>Quick Call</h4><p>15-minute call about your shop and hiring needs.</p></div>
+<div class="step"><div class="step-dot gc">02</div><h4>We Build</h4><p>Ads, social, lead lists, recruiting — set up in 72 hours.</p></div>
+<div class="step"><div class="step-dot gc">03</div><h4>Ads Go Live</h4><p>Campaigns launch targeting fleet customers and techs.</p></div>
+<div class="step"><div class="step-dot gc">04</div><h4>Phone Rings</h4><p>New customers call. Techs apply. You turn wrenches.</p></div>
+</div>
+</div>
+</section>
+
+<!-- PROOF -->
+<section class="proof-sec">
+<div class="proof-grid reveal">
+<div class="pcard gc"><div class="qt">First month — 18 new fleet accounts. Paid for itself ten times over. I was skeptical. Not anymore.</div><div class="pa">Mike R.</div><div class="pr">Owner, Big Rig Diesel — Houston, TX</div></div>
+<div class="pcard gc"><div class="qt">They got me a list of every trucking company within 50 miles. I don't touch anything. Best money I spend every month.</div><div class="pa">Dave K.</div><div class="pr">Owner, Crossroads Truck Repair — OKC, OK</div></div>
+<div class="pcard gc"><div class="qt">Couldn't find techs for 6 months. They ran recruiting ads on Instagram — hired two guys in 3 weeks. Game changer.</div><div class="pa">Carlos M.</div><div class="pr">Owner, Iron Horse Diesel — Phoenix, AZ</div></div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+<div class="pricing-inner">
+<div class="pricing-header reveal">
+<div class="stag">Investment</div>
+<div class="stitle">FILL YOUR BAYS. FILL YOUR TEAM.</div>
+</div>
+<div class="pgrid reveal">
+<div class="prc gc ft">
+<div class="pn">Full Throttle — Customers</div>
+<div class="pa">$2,500<span>/month</span></div>
+<p class="psub">+ ad spend (paid to Meta, $750–$1,500/mo recommended)</p>
+<ul class="fl">
+<li><span class="ck">✓</span> Complete Meta ad management</li>
+<li><span class="ck">✓</span> 4–6 custom ad creatives/month</li>
+<li><span class="ck">✓</span> 30 social media posts (FB + IG)</li>
+<li><span class="ck">✓</span> Fleet lead list for your area</li>
+<li><span class="ck">✓</span> Google Business optimization</li>
+<li><span class="ck">✓</span> Monthly performance report</li>
+<li><span class="ck">✓</span> 72-hour setup · Cancel anytime</li>
+</ul>
+<a href="#cta" class="btn" style="width:100%;text-align:center;">Get Started</a>
+</div>
+<div class="prc gc ao">
+<div class="pn">Crew Builder — Recruiting</div>
+<div class="pa">$1,500<span>/month</span></div>
+<p class="psub">+ recruiting ad spend ($300–$500/mo recommended)</p>
+<ul class="fl">
+<li><span class="ck">✓</span> Recruiting ads on IG, FB & TikTok</li>
+<li><span class="ck">✓</span> Shop culture content</li>
+<li><span class="ck">✓</span> Trade school & tech program targeting</li>
+<li><span class="ck">✓</span> Application funnel — techs apply direct</li>
+<li><span class="ck">✓</span> 10 recruiting posts/month</li>
+<li><span class="ck">✓</span> Gen Z creative (reels, stories)</li>
+<li><span class="ck">✓</span> Every post also markets your shop</li>
+</ul>
+<a href="#cta" class="btn btn-green" style="width:100%;text-align:center;">Add to Package</a>
+</div>
+</div>
+<div class="bundle reveal">
+<p style="font-size:0.7rem;color:var(--gray-dark);text-transform:uppercase;letter-spacing:3px;font-family:'Barlow Condensed',sans-serif;margin-bottom:0.3rem;">Bundle Both &amp; Save</p>
+<div class="bundle-price">$3,500<span>/month</span></div>
+<p><strong>Save $500/mo</strong> — customers AND techs in one package. Most shops choose this.</p>
+</div>
+<div class="roi reveal">
+<p><strong>The math:</strong> One repair ticket covers the whole month. One good tech hire adds $50K–$80K/year in revenue capacity. This pays for itself before month one is over.</p>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+<div class="cta-glow"></div>
+<div class="cta-inner reveal">
+<div class="stag">Let's Go</div>
+<div class="stitle">STOP LOSING JOBS AND TECHS TO THE SHOP DOWN THE ROAD.</div>
+<p>15-minute call. We'll show you how many fleet customers are in your area and how to start attracting the next generation of techs.</p>
+<a href="https://calendly.com/YOUR-LINK" class="btn" target="_blank">Book Free Call — 15 Minutes</a>
+</div>
+</section>
+
+<footer><p>© 2026 TorqueLeads. All Rights Reserved.</p></footer>
+
+<script>
+const o=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>o.observe(el));
+</script>
+</body>
+</html>
