@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TorqueLeads — Fill Your Diesel Shop With Customers</title>
+<meta name="description" content="We handle your ads, social media, and lead generation so you can focus on turning wrenches. Built exclusively for heavy-duty diesel repair shops.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #060608;
+    --dark: #0b0b10;
+    --surface: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.04);
+    --glass-strong: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.07);
+    --glass-border-hover: rgba(255,255,255,0.14);
+    --amber: #f59e0b;
+    --amber-soft: #fbbf24;
+    --amber-glow: rgba(245,158,11,0.12);
+    --amber-glow-strong: rgba(245,158,11,0.2);
+    --red: #ef4444;
+    --white: #f5f5f5;
+    --gray: #a1a1aa;
+    --gray-dark: #71717a;
+    --gray-darker: #3f3f46;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .glass:hover {
+    background: var(--glass-strong);
+    border-color: var(--glass-border-hover);
+  }
+  .glass-strong {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 1rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(6,6,8,0.6);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem; letter-spacing: 3px;
+    color: var(--white); text-decoration: none;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .logo .mark {
+    width: 8px; height: 26px; background: var(--amber);
+    display: inline-block; transform: skewX(-12deg);
+    box-shadow: 0 0 20px var(--amber-glow-strong);
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 2rem; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.85rem; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 0.75rem 1.8rem;
+    background: var(--amber); color: var(--black);
+    border: none; border-radius: 6px; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn:hover {
+    background: var(--amber-soft); transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(245,158,11,0.25), 0 0 0 1px rgba(245,158,11,0.3);
+  }
+  .btn-glass {
+    background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border); color: var(--white);
+  }
+  .btn-glass:hover {
+    background: var(--glass-strong); border-color: var(--amber);
+    box-shadow: 0 10px 40px rgba(245,158,11,0.1);
+  }
+  .btn-lg { font-size: 0.95rem; padding: 1rem 2.5rem; border-radius: 8px; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 8rem 2.5rem 4rem; position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(6,6,8,0.88) 30%, rgba(6,6,8,0.65) 60%, rgba(6,6,8,0.85)),
+      url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1800&q=80') center/cover no-repeat;
+  }
+  .hero-content {
+    max-width: 1240px; margin: 0 auto; width: 100%; position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 4rem; align-items: center;
+  }
+  .hero-tag {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 4px; text-transform: uppercase; color: var(--amber);
+    margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-tag::before { content: ''; width: 30px; height: 2px; background: var(--amber); box-shadow: 0 0 10px var(--amber-glow-strong); }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 7vw, 6.5rem);
+    line-height: 0.92; letter-spacing: 1px; color: var(--white);
+    margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.6s 0.35s forwards;
+  }
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, var(--amber), #f97316);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.1rem; font-weight: 300; color: var(--gray); max-width: 480px;
+    margin-bottom: 2.5rem; line-height: 1.8;
+    opacity: 0; animation: fadeUp 0.6s 0.5s forwards;
+  }
+  .hero-sub strong { color: var(--white); font-weight: 600; }
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+
+  .hero-glass {
+    border-radius: 16px; padding: 2.5rem; position: relative; overflow: hidden;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-glass::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--amber), var(--red), var(--amber));
+    border-radius: 16px 16px 0 0;
+  }
+  .hero-glass h3 {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 2rem;
+  }
+  .stat-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.9rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .stat-row:last-of-type { border-bottom: none; }
+  .stat-label { font-size: 0.9rem; color: var(--gray); }
+  .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; color: var(--amber); }
+  .stat-value.white { color: var(--white); }
+  .stats-note { margin-top: 1.5rem; font-size: 0.78rem; color: var(--gray-dark); text-align: center; font-style: italic; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+  /* MOSAIC */
+  .mosaic { padding: 0.5rem; display: grid; gap: 4px; position: relative; }
+  .mosaic-4 { grid-template-columns: repeat(4, 1fr); }
+  .mosaic-3 { grid-template-columns: 1.2fr 0.8fr 1fr; }
+  .mosaic-img {
+    height: 300px; background-size: cover; background-position: center;
+    position: relative; overflow: hidden;
+    filter: grayscale(30%) brightness(0.65) contrast(1.05);
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .mosaic-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(6,6,8,0.5)); transition: opacity 0.4s; }
+  .mosaic-img:hover { filter: grayscale(0%) brightness(0.8) contrast(1); transform: scale(1.01); z-index: 2; }
+  .mosaic-img:hover::after { opacity: 0.3; }
+  .mosaic-fade { position: relative; }
+  .mosaic-fade::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 80px; z-index: 3; pointer-events: none; background: linear-gradient(to bottom, var(--black), transparent); }
+  .mosaic-fade::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px; z-index: 3; pointer-events: none; background: linear-gradient(to top, var(--black), transparent); }
+  .mosaic-fade-dark::after { background: linear-gradient(to top, var(--dark), transparent); }
+  .mosaic-fade-dark-top::before { background: linear-gradient(to bottom, var(--dark), transparent); }
+
+  /* SECTIONS */
+  .section-tag {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 4px; text-transform: uppercase; color: var(--amber);
+    margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-tag::before { content: ''; width: 20px; height: 2px; background: var(--amber); }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1; color: var(--white); margin-bottom: 1.5rem; }
+
+  /* PROBLEM */
+  .problem { padding: 7rem 2.5rem; position: relative; }
+  .problem-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 0.45fr 0.55fr; gap: 4rem; align-items: start; }
+  .problem-text p { font-size: 1.05rem; color: var(--gray); margin-bottom: 1.2rem; font-weight: 300; line-height: 1.85; }
+  .problem-text strong { color: var(--white); font-weight: 600; }
+  .pain-list { list-style: none; padding: 0; display: grid; gap: 0.6rem; margin-top: 1.5rem; }
+  .pain-item { display: flex; align-items: flex-start; gap: 1rem; font-size: 0.95rem; color: var(--gray); padding: 1.1rem 1.4rem; border-radius: 10px; }
+  .pain-item:hover { background: rgba(239,68,68,0.04); }
+  .pain-icon { color: var(--red); font-size: 0.7rem; font-weight: 700; flex-shrink: 0; margin-top: 3px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; background: rgba(239,68,68,0.1); border-radius: 50%; }
+
+  /* FOUNDER */
+  .founder { padding: 7rem 2.5rem; background: var(--dark); position: relative; overflow: hidden; }
+  .founder-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 4rem; align-items: center; position: relative; z-index: 2; }
+  .founder-story p { font-size: 1.05rem; color: var(--gray); margin-bottom: 1.2rem; font-weight: 300; line-height: 1.85; }
+  .founder-story strong { color: var(--white); font-weight: 600; }
+  .founder-story .closer { color: var(--amber); font-weight: 500; font-size: 1.08rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
+  .founder-proof { display: grid; gap: 1rem; }
+  .proof-block { padding: 1.4rem 1.6rem; border-radius: 12px; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: 0.1rem 1rem; }
+  .proof-block:hover { transform: translateX(6px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .proof-block .p-icon { grid-row: 1 / 3; font-size: 1.5rem; display: flex; align-items: center; }
+  .proof-block .p-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--white); }
+  .proof-block .p-desc { font-size: 0.83rem; color: var(--gray-dark); line-height: 1.5; }
+
+  /* PHOTO FEATURE */
+  .photo-feature { padding: 5rem 2.5rem; }
+  .photo-feature-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .pf-img { border-radius: 14px; overflow: hidden; position: relative; height: 400px; }
+  .pf-img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.75) contrast(1.05); }
+  .pf-img::after { content: ''; position: absolute; inset: 0; border-radius: 14px; border: 1px solid var(--glass-border); pointer-events: none; }
+  .pf-text h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1; color: var(--white); margin-bottom: 1rem; }
+  .pf-text p { font-size: 1rem; color: var(--gray); line-height: 1.8; font-weight: 300; margin-bottom: 1.5rem; }
+  .pf-text strong { color: var(--white); font-weight: 600; }
+
+  /* SERVICES */
+  .services { padding: 7rem 2.5rem; background: var(--dark); position: relative; overflow: hidden; }
+  .services-inner { max-width: 1240px; margin: 0 auto; position: relative; z-index: 2; }
+  .services-header { text-align: center; margin-bottom: 4rem; }
+  .services-header .section-tag { justify-content: center; }
+  .services-header p { color: var(--gray); font-size: 1.05rem; font-weight: 300; max-width: 550px; margin: 0 auto; }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  .service-card { padding: 2.2rem; border-radius: 14px; position: relative; overflow: hidden; }
+  .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(245,158,11,0.08); }
+  .service-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; position: absolute; top: 0.8rem; right: 1.2rem; line-height: 1; color: rgba(255,255,255,0.03); transition: color 0.3s; }
+  .service-card:hover .service-num { color: rgba(245,158,11,0.06); }
+  .service-icon { width: 50px; height: 50px; background: var(--amber-glow); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 1.3rem; border: 1px solid rgba(245,158,11,0.1); }
+  .service-card h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--white); margin-bottom: 0.8rem; }
+  .service-card p { font-size: 0.9rem; color: var(--gray); line-height: 1.7; font-weight: 300; }
+
+  /* PROCESS */
+  .process { padding: 7rem 2.5rem; position: relative; }
+  .process-inner { max-width: 1240px; margin: 0 auto; }
+  .process-header { text-align: center; margin-bottom: 4rem; }
+  .process-header .section-tag { justify-content: center; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+  .step { text-align: center; padding: 2rem 1.5rem; border-radius: 14px; position: relative; }
+  .step:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+  .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--amber); line-height: 1; margin-bottom: 1rem; text-shadow: 0 0 30px var(--amber-glow); }
+  .step h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--white); margin-bottom: 0.5rem; }
+  .step p { font-size: 0.85rem; color: var(--gray-dark); max-width: 200px; margin: 0 auto; line-height: 1.6; }
+  .step-arr { position: absolute; top: 50%; right: -0.6rem; color: var(--gray-darker); font-size: 1.2rem; z-index: 5; }
+
+  /* TESTIMONIALS */
+  .testimonials { padding: 5rem 2.5rem; background: var(--dark); }
+  .testimonials-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  .test-card { padding: 2rem; border-radius: 14px; }
+  .test-quote { font-size: 1rem; font-weight: 300; font-style: italic; color: var(--gray); margin-bottom: 1.5rem; line-height: 1.75; }
+  .test-quote::before { content: '"'; font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--amber); display: block; line-height: 0.8; margin-bottom: 0.5rem; opacity: 0.7; }
+  .test-author { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--white); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+  .test-role { font-size: 0.78rem; color: var(--gray-dark); }
+
+  /* PRICING */
+  .pricing { padding: 7rem 2.5rem; position: relative; overflow: hidden; }
+  .pricing-inner { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
+  .pricing .section-tag { justify-content: center; }
+  .price-card { border-radius: 20px; padding: 3.5rem; margin-top: 3rem; position: relative; overflow: hidden; border: 1px solid rgba(245,158,11,0.15); background: rgba(245,158,11,0.02); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+  .price-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, var(--amber), var(--red), var(--amber), transparent); }
+  .plan-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--amber); margin-bottom: 0.5rem; }
+  .price-amount { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; line-height: 1; color: var(--white); margin-bottom: 0.3rem; }
+  .price-amount span { font-family: 'Barlow', sans-serif; font-size: 1.1rem; font-weight: 300; color: var(--gray); }
+  .price-sub { font-size: 0.88rem; color: var(--gray-dark); margin-bottom: 2.5rem; }
+  .features-list { list-style: none; padding: 0; text-align: left; max-width: 460px; margin: 0 auto 2.5rem; display: grid; gap: 0.5rem; }
+  .features-list li { display: flex; align-items: center; gap: 0.8rem; font-size: 0.93rem; color: var(--gray); padding: 0.65rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .feat-check { width: 22px; height: 22px; background: var(--amber-glow); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--amber); font-size: 0.7rem; font-weight: 700; flex-shrink: 0; border: 1px solid rgba(245,158,11,0.15); }
+  .roi-note { margin-top: 2rem; padding: 1.2rem 1.5rem; border-radius: 10px; background: var(--amber-glow); border: 1px solid rgba(245,158,11,0.12); text-align: left; }
+  .roi-note p { font-size: 0.88rem; color: var(--gray); line-height: 1.7; }
+  .roi-note strong { color: var(--amber); }
+
+  /* CTA */
+  .cta { padding: 7rem 2.5rem; text-align: center; position: relative; overflow: hidden; background: var(--dark); }
+  .cta-inner { max-width: 700px; margin: 0 auto; position: relative; z-index: 2; }
+  .cta .section-title { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; }
+  .cta p { font-size: 1.1rem; color: var(--gray); font-weight: 300; margin-bottom: 2.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  footer { padding: 3rem 2.5rem; border-top: 1px solid rgba(255,255,255,0.04); text-align: center; }
+  footer p { font-size: 0.78rem; color: var(--gray-dark); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1.5px; text-transform: uppercase; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .mobile-menu { display: none; cursor: pointer; }
+  .mobile-menu span { display: block; width: 22px; height: 2px; background: var(--white); margin: 5px 0; }
+
+  @media (max-width: 900px) {
+    .hero-content { grid-template-columns: 1fr; }
+    .hero-glass { display: none; }
+    .problem-inner, .founder-inner, .photo-feature-inner { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .step-arr { display: none; }
+    .testimonials-inner { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .mobile-menu { display: block; }
+    .mosaic-4 { grid-template-columns: repeat(2, 1fr); }
+    .mosaic-3 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .hero h1 { font-size: 3.2rem; }
+    .steps { grid-template-columns: 1fr; }
+    nav { padding: 1rem 1.5rem; }
+    .price-card { padding: 2rem; }
+    .price-amount { font-size: 3.5rem; }
+    .mosaic-img { height: 200px; }
+    .pf-img { height: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo"><span class="mark"></span>TORQUELEADS</a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#process">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#cta" class="btn">Get Started</a>
+  </div>
+  <div class="mobile-menu"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="orb" style="width:600px;height:600px;background:rgba(245,158,11,0.06);top:-200px;right:-100px;"></div>
+  <div class="orb" style="width:400px;height:400px;background:rgba(239,68,68,0.04);bottom:-100px;left:-100px;"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-tag">Built for diesel shops</div>
+      <h1>YOUR PHONE<br>SHOULD BE<br><span class="highlight">RINGING MORE.</span></h1>
+      <p class="hero-sub"><strong>Built by a shop owner</strong> who got tired of empty bays and bad marketing agencies. We run your ads, manage your social media, and deliver a list of every fleet and commercial customer in your area — so you can stay in the bay, not behind a desk.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn btn-lg">Book a Free Call</a>
+        <a href="#services" class="btn-glass btn btn-lg">See What We Do</a>
+      </div>
+    </div>
+    <div class="hero-glass glass-strong">
+      <h3>Why Diesel Shops Choose Us</h3>
+      <div class="stat-row"><span class="stat-label">Avg. Repair Ticket</span><span class="stat-value">$1,800</span></div>
+      <div class="stat-row"><span class="stat-label">New Customers / Mo</span><span class="stat-value white">12–30</span></div>
+      <div class="stat-row"><span class="stat-label">ROI for Clients</span><span class="stat-value">8–15×</span></div>
+      <div class="stat-row"><span class="stat-label">You Touch</span><span class="stat-value white">Nothing.</span></div>
+      <p class="stats-note">One new customer covers the entire monthly cost.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MOSAIC 1 -->
+<div class="mosaic mosaic-4 mosaic-fade" style="--bg-fade:var(--black);">
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1615887023544-3a566f29616b?w=600&q=80')"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1504222490345-c075b6008014?w=600&q=80')"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1580983218765-f663bec07b37?w=600&q=80')"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80')"></div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="orb" style="width:500px;height:500px;background:rgba(245,158,11,0.04);top:50%;left:30%;transform:translate(-50%,-50%);"></div>
+  <div class="problem-inner">
+    <div class="reveal">
+      <div class="section-tag">The Problem</div>
+      <div class="section-title">YOU DIDN'T OPEN A SHOP TO POST ON FACEBOOK.</div>
+    </div>
+    <div class="problem-text reveal">
+      <p>You got into diesel repair because you're damn good at it. But right now, you're losing jobs to shops with worse techs and better marketing.</p>
+      <p><strong>Sound familiar?</strong></p>
+      <div class="pain-list">
+        <div class="pain-item glass"><span class="pain-icon">✕</span> You know you should be running ads but don't have time to learn Meta</div>
+        <div class="pain-item glass"><span class="pain-icon">✕</span> Your social media is dead or nonexistent</div>
+        <div class="pain-item glass"><span class="pain-icon">✕</span> You're relying 100% on word of mouth and hoping the phone rings</div>
+        <div class="pain-item glass"><span class="pain-icon">✕</span> Marketing agencies charge a fortune and don't understand diesel</div>
+        <div class="pain-item glass"><span class="pain-icon">✕</span> You've got empty bays that should be full</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder">
+  <div class="orb" style="width:500px;height:500px;background:rgba(245,158,11,0.04);top:-200px;right:-200px;"></div>
+  <div class="founder-inner">
+    <div class="founder-content reveal">
+      <div class="section-tag">Why We're Different</div>
+      <div class="section-title">WE DIDN'T LEARN DIESEL<br>FROM A TEXTBOOK.</div>
+      <div class="founder-story">
+        <p>Our founder <strong>owned and operated a heavy-duty diesel repair shop.</strong> He knows what it's like to have empty bays, waste money on agencies that don't know a turbo from a tailpipe, and pray for the phone to ring.</p>
+        <p>After years in the industry, one thing became clear: <strong>the best shops don't fail because of bad work — they fail because nobody knows they exist.</strong> Meanwhile, generic marketing agencies treat your shop the same as a nail salon or a pizza place.</p>
+        <p>He built TorqueLeads because nothing like it existed — <strong>a done-for-you marketing system built by someone who's actually been under the hood.</strong> Priced so one new customer covers the cost. Completely hands-off so you never think about it.</p>
+        <p class="closer">We speak your language because we've lived your business. Let us prove it.</p>
+      </div>
+      <a href="#cta" class="btn" style="margin-top:1.5rem;">Book a Free Call →</a>
+    </div>
+    <div class="founder-proof reveal">
+      <div class="proof-block glass"><div class="p-icon">🔧</div><div class="p-title">Shop Owner</div><div class="p-desc">Founded & operated a heavy-duty diesel repair shop</div></div>
+      <div class="proof-block glass"><div class="p-icon">🛻</div><div class="p-title">Industry-Built</div><div class="p-desc">Every ad, post, and strategy designed for diesel — not generic "auto repair"</div></div>
+      <div class="proof-block glass"><div class="p-icon">🤝</div><div class="p-title">We Get It</div><div class="p-desc">We know the difference between a shop that needs fleet work and one that needs walk-ins</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO FEATURE 1 -->
+<section class="photo-feature">
+  <div class="photo-feature-inner reveal">
+    <div class="pf-img"><img src="https://images.unsplash.com/photo-1530685932526-e0eb4d37e8ea?w=800&q=80" alt="Diesel mechanic at work"></div>
+    <div class="pf-text">
+      <h2>YOUR BAYS SHOULD BE FULL. YOUR PHONE SHOULD BE BUSY.</h2>
+      <p>Most diesel shops are invisible online. No ads running. Dead social media. A Google listing they set up in 2017 and never touched. Meanwhile, the shop across town — with half your talent — is booked solid because they showed up in someone's Facebook feed.</p>
+      <p><strong>We fix that. Permanently.</strong></p>
+      <a href="#pricing" class="btn">See the Plan</a>
+    </div>
+  </div>
+</section>
+
+<!-- MOSAIC 2 -->
+<div class="mosaic mosaic-3 mosaic-fade mosaic-fade-dark">
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=600&q=80');height:340px;"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80');height:340px;"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1632823471565-1ecdf5c6da20?w=600&q=80');height:340px;"></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="orb" style="width:600px;height:600px;background:rgba(245,158,11,0.03);bottom:-200px;left:-200px;"></div>
+  <div class="services-inner">
+    <div class="services-header reveal">
+      <div class="section-tag">What You Get</div>
+      <div class="section-title">YOUR ENTIRE DIGITAL PRESENCE. HANDLED.</div>
+      <p>We don't teach you marketing. We do it for you. Completely.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card glass reveal"><div class="service-num">01</div><div class="service-icon">📋</div><h3>Lead Lists</h3><p>We build you a complete database of every fleet company, trucking outfit, and commercial vehicle owner in your service area. Names, numbers, emails — ready to close.</p></div>
+      <div class="service-card glass reveal"><div class="service-num">02</div><div class="service-icon">📣</div><h3>Meta Ad Campaigns</h3><p>Custom Facebook & Instagram ads designed specifically for diesel repair. We create them, run them, optimize them. You just answer the phone.</p></div>
+      <div class="service-card glass reveal"><div class="service-num">03</div><div class="service-icon">📱</div><h3>Social Media Management</h3><p>30 posts per month on Facebook & Instagram. Shop content, tips, before-and-afters, customer spotlights. We keep your pages active and professional.</p></div>
+      <div class="service-card glass reveal"><div class="service-num">04</div><div class="service-icon">📍</div><h3>Google Business Profile</h3><p>We optimize and manage your Google listing so you show up when someone searches "diesel repair near me." Posts, photos, review management — all covered.</p></div>
+      <div class="service-card glass reveal"><div class="service-num">05</div><div class="service-icon">🎨</div><h3>Ad Creative Design</h3><p>4–6 fresh ad designs every month. No stock photos of smiling people in hard hats. Real, gritty creative that diesel shop customers actually respond to.</p></div>
+      <div class="service-card glass reveal"><div class="service-num">06</div><div class="service-icon">📊</div><h3>Monthly Reporting</h3><p>Simple, clear reports showing exactly how many leads you got, what you spent, and what it cost per new customer. No marketing jargon. Just numbers.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO FEATURE 2 -->
+<section class="photo-feature" style="background:var(--black);">
+  <div class="photo-feature-inner reveal" style="direction:rtl;">
+    <div class="pf-img" style="direction:ltr;"><img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&q=80" alt="Fleet trucks"></div>
+    <div class="pf-text" style="direction:ltr;">
+      <h2>EVERY FLEET COMPANY IN YOUR ZIP CODE. IN YOUR INBOX.</h2>
+      <p>We don't just run ads. We hand you a <strong>complete lead list</strong> of every fleet manager, trucking company, and commercial vehicle operator in your service area — with names, phone numbers, and emails. These aren't random leads. They're the exact people who need your services.</p>
+      <a href="#cta" class="btn">Get Your Lead List</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process" style="background:var(--dark);">
+  <div class="process-inner">
+    <div class="process-header reveal">
+      <div class="section-tag">How It Works</div>
+      <div class="section-title">UP AND RUNNING IN 72 HOURS.</div>
+    </div>
+    <div class="steps">
+      <div class="step glass reveal"><div class="step-num">01</div><h4>Quick Call</h4><p>15-minute call to learn about your shop, services, and service area.</p><span class="step-arr">→</span></div>
+      <div class="step glass reveal"><div class="step-num">02</div><h4>We Build</h4><p>We set up your ad campaigns, social media, and lead lists within 72 hours.</p><span class="step-arr">→</span></div>
+      <div class="step glass reveal"><div class="step-num">03</div><h4>Ads Go Live</h4><p>Your campaigns launch on Facebook & Instagram, targeting your ideal customers.</p><span class="step-arr">→</span></div>
+      <div class="step glass reveal"><div class="step-num">04</div><h4>Phone Rings</h4><p>New customers start calling. You focus on what you do best — fixing trucks.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOSAIC 3 -->
+<div class="mosaic mosaic-4 mosaic-fade mosaic-fade-dark-top">
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&q=80');height:260px;"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=600&q=80');height:260px;"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&q=80');height:260px;"></div>
+  <div class="mosaic-img" style="background-image:url('https://images.unsplash.com/photo-1562920618-5afb0916a600?w=600&q=80');height:260px;"></div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="test-card glass reveal"><div class="test-quote">I was skeptical about paying for marketing. First month we got 18 new fleet accounts. Paid for itself ten times over.</div><div class="test-author">Mike R.</div><div class="test-role">Owner, Big Rig Diesel — Houston, TX</div></div>
+    <div class="test-card glass reveal"><div class="test-quote">I don't touch anything. They run the ads, they post on my Facebook, they even got me a list of every trucking company within 50 miles. Best money I spend.</div><div class="test-author">Dave K.</div><div class="test-role">Owner, Crossroads Truck Repair — OKC, OK</div></div>
+    <div class="test-card glass reveal"><div class="test-quote">We went from 2 bays sitting empty to a 3-day backlog in about 6 weeks. Finally had to hire another tech. That's the kind of problem I want.</div><div class="test-author">Carlos M.</div><div class="test-role">Owner, Iron Horse Diesel — Phoenix, AZ</div></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="orb" style="width:700px;height:700px;background:rgba(245,158,11,0.04);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="pricing-inner">
+    <div class="reveal">
+      <div class="section-tag">Investment</div>
+      <div class="section-title">ONE PLAN. EVERYTHING INCLUDED.</div>
+    </div>
+    <div class="price-card reveal">
+      <div class="plan-name">Full Throttle Package</div>
+      <div class="price-amount">$2,200<span>/month</span></div>
+      <p class="price-sub">+ your ad spend (paid directly to Meta, we recommend $750–$1,500/mo)</p>
+      <ul class="features-list">
+        <li><span class="feat-check">✓</span> Complete Meta ad campaign management</li>
+        <li><span class="feat-check">✓</span> 4–6 custom ad creatives per month</li>
+        <li><span class="feat-check">✓</span> 30 social media posts (Facebook + Instagram)</li>
+        <li><span class="feat-check">✓</span> Targeted lead list for your service area</li>
+        <li><span class="feat-check">✓</span> Google Business Profile optimization</li>
+        <li><span class="feat-check">✓</span> Monthly performance report</li>
+        <li><span class="feat-check">✓</span> 72-hour setup — no long onboarding</li>
+        <li><span class="feat-check">✓</span> Cancel anytime — no contracts</li>
+      </ul>
+      <a href="#cta" class="btn btn-lg">Book Your Free Strategy Call</a>
+      <div class="roi-note">
+        <p><strong>The math is simple:</strong> Your average repair ticket is $800–$3,000. One new customer per month covers the entire cost. Our clients typically see 12–30 new customers per month.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="orb" style="width:600px;height:600px;background:rgba(245,158,11,0.06);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="cta-inner reveal">
+    <div class="section-tag" style="justify-content:center;">Let's Go</div>
+    <div class="section-title">STOP LOSING JOBS TO SHOPS WITH WORSE TECHS.</div>
+    <p>Book a free 15-minute call. We'll show you exactly how many fleet customers are in your area that don't know you exist.</p>
+    <a href="https://calendly.com/YOUR-LINK" class="btn btn-lg" target="_blank">Book Free Call — 15 Minutes</a>
+  </div>
+</section>
+
+<footer><p>© 2026 TorqueLeads. All Rights Reserved.</p></footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
