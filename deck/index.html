@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TorqueLeads — Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f1a;
+      --bg2: #14141f;
+      --bg3: #1a1a2e;
+      --accent: #f59e0b;
+      --accent-dim: #b97a08;
+      --accent-glow: rgba(245,158,11,0.18);
+      --white: #ffffff;
+      --muted: rgba(255,255,255,0.55);
+      --border: rgba(245,158,11,0.25);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ── DECK WRAPPER ── */
+    #deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── SLIDES ── */
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 80px 90px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+      background: var(--bg);
+      text-align: center;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .slide.left-align {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    #deck::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.4;
+    }
+
+    /* ── ACCENT LINE ── */
+    .accent-line {
+      width: 64px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin: 18px auto 0;
+    }
+    .left-align .accent-line { margin-left: 0; }
+
+    /* ── TYPOGRAPHY ── */
+    .label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.1; }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.6rem); font-weight: 800; line-height: 1.15; }
+    .subhead {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 18px;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+    .body-text {
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+      color: rgba(255,255,255,0.8);
+      line-height: 1.75;
+      max-width: 680px;
+      margin-top: 16px;
+    }
+
+    /* ── BULLET LIST ── */
+    .bullet-list {
+      list-style: none;
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 680px;
+      width: 100%;
+    }
+    .bullet-list li {
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      font-weight: 600;
+      color: rgba(255,255,255,0.88);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.5;
+    }
+    .bullet-list li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .bullet-list.checks li::before { content: none; }
+    .bullet-list.checks li .icon { font-style: normal; flex-shrink: 0; }
+
+    /* ── STEP CARDS ── */
+    .step-cards {
+      display: flex;
+      gap: 20px;
+      margin-top: 36px;
+      width: 100%;
+      max-width: 900px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .step-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      flex: 1;
+      min-width: 200px;
+      max-width: 260px;
+      position: relative;
+      text-align: left;
+    }
+    .step-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent-glow), transparent 60%);
+      pointer-events: none;
+    }
+    .step-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .step-body {
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── FUNNEL ── */
+    .funnel {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 32px;
+      align-items: center;
+      width: 100%;
+      max-width: 520px;
+    }
+    .funnel-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .funnel-block {
+      width: 100%;
+      padding: 14px 24px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .funnel-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: left;
+    }
+    .funnel-value {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .funnel-arrow {
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin: 4px 0;
+      line-height: 1;
+    }
+    .funnel-note {
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+      max-width: 440px;
+      line-height: 1.5;
+    }
+    .avg-job {
+      margin-top: 18px;
+      padding: 12px 28px;
+      background: var(--accent-glow);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ── FIT GRID ── */
+    .fit-grid {
+      display: flex;
+      gap: 28px;
+      margin-top: 28px;
+      max-width: 800px;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .fit-col { flex: 1; min-width: 280px; text-align: left; }
+    .fit-col-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid;
+    }
+    .fit-col-label.good { color: #22c55e; border-color: #22c55e40; }
+    .fit-col-label.bad  { color: #ef4444; border-color: #ef444440; }
+    .fit-list { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .fit-list li {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+
+    /* ── CTA BUTTON ── */
+    .cta-btn {
+      display: inline-block;
+      margin-top: 32px;
+      padding: 18px 42px;
+      background: var(--accent);
+      color: #0f0f1a;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: 10px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: background 0.2s, transform 0.15s;
+      cursor: pointer;
+      border: none;
+    }
+    .cta-btn:hover { background: #fbbf24; transform: translateY(-2px); }
+
+    /* ── WORDMARK ── */
+    .wordmark {
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .wordmark span { color: var(--accent); }
+    .wordmark-sm {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .wordmark-sm span { color: var(--accent); }
+
+    /* ── COVER specifics ── */
+    .truck-emoji { font-size: clamp(4rem, 10vw, 7rem); margin-bottom: 18px; line-height: 1; }
+    .cover-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      background: var(--accent-glow);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    /* ── CONTACT BLOCK ── */
+    .contact-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 28px;
+      align-items: center;
+    }
+    .contact-list li {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contact-list li a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .contact-list li a:hover { text-decoration: underline; }
+
+    /* ── SLIDE COUNTER ── */
+    #counter {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      z-index: 200;
+    }
+
+    /* ── NAV BUTTONS ── */
+    #nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+    }
+    .nav-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 8px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .nav-btn:hover { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* ── PROGRESS BAR ── */
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: width 0.35s ease;
+      z-index: 300;
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 700px) {
+      .slide { padding: 40px 24px 100px; }
+      .step-cards { gap: 12px; }
+      .step-card { min-width: 100%; max-width: 100%; }
+      .fit-grid { gap: 18px; }
+      .fit-col { min-width: 100%; }
+      #nav { bottom: 12px; gap: 8px; }
+      .nav-btn { padding: 8px 18px; font-size: 0.8rem; }
+      #counter { bottom: 20px; right: 16px; }
+    }
+    @media (max-width: 480px) {
+      .slide { padding: 32px 18px 100px; }
+      .funnel-block { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="deck">
+
+  <!-- ══ SLIDE 1 — COVER ══ -->
+  <section class="slide active" data-index="0">
+    <div class="cover-badge">Lead Generation for Diesel Shops</div>
+    <div class="truck-emoji">🚛</div>
+    <div class="wordmark">Torque<span>Leads</span></div>
+    <div class="accent-line" style="margin:16px auto 22px;"></div>
+    <h1 style="max-width:720px;">More Qualified Diesel Jobs.<br>Less Chasing.</h1>
+    <p class="subhead">A lead generation system built exclusively for diesel repair shops.</p>
+  </section>
+
+  <!-- ══ SLIDE 2 — THE PROBLEM ══ -->
+  <section class="slide left-align" data-index="1">
+    <div style="max-width:720px;width:100%;">
+      <div class="label">The Problem</div>
+      <h2>"Word of Mouth Only<br>Goes So Far."</h2>
+      <div class="accent-line"></div>
+      <ul class="bullet-list" style="margin-top:32px;">
+        <li>Most diesel shop owners rely on referrals and repeat customers</li>
+        <li>When it slows down — it <em style="color:var(--accent);font-style:normal;">really</em> slows down</li>
+        <li>You can't control word of mouth. You <strong style="color:var(--accent);">CAN</strong> control your pipeline.</li>
+        <li>Other shops in your market are already running ads and taking your potential customers</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 3 — WHY AGENCIES FAIL ══ -->
+  <section class="slide left-align" data-index="2">
+    <div style="max-width:720px;width:100%;">
+      <div class="label">Why Generic Agencies Fail You</div>
+      <h2>"Regular Marketing Agencies<br>Don't Know Your Business."</h2>
+      <div class="accent-line"></div>
+      <ul class="bullet-list" style="margin-top:32px;">
+        <li>They don't know the difference between a DPF clean and a DEF delete</li>
+        <li>They write ads that attract tire-kickers, not real diesel work</li>
+        <li>They waste your budget on unqualified clicks</li>
+        <li>You end up paying for leads you can't close</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 4 — WHO WE ARE ══ -->
+  <section class="slide left-align" data-index="3">
+    <div style="max-width:720px;width:100%;">
+      <div class="label">Who We Are</div>
+      <h2>"We Came From<br>the Shop Floor."</h2>
+      <div class="accent-line"></div>
+      <ul class="bullet-list" style="margin-top:32px;">
+        <li>TorqueLeads was built by a former diesel shop operator</li>
+        <li>We ran a <strong style="color:var(--accent);">$16M</strong> heavy-duty repair operation</li>
+        <li>We know exactly what a qualified lead looks like for your shop</li>
+        <li>We only work with diesel and heavy-duty shops — <strong style="color:var(--white);">no one else</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 5 — HOW IT WORKS ══ -->
+  <section class="slide" data-index="4">
+    <div class="label">How It Works</div>
+    <h2>"A Simple System That Fills Your Bays."</h2>
+    <div class="accent-line"></div>
+    <div class="step-cards">
+      <div class="step-card">
+        <div class="step-num">Step 1</div>
+        <div class="step-title">🎯 Target</div>
+        <div class="step-body">Laser-focused Meta ads to diesel shop owners, fleet managers, and service directors in your market.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 2</div>
+        <div class="step-title">📋 Capture</div>
+        <div class="step-body">Leads come in through a branded form. Instantly added to your pipeline with automatic SMS follow-up.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 3</div>
+        <div class="step-title">📞 Close</div>
+        <div class="step-body">You get on the phone with qualified prospects who already know what you do and are ready to talk.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 6 — WHAT YOU GET ══ -->
+  <section class="slide left-align" data-index="5">
+    <div style="max-width:680px;width:100%;">
+      <div class="label">What You Get</div>
+      <h2>"Everything You Need.<br>Nothing You Don't."</h2>
+      <div class="accent-line"></div>
+      <ul class="bullet-list checks" style="margin-top:28px;">
+        <li><span class="icon">✅</span> Done-for-you Meta ad campaigns</li>
+        <li><span class="icon">✅</span> Branded lead capture forms</li>
+        <li><span class="icon">✅</span> Automated SMS follow-up sequence</li>
+        <li><span class="icon">✅</span> CRM pipeline — no lead falls through the cracks</li>
+        <li><span class="icon">✅</span> Booking calendar integration</li>
+        <li><span class="icon">✅</span> Weekly performance reports</li>
+        <li><span class="icon">✅</span> Direct access — no account manager runaround</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 7 — THE NUMBERS ══ -->
+  <section class="slide" data-index="6">
+    <div class="label">The Numbers</div>
+    <h2>"Here's What This Looks Like in Practice."</h2>
+    <div class="accent-line"></div>
+    <div class="funnel">
+      <div class="funnel-row">
+        <div class="funnel-block">
+          <span class="funnel-label">Monthly Ad Spend</span>
+          <span class="funnel-value">$1,500 / mo</span>
+        </div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-row">
+        <div class="funnel-block">
+          <span class="funnel-label">Qualified Leads Generated</span>
+          <span class="funnel-value">30–60 leads</span>
+        </div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-row">
+        <div class="funnel-block">
+          <span class="funnel-label">Booked Strategy Calls</span>
+          <span class="funnel-value">15–25 calls</span>
+        </div>
+      </div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-row">
+        <div class="funnel-block">
+          <span class="funnel-label">New Client Relationships</span>
+          <span class="funnel-value">5–10 clients</span>
+        </div>
+      </div>
+      <div class="avg-job">Average Job Value: $2,000 – $8,000+</div>
+      <p class="funnel-note">Results vary. We'll show you realistic projections for YOUR shop on the call.</p>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 8 — WHO THIS IS FOR ══ -->
+  <section class="slide" data-index="7">
+    <div class="label">Who This Is For</div>
+    <h2>"This Works Best For..."</h2>
+    <div class="accent-line"></div>
+    <div class="fit-grid">
+      <div class="fit-col">
+        <div class="fit-col-label good">✅ Great Fit</div>
+        <ul class="fit-list">
+          <li><span>✅</span> Diesel and heavy-duty repair shops doing $500k+ annual revenue</li>
+          <li><span>✅</span> Shop owners who want to grow but don't have time to figure out marketing</li>
+          <li><span>✅</span> Shops with capacity — you have bays to fill</li>
+          <li><span>✅</span> Owners ready to invest in a real system, not just "boost a post"</li>
+        </ul>
+      </div>
+      <div class="fit-col">
+        <div class="fit-col-label bad">❌ Not a Fit</div>
+        <ul class="fit-list">
+          <li><span>❌</span> Already at capacity and not looking to grow</li>
+          <li><span>❌</span> Looking for a $99/mo solution</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 9 — THE OFFER ══ -->
+  <section class="slide" data-index="8">
+    <div class="label">The Offer</div>
+    <h2 style="max-width:640px;">"Start With a Free<br>30-Minute Strategy Call."</h2>
+    <div class="accent-line"></div>
+    <p class="body-text" style="margin-top:22px;">
+      On the call we'll audit your current marketing, show you the opportunity in your market, and walk you through exactly what the system looks like for a shop your size.
+    </p>
+    <p class="body-text" style="margin-top:8px;font-weight:700;color:var(--white);">
+      No pressure. No pitch. Just a real conversation.
+    </p>
+    <a class="cta-btn" href="https://calendly.com/torqueleads/30min" target="_blank">
+      Book Your Free Call &rarr;
+    </a>
+    <p style="margin-top:14px;font-size:0.82rem;color:var(--muted);">calendly.com/torqueleads/30min</p>
+  </section>
+
+  <!-- ══ SLIDE 10 — CLOSE ══ -->
+  <section class="slide" data-index="9">
+    <div class="wordmark" style="margin-bottom:6px;">Torque<span>Leads</span></div>
+    <div class="accent-line" style="margin:14px auto 28px;"></div>
+    <h2 style="max-width:560px;">Ready to Fill<br>Your Bays?</h2>
+    <ul class="contact-list">
+      <li>🌐 <a href="https://TorqueLeads.net" target="_blank">TorqueLeads.net</a></li>
+      <li>📅 <a href="https://calendly.com/torqueleads/30min" target="_blank">calendly.com/torqueleads/30min</a></li>
+      <li>📱 <a href="tel:+19252979107">(925) 297-9107</a></li>
+    </ul>
+    <div class="accent-line" style="margin:32px auto 0;width:120px;opacity:0.4;"></div>
+  </section>
+
+</div><!-- /deck -->
+
+<!-- ── CONTROLS ── -->
+<div id="nav">
+  <button class="nav-btn" id="prevBtn" onclick="move(-1)" disabled>← Prev</button>
+  <button class="nav-btn" id="nextBtn" onclick="move(1)">Next →</button>
+</div>
+<div id="counter">1 / 10</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function show(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, n));
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function move(dir) { show(current + dir); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') move(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   move(-1);
+  });
+
+  // Touch swipe support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  // Init progress bar
+  show(0);
+</script>
+</body>
+</html>
