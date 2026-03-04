@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TorqueLeads — VSL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #040406;
+      --amber:    #f59e0b;
+      --amber-dim:#c47d08;
+      --green:    #22c55e;
+      --white:    #f0f0f5;
+      --glass-bg: rgba(255,255,255,0.05);
+      --glass-bd: rgba(255,255,255,0.10);
+      --radius:   12px;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ─── CANVAS BACKGROUND ─────────────────────────────── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── PROGRESS BAR ──────────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--amber), #fcd34d);
+      width: 0%;
+      z-index: 100;
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 12px rgba(245,158,11,0.7);
+    }
+
+    /* ─── SLIDE COUNTER ─────────────────────────────────── */
+    #slide-counter {
+      position: fixed;
+      bottom: 24px; right: 28px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgba(240,240,245,0.45);
+      z-index: 100;
+    }
+    #slide-counter span { color: var(--amber); }
+
+    /* ─── NAV ARROWS ────────────────────────────────────── */
+    .nav-arrow {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      width: 44px; height: 44px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      transition: background 0.2s, border-color 0.2s;
+      backdrop-filter: blur(10px);
+    }
+    .nav-arrow:hover { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.4); }
+    .nav-arrow svg { width: 18px; height: 18px; fill: none; stroke: var(--white); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #nav-prev { left: 20px; }
+    #nav-next { right: 76px; }
+    @media (max-width: 600px) {
+      #nav-prev { left: 10px; }
+      #nav-next { right: 66px; }
+    }
+
+    /* ─── SLIDE WRAPPER ─────────────────────────────────── */
+    #slides-wrapper {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1);
+      transform: translateY(18px);
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .slide.exit {
+      opacity: 0;
+      transform: translateY(-18px);
+    }
+
+    /* ─── SLIDE INNER ────────────────────────────────────── */
+    .slide-inner {
+      max-width: 860px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* ─── LABEL ──────────────────────────────────────────── */
+    .slide-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+
+    /* ─── HEADLINE ───────────────────────────────────────── */
+    .slide-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(44px, 8vw, 90px);
+      line-height: 0.95;
+      color: var(--white);
+      margin-bottom: 28px;
+      letter-spacing: 0.02em;
+    }
+    .slide-headline .hl { color: var(--amber); }
+
+    /* ─── GLASS PANEL ────────────────────────────────────── */
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-bd);
+      border-radius: var(--radius);
+      padding: 32px 36px;
+    }
+    @media (max-width: 600px) {
+      .glass-panel { padding: 24px 20px; }
+    }
+
+    /* ─── BODY COPY ──────────────────────────────────────── */
+    .slide-body {
+      font-family: 'Barlow', sans-serif;
+      font-size: clamp(15px, 2.2vw, 19px);
+      font-weight: 300;
+      line-height: 1.72;
+      color: rgba(240,240,245,0.85);
+    }
+    .slide-body em { font-style: normal; color: var(--amber); font-weight: 500; }
+    .slide-body strong { color: var(--white); font-weight: 600; }
+
+    /* ─── STAT BADGES ────────────────────────────────────── */
+    .badge-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .badge {
+      background: rgba(245,158,11,0.10);
+      border: 1px solid rgba(245,158,11,0.30);
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(20px, 3.5vw, 30px);
+      color: var(--amber);
+      letter-spacing: 0.05em;
+    }
+    .badge small {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(240,240,245,0.5);
+      margin-top: 2px;
+    }
+
+    /* ─── CHECKLIST ──────────────────────────────────────── */
+    .check-list {
+      list-style: none;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .check-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-family: 'Barlow', sans-serif;
+      font-size: clamp(14px, 2vw, 17px);
+      font-weight: 300;
+      color: rgba(240,240,245,0.85);
+      line-height: 1.55;
+    }
+    .check-list li .icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      margin-top: 1px;
+    }
+    .icon-x  { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35); color: #ef4444; }
+    .icon-ok { background: rgba(34,197,94,0.15);  border: 1px solid rgba(34,197,94,0.35); color: var(--green); }
+    .icon-amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: var(--amber); }
+
+    /* ─── HOW IT WORKS STEPS ─────────────────────────────── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .step-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--amber), transparent);
+    }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 38px;
+      color: rgba(245,158,11,0.25);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .step-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(240,240,245,0.6);
+      line-height: 1.5;
+    }
+
+    /* ─── CTA BUTTON ─────────────────────────────────────── */
+    .cta-btn {
+      display: inline-block;
+      margin-top: 32px;
+      padding: 18px 48px;
+      background: linear-gradient(135deg, var(--amber) 0%, #fbbf24 100%);
+      color: #040406;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(20px, 3vw, 26px);
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      border-radius: var(--radius);
+      box-shadow: 0 0 30px rgba(245,158,11,0.4), 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      cursor: pointer;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(245,158,11,0.6), 0 8px 30px rgba(0,0,0,0.5);
+    }
+    .cta-sub {
+      margin-top: 14px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(240,240,245,0.4);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── WORDMARK ───────────────────────────────────────── */
+    #wordmark {
+      position: fixed;
+      top: 18px; left: 24px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      z-index: 100;
+      opacity: 0.6;
+    }
+    #wordmark span { color: var(--amber); }
+
+    /* ─── DIVIDER LINE ───────────────────────────────────── */
+    .hl-line {
+      width: 56px; height: 3px;
+      background: linear-gradient(90deg, var(--amber), transparent);
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    /* ─── AMBER QUOTE ────────────────────────────────────── */
+    .amber-quote {
+      border-left: 3px solid var(--amber);
+      padding-left: 18px;
+      margin-top: 20px;
+    }
+
+    /* ─── RECRUITING ICONS ───────────────────────────────── */
+    .recruit-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    @media (max-width: 480px) {
+      .recruit-row { grid-template-columns: 1fr; }
+    }
+    .recruit-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .recruit-card .rc-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+    .recruit-card p {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(240,240,245,0.65);
+      line-height: 1.5;
+    }
+
+    /* ─── TOOLTIP DOT ────────────────────────────────────── */
+    .dot-amber {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      margin-right: 8px;
+      vertical-align: middle;
+      box-shadow: 0 0 6px var(--amber);
+    }
+
+    /* ─── MOBILE TWEAKS ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .slide { padding: 60px 16px 48px; align-items: flex-start; overflow-y: auto; }
+      .slide-headline { font-size: clamp(38px, 11vw, 60px); }
+    }
+
+    /* ─── SCROLL HINT ────────────────────────────────────── */
+    #scroll-hint {
+      position: fixed;
+      bottom: 24px; left: 50%; transform: translateX(-50%);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(240,240,245,0.25);
+      z-index: 100;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    #scroll-hint.hidden { opacity: 0; }
+  </style>
+</head>
+<body>
+
+<!-- Animated BG -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Wordmark -->
+<div id="wordmark">TORQUE<span>LEADS</span></div>
+
+<!-- Slide Counter -->
+<div id="slide-counter"><span id="cur-num">1</span> / 6</div>
+
+<!-- Nav Arrows -->
+<div class="nav-arrow" id="nav-prev" title="Previous">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+</div>
+<div class="nav-arrow" id="nav-next" title="Next">
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+</div>
+
+<!-- Scroll hint -->
+<div id="scroll-hint">← → to navigate</div>
+
+<!-- ════════════════════════════════════════════
+     SLIDES
+════════════════════════════════════════════ -->
+<div id="slides-wrapper">
+
+  <!-- ── SLIDE 1: THE PROBLEM ───────────────── -->
+  <div class="slide active" data-index="0">
+    <div class="slide-inner">
+      <span class="slide-label">01 — The Problem</span>
+      <div class="hl-line"></div>
+      <h1 class="slide-headline">YOUR BAYS SHOULD<br><span class="hl">BE FULL.</span></h1>
+      <div class="glass-panel">
+        <p class="slide-body">
+          If you own a heavy-duty diesel repair shop, you already know <em>the work is there.</em>
+          Fleets need service. Trucks break down. <em>The demand never stops.</em>
+          But somewhere between the bay and the phone — something's broken.
+        </p>
+        <ul class="check-list" style="margin-top:20px;">
+          <li>
+            <span class="icon icon-x">✕</span>
+            Your phone <strong>isn't ringing</strong> like it should
+          </li>
+          <li>
+            <span class="icon icon-x">✕</span>
+            You're relying on the <strong>same accounts</strong> you've had for years
+          </li>
+          <li>
+            <span class="icon icon-x">✕</span>
+            When it gets slow — and it <em>does get slow</em> — you don't have a system
+          </li>
+        </ul>
+        <div class="amber-quote" style="margin-top: 22px;">
+          <p class="slide-body" style="font-style: italic; color: rgba(240,240,245,0.65);">
+            "You don't have a system to fix it. You have <em>hope.</em>"
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: WHY TRADITIONAL FAILS ────── -->
+  <div class="slide" data-index="1">
+    <div class="slide-inner">
+      <span class="slide-label">02 — The Real Issue</span>
+      <div class="hl-line"></div>
+      <h1 class="slide-headline">GENERIC ADS<br><span class="hl">DON'T CUT IT.</span></h1>
+      <div class="glass-panel">
+        <p class="slide-body">
+          Most marketing agencies have <em>never set foot in a shop.</em>
+          They don't know the difference between a DPF cleaning and a full engine overhaul.
+          They don't know that <em>fleet managers make decisions differently</em> than a guy bringing in his pickup.
+        </p>
+        <ul class="check-list" style="margin-top:20px;">
+          <li>
+            <span class="icon icon-x">✕</span>
+            Run <strong>generic ads</strong> with zero industry knowledge
+          </li>
+          <li>
+            <span class="icon icon-x">✕</span>
+            Charge you <em>$3,000/month</em> for garbage leads
+          </li>
+          <li>
+            <span class="icon icon-x">✕</span>
+            <strong>Disappear</strong> the moment you push back
+          </li>
+          <li>
+            <span class="icon icon-x">✕</span>
+            Don't know your customer — or your <strong>business</strong>
+          </li>
+        </ul>
+        <div class="amber-quote" style="margin-top: 22px;">
+          <p class="slide-body" style="font-style: italic; color: rgba(240,240,245,0.65);">
+            "You've probably seen it. <em>Maybe you've lived it.</em>"
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: WHO WE ARE ────────────────── -->
+  <div class="slide" data-index="2">
+    <div class="slide-inner">
+      <span class="slide-label">03 — Who We Are</span>
+      <div class="hl-line"></div>
+      <h1 class="slide-headline">BUILT FROM<br><span class="hl">THE INSIDE.</span></h1>
+
+      <div class="badge-row" style="margin-bottom: 22px;">
+        <div class="badge">
+          $16M
+          <small>Shop owner — not a consultant</small>
+        </div>
+        <div class="badge" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08);color:var(--green);">
+          BUILT BY OPERATORS
+          <small>For heavy-duty diesel shops</small>
+        </div>
+      </div>
+
+      <div class="glass-panel">
+        <p class="slide-body">
+          TorqueLeads was built by someone who <em>ran a $16 million heavy-duty shop.</em>
+          Not someone who read about it — <strong>someone who lived it.</strong>
+        </p>
+        <ul class="check-list" style="margin-top:18px;">
+          <li>
+            <span class="icon icon-amber">◆</span>
+            Survived the <em>slow Januaries</em> and lean seasons
+          </li>
+          <li>
+            <span class="icon icon-amber">◆</span>
+            Chased fleet accounts and <strong>closed them</strong>
+          </li>
+          <li>
+            <span class="icon icon-amber">◆</span>
+            Got burned by agencies who <em>didn't understand the business</em>
+          </li>
+          <li>
+            <span class="icon icon-ok">✓</span>
+            <strong>Built the system</strong> that should have existed all along
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: HOW IT WORKS ──────────────── -->
+  <div class="slide" data-index="3">
+    <div class="slide-inner">
+      <span class="slide-label">04 — How It Works</span>
+      <div class="hl-line"></div>
+      <h1 class="slide-headline">TARGETED. PROVEN.<br><span class="hl">DELIVERED.</span></h1>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-title">Targeted Meta Ads</div>
+          <p class="step-desc">Fleet managers, owner-operators, commercial vehicle owners — <em style="color:var(--amber);">in your service area.</em> Not random people. Not tire kickers.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-title">Convert-Ready Pages</div>
+          <p class="step-desc">When they click, they land on a page <em style="color:var(--amber);">built to convert.</em> Calls book. Forms fill. Leads go straight to you.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-title">30 Posts / Month</div>
+          <p class="step-desc">Your work, your shop, your team — <em style="color:var(--amber);">30 posts a month.</em> So when someone looks you up, they see a shop that's alive.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-title">No Middlemen</div>
+          <p class="step-desc">Every lead is <em style="color:var(--amber);">yours.</em> No shared lead pools. No aged data. Direct to your inbox, direct to your team.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: RECRUITING ────────────────── -->
+  <div class="slide" data-index="4">
+    <div class="slide-inner">
+      <span class="slide-label">05 — The Recruiting Side</span>
+      <div class="hl-line"></div>
+      <h1 class="slide-headline">FIND THE<br><span class="hl">TECHS TOO.</span></h1>
+      <div class="glass-panel">
+        <p class="slide-body">
+          Here's the one <em>nobody talks about:</em> you can get all the leads in the world
+          and still be stuck if you can't find techs.
+        </p>
+        <div class="recruit-row">
+          <div class="recruit-card">
+            <div class="rc-label">The Problem</div>
+            <p>The best diesel techs coming out of <strong style="color:var(--white);">UTI and Lincoln Tech</strong> right now — they're not on Indeed. <em style="color:var(--amber);">They're on Instagram.</em></p>
+          </div>
+          <div class="recruit-card">
+            <div class="rc-label">Our Solution</div>
+            <p>We run <strong style="color:var(--white);">recruiting campaigns</strong> targeting trade school grads &amp; young diesel techs within commute distance of your shop.</p>
+          </div>
+          <div class="recruit-card">
+            <div class="rc-label">The Result</div>
+            <p>We make your shop look like <em style="color:var(--amber);">the place they want to work.</em> Applications come in. You hire. Simple.</p>
+          </div>
+          <div class="recruit-card">
+            <div class="rc-label">Why It Matters</div>
+            <p>More leads only matter if you have the <strong style="color:var(--white);">techs to do the work.</strong> We solve both sides of the equation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: CTA ───────────────────────── -->
+  <div class="slide" data-index="5">
+    <div class="slide-inner" style="text-align:center; max-width:720px;">
+      <span class="slide-label">06 — Let's Talk</span>
+      <div class="hl-line" style="margin: 0 auto 18px;"></div>
+      <h1 class="slide-headline" style="font-size: clamp(40px, 9vw, 96px);">BOOK THE<br><span class="hl">CALL.</span></h1>
+      <div class="glass-panel" style="text-align:left;">
+        <p class="slide-body">
+          This isn't a sales call where I read you a pitch deck.
+          I want to know about <em>your shop.</em>
+        </p>
+        <ul class="check-list" style="margin-top:16px;">
+          <li>
+            <span class="icon icon-ok">✓</span>
+            How many bays, what you specialize in, where you're at with marketing
+          </li>
+          <li>
+            <span class="icon icon-ok">✓</span>
+            I'll tell you <em>honestly</em> whether this is a fit — and what we'd do specifically for you
+          </li>
+          <li>
+            <span class="icon icon-ok">✓</span>
+            <strong>No pressure. No obligation.</strong> Just real talk from someone who knows the industry.
+          </li>
+          <li>
+            <span class="icon icon-amber">◆</span>
+            If it doesn't fit — you got <em>15 minutes of free strategy</em> from someone who actually gets it
+          </li>
+        </ul>
+      </div>
+      <div style="text-align:center;">
+        <a class="cta-btn" href="https://calendly.com/torqueleads/30min" target="_blank" rel="noopener">
+          SCHEDULE YOUR FREE STRATEGY CALL →
+        </a>
+        <p class="cta-sub">15 minutes. No pitch. No obligation. <span style="color:var(--amber);">Either way you win.</span></p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slides-wrapper -->
+
+<!-- ════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════ -->
+<script>
+  // ─── PARTICLE CANVAS BG ─────────────────────────────────
+  (function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles;
+
+    const COLORS = ['rgba(245,158,11,', 'rgba(255,255,255,', 'rgba(34,197,94,'];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      initParticles();
+    }
+
+    function initParticles() {
+      const N = Math.min(Math.floor((W * H) / 14000), 60);
+      particles = Array.from({length: N}, () => ({
+        x:  Math.random() * W,
+        y:  Math.random() * H,
+        r:  Math.random() * 1.4 + 0.3,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22,
+        a:  Math.random() * 0.5 + 0.1,
+        c:  COLORS[Math.random() < 0.7 ? 0 : (Math.random() < 0.5 ? 1 : 2)],
+      }));
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // subtle radial gradient pulse
+      const t = Date.now() / 4000;
+      const pulse = 0.03 + 0.015 * Math.sin(t);
+      const grad = ctx.createRadialGradient(W*0.5, H*0.45, 0, W*0.5, H*0.45, W*0.65);
+      grad.addColorStop(0,   `rgba(245,158,11,${pulse})`);
+      grad.addColorStop(0.5, 'rgba(4,4,6,0)');
+      grad.addColorStop(1,   'rgba(4,4,6,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      // particles
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.c + p.a + ')';
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < -10)  p.x = W + 10;
+        if (p.x > W+10) p.x = -10;
+        if (p.y < -10)  p.y = H + 10;
+        if (p.y > H+10) p.y = -10;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  })();
+
+  // ─── SLIDE NAVIGATION ───────────────────────────────────
+  const slides  = document.querySelectorAll('.slide');
+  const progBar = document.getElementById('progress-bar');
+  const curNum  = document.getElementById('cur-num');
+  const hint    = document.getElementById('scroll-hint');
+  let current   = 0;
+  let animating = false;
+
+  function goTo(idx) {
+    if (animating) return;
+    if (idx < 0 || idx >= slides.length) return;
+    if (idx === current) return;
+    animating = true;
+
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.add('exit');
+    setTimeout(() => {
+      prev.classList.remove('active', 'exit');
+    }, 550);
+
+    next.classList.add('active');
+    current = idx;
+
+    const pct = ((current) / (slides.length - 1)) * 100;
+    progBar.style.width = pct + '%';
+    curNum.textContent  = current + 1;
+
+    if (current > 0) hint.classList.add('hidden');
+
+    setTimeout(() => { animating = false; }, 560);
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(current + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(current - 1);
+    }
+  });
+
+  // Click center-right of screen to advance
+  document.getElementById('slides-wrapper').addEventListener('click', e => {
+    // Don't trigger on links/buttons
+    if (e.target.closest('a') || e.target.closest('.nav-arrow')) return;
+    goTo(current + 1);
+  });
+
+  // Arrows
+  document.getElementById('nav-prev').addEventListener('click', e => { e.stopPropagation(); goTo(current - 1); });
+  document.getElementById('nav-next').addEventListener('click', e => { e.stopPropagation(); goTo(current + 1); });
+
+  // Touch / swipe
+  let touchStartX = 0, touchStartY = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, {passive: true});
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      dx < 0 ? goTo(current + 1) : goTo(current - 1);
+    }
+  }, {passive: true});
+
+  // Init progress
+  progBar.style.width = '0%';
+
+  // Hide hint after 5s
+  setTimeout(() => hint.classList.add('hidden'), 5000);
+</script>
+</body>
+</html>
