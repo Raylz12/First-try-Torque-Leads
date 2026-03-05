@@ -56,8 +56,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .btn-outline:hover{background:var(--amber);color:var(--bg);}
 .btn-green{background:var(--green);}
 .btn-green:hover{background:#4ade80;box-shadow:0 12px 40px var(--green-glow);}
-.mobile-menu{display:none;cursor:pointer;}
-.mobile-menu span{display:block;width:22px;height:2px;background:var(--white);margin:5px 0;}
+.mobile-menu{display:none;cursor:pointer;padding:4px;z-index:1100;}
+.mobile-menu span{display:block;width:22px;height:2px;background:var(--white);margin:5px 0;transition:all 0.3s ease;}
+.mobile-menu.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.mobile-menu.open span:nth-child(2){opacity:0;}
+.mobile-menu.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(4,4,6,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);z-index:1050;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;}
+.mobile-nav.open{display:flex;}
+.mobile-nav a{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:4px;color:var(--white);text-decoration:none;transition:color 0.2s;}
+.mobile-nav a:hover,.mobile-nav a:active{color:var(--amber);}
+.mobile-nav .btn{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-size:0.95rem;padding:1rem 3rem;margin-top:0.5rem;}
 .hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2.5rem 4rem;position:relative;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(4,4,6,0.97) 25%,rgba(4,4,6,0.88) 70%),url('https://cdn.prod.website-files.com/62571f58fea7bbc10a367876/62d0435d404de51e6c9ee2f0_Heavy-Duty%20Diesel%20Truck%20Collision%20Repair%20-%20Step%20By%20Step%20Process.jpg') center/cover no-repeat;}
 .hero-glow1{position:absolute;top:-15%;right:-5%;width:55%;height:75%;background:radial-gradient(ellipse,rgba(245,158,11,0.35),transparent 65%);pointer-events:none;filter:blur(40px);}
@@ -244,8 +252,15 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <a href="#pricing">Pricing</a>
 <a href="#cta" class="btn">Get Started</a>
 </div>
-<div class="mobile-menu"><span></span><span></span><span></span></div>
+<div class="mobile-menu" id="menuToggle" aria-label="Open menu" role="button" tabindex="0"><span></span><span></span><span></span></div>
 </nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#services" class="mobile-nav-link">Services</a>
+  <a href="#recruiting" class="mobile-nav-link">Recruiting</a>
+  <a href="#pricing" class="mobile-nav-link">Pricing</a>
+  <a href="#cta" class="btn mobile-nav-link">Get Started</a>
+</div>
 
 <section class="hero">
 <div class="hero-bg"></div>
@@ -482,8 +497,55 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </footer>
 
 <script>
+// Scroll reveal
 const o=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>o.observe(el));
+
+// Mobile hamburger menu
+const toggle = document.getElementById('menuToggle');
+const mobileNav = document.getElementById('mobileNav');
+
+function openMenu() {
+  toggle.classList.add('open');
+  mobileNav.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMenu() {
+  toggle.classList.remove('open');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+toggle.addEventListener('click', () => {
+  toggle.classList.contains('open') ? closeMenu() : openMenu();
+});
+
+toggle.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+});
+
+// Close menu when a nav link is clicked (smooth scroll to section)
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      closeMenu();
+      setTimeout(() => {
+        const target = document.querySelector(href);
+        if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 200);
+    } else {
+      closeMenu();
+    }
+  });
+});
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMenu();
+});
 </script>
 </body>
 </html>
