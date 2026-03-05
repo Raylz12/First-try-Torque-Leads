@@ -307,21 +307,25 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <nav>
 <a href="#" class="logo"><span class="mark"></span>TORQUELEADS</a>
 <div class="nav-links">
-<a href="#services">Services</a>
-        <a href="/vsl/">Watch This</a>
+<a href="#services">What We Do</a>
 <a href="#recruiting">Recruiting</a>
+<a href="#process">How It Works</a>
+<a href="#why-us">About Us</a>
 <a href="#pricing">Pricing</a>
+<a href="/vsl/">Watch This</a>
 <a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn">Get Started</a>
 </div>
 <div class="mobile-menu" id="menuToggle" aria-label="Open menu" role="button" tabindex="0"><span></span><span></span><span></span></div>
 </nav>
 
 <div class="mobile-nav" id="mobileNav">
-  <a href="#services" class="mobile-nav-link">Services</a>
-  <a href="/vsl/" class="mobile-nav-link">Watch This</a>
-  <a href="#recruiting" class="mobile-nav-link">Recruiting</a>
-  <a href="#pricing" class="mobile-nav-link">Pricing</a>
-  <a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn mobile-nav-link">Get Started</a>
+  <a href="/vsl/" class="mobile-nav-link" onclick="closeMenu()">Watch This</a>
+  <a href="#services" class="mobile-nav-link" onclick="closeMenu()">What We Do</a>
+  <a href="#recruiting" class="mobile-nav-link" onclick="closeMenu()">Tech Recruiting</a>
+  <a href="#process" class="mobile-nav-link" onclick="closeMenu()">How It Works</a>
+  <a href="#why-us" class="mobile-nav-link" onclick="closeMenu()">About Us</a>
+  <a href="#pricing" class="mobile-nav-link" onclick="closeMenu()">Pricing</a>
+  <a href="#cta" class="mobile-nav-link btn" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}closeMenu()">Get Started</a>
 </div>
 
 <section class="hero">
@@ -372,8 +376,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="recruiting-content reveal">
 <div class="stag">Can't Find Good Help?</div>
 <div class="stitle">YOUR NEXT TECH ISN'T ON INDEED.<br><span>THEY'RE ON INSTAGRAM.</span></div>
-<p class="rec-sub">Every shop owner says the same thing: <strong>"I can get the work. I just can't find the people."</strong></p>
-<p class="rec-sub">The next generation of diesel techs grew up on Instagram and TikTok — not job boards. We put your shop in their feed, make you look like the place they want to work, and send applications straight to your phone.</p>
+<p class="rec-sub">The next generation of diesel techs grew up on Instagram — not job boards. We put your shop in their feed, make you look like the place to work, and send applications to your phone.</p>
 <div class="rec-feats">
 <div class="rf gc"><div class="rf-icon">📱</div><div><h4>Social-First Recruiting</h4><p>Targeted ads on IG, FB & TikTok aimed at trade school grads and young techs</p></div></div>
 <div class="rf gc"><div class="rf-icon">🎬</div><div><h4>Shop Culture Content</h4><p>Posts showing what it's actually like to work at your shop — builds, team, culture</p></div></div>
@@ -398,29 +401,26 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="stitle">SEO REACHES ONE PERSON.<br><span style="color:var(--amber);">META ADS REACH THE WHOLE FAMILY.</span></div>
 </div>
 <div class="problem-text reveal">
-<p>When a fleet manager searches Google for a diesel shop, maybe one person sees it — probably someone already looking, already a customer, or a competitor doing research.</p>
-<p>When we run your Meta ads, we're not just reaching the fleet manager. <strong>We're reaching his wife. His kids. His parents.</strong> The people who influence every decision he makes. The same goes for recruiting — we're not just reaching the tech. We're reaching their whole social world.</p>
-<p>Your competitors are chasing SEO — a strategy that's going the way of the dinosaur as AI takes over search results. Their "premium plan" is Google Ads and drip emails nobody reads.</p>
-<p><strong>We're in the feed. In the family. In the conversation that happens at dinner.</strong> That's not a Google ranking. That's real influence.</p>
+<p>SEO reaches one person — whoever's searching. Usually already a customer, a competitor, or someone doing research.</p>
+<p>Meta ads reach the fleet manager. <strong>And his wife. His kids. His parents.</strong> The whole decision circle — before anyone types a single search query.</p>
+<p>Same goes for recruiting. We're not just in front of the UTI grad — we're in their entire social world.</p>
 <div class="pain-list">
-<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> SEO reaches 1 person actively searching — usually already a customer</div>
-<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> Meta ads reach the owner, his wife, his family — the whole decision circle</div>
-<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> Tech recruiting on Instagram reaches the grad AND their entire social network</div>
-<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> You don't just get to the top of Google — you get into their lives</div>
+<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> SEO: one searcher. Meta: the whole family.</div>
+<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> Google: side-of-screen ads nobody clicks. Meta: in the feed they can't ignore.</div>
+<div class="pain gc"><span class="x" style="color:var(--amber);">→</span> Not a ranking. A conversation at dinner. Real influence.</div>
 </div>
 </div>
 </div>
 </section>
 
-<section class="founder">
+<section class="founder" id="why-us">
 <div class="founder-inner reveal">
 <div>
 <div class="stag">Why Us</div>
 <div class="stitle">BUILT BY A SHOP OWNER.<br>FOR SHOP OWNERS.</div>
 <div class="founder-story">
-<p>Our founder <strong>owned and operated a $16M heavy-duty diesel repair shop.</strong> He's been in the bays, chased fleet accounts, sat through slow Januaries, and got burned by every kind of agency that doesn't understand diesel.</p>
-<p>He didn't hire marketers to figure out this industry. <strong>He already knew it.</strong> TorqueLeads is what he built when he got tired of explaining what a fleet manager was to a 26-year-old account rep who'd never seen the inside of a shop.</p>
-<p class="fcta">We don't just run your ads. We understand the business behind them.</p>
+<p>Our founder ran a <strong>$16M heavy-duty diesel shop.</strong> He chased fleet accounts. He sat through slow Januaries. He got burned by agencies who'd never seen the inside of a bay.</p>
+<p class="fcta">TorqueLeads is what he built when he got tired of explaining what a fleet manager was to someone who'd never turned a wrench.</p>
 </div>
 <a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn" style="margin-top:1rem;">Book a Free Call →</a>
 </div>
@@ -464,17 +464,17 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
-<section class="process">
+<section class="process" id="process">
 <div class="process-inner">
 <div class="process-header reveal">
 <div class="stag">How It Works</div>
 <div class="stitle">UP AND RUNNING IN 72 HOURS.</div>
 </div>
 <div class="steps reveal">
-<div class="step"><div class="step-dot gc">01</div><h4>Quick Call</h4><p>15-minute call about your shop and hiring needs.</p></div>
-<div class="step"><div class="step-dot gc">02</div><h4>We Build</h4><p>Ads, social, lead lists, recruiting — set up in 72 hours.</p></div>
-<div class="step"><div class="step-dot gc">03</div><h4>Ads Go Live</h4><p>Campaigns launch targeting fleet customers and techs.</p></div>
-<div class="step"><div class="step-dot gc">04</div><h4>Phone Rings</h4><p>New customers call. Techs apply. You turn wrenches.</p></div>
+<div class="step"><div class="step-dot gc">01</div><h4>15-Min Strategy Call</h4><p>We learn your market, your shop, what's working and what isn't. No pitch — just a real conversation.</p></div>
+<div class="step"><div class="step-dot gc">02</div><h4>We Build Everything</h4><p>Meta ad campaigns, social content, fleet lead lists, tech recruiting setup, Google Business profile — live in 72 hours.</p></div>
+<div class="step"><div class="step-dot gc">03</div><h4>We Go Into the Feed</h4><p>Ads run across Facebook and Instagram reaching fleet managers, commercial vehicle owners — and their families. Not just people searching Google.</p></div>
+<div class="step"><div class="step-dot gc">04</div><h4>Techs &amp; Customers Come to You</h4><p>Qualified leads call. Trade school grads apply. You stay in the bay doing what you're good at — we handle the rest.</p></div>
 </div>
 </div>
 </section>
