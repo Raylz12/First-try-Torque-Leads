@@ -241,6 +241,50 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .contact-row{flex-direction:column;gap:0.8rem;}
 }
 </style>
+<!-- Schema Markup: Organization + Service -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://torqueleads.net/#organization",
+      "name": "TorqueLeads",
+      "url": "https://torqueleads.net",
+      "logo": "https://torqueleads.net/assets/logo.png",
+      "description": "Done-for-you lead generation, advertising, and tech recruiting for heavy-duty diesel repair shops across the U.S.",
+      "areaServed": "US",
+      "sameAs": [],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "sales",
+        "url": "https://calendly.com/torqueleads/30min"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://torqueleads.net/#service",
+      "name": "Diesel Shop Lead Generation & Advertising",
+      "provider": { "@id": "https://torqueleads.net/#organization" },
+      "serviceType": "Lead Generation",
+      "description": "Done-for-you customer lead generation, paid advertising, social media content, and diesel technician recruiting for heavy-duty diesel repair shops.",
+      "areaServed": "US",
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Heavy-duty diesel repair shop owners"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://torqueleads.net/#website",
+      "url": "https://torqueleads.net",
+      "name": "TorqueLeads",
+      "publisher": { "@id": "https://torqueleads.net/#organization" }
+    }
+  ]
+}
+</script>
+<!-- End Schema Markup -->
 </head>
 <body>
 
