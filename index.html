@@ -262,6 +262,15 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .prc{padding:2rem;}.pa{font-size:3rem;}
 .contact-row{flex-direction:column;gap:0.8rem;}
 }
+/* ── FAQ ── */
+.faq-section{padding:6rem 2.5rem;background:var(--dark);position:relative;content-visibility:auto;contain-intrinsic-size:0 500px;}
+.faq-inner{max-width:760px;margin:0 auto;}
+.faq-item{border-bottom:1px solid rgba(255,255,255,.07);padding:1.2rem 0;}
+.faq-q{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--white);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.faq-q::after{content:'+';font-size:1.4rem;color:var(--amber);flex-shrink:0;transition:transform .25s;}
+.faq-item.open .faq-q::after{transform:rotate(45deg);}
+.faq-a{font-size:.92rem;font-weight:300;color:var(--gray);line-height:1.75;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;}
+.faq-item.open .faq-a{max-height:240px;padding-top:.8rem;}
 </style>
 <!-- Schema Markup: Organization + Service -->
 <script type="application/ld+json">
@@ -318,6 +327,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <a href="#services">What We Do</a>
 <a href="#process">How It Works</a>
 <a href="#pricing">Pricing</a>
+<a href="#faq">FAQ</a>
 <a href="/vsl/">Watch This</a>
 <a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn">Get Started</a>
 </div>
@@ -330,6 +340,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
   <a href="#services" class="mobile-nav-link" onclick="closeMenu()">What We Do</a>
   <a href="#process" class="mobile-nav-link" onclick="closeMenu()">How It Works</a>
   <a href="#pricing" class="mobile-nav-link" onclick="closeMenu()">Pricing</a>
+  <a href="#faq" class="mobile-nav-link" onclick="closeMenu()">FAQ</a>
   <a href="/vsl/" class="mobile-nav-link" onclick="closeMenu()">Watch This</a>
   <a href="#cta" class="mobile-nav-link btn" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}closeMenu()">Get Started</a>
 </div>
@@ -546,6 +557,38 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+<div class="faq-inner">
+  <div class="stag" style="text-align:center;margin-bottom:0.75rem;">Got Questions</div>
+  <h2 class="stitle" style="text-align:center;margin-bottom:2.5rem;">COMMON <span style="color:var(--amber);">QUESTIONS.</span></h2>
+  <div class="faq-item">
+    <div class="faq-q">Do you work with any type of auto shop?</div>
+    <div class="faq-a">Our system is built specifically around heavy-duty diesel — Class 6–8 trucks, fleet maintenance, commercial diesel. That's where we get results. If you're outside that niche, we could discuss whether our approach makes sense for your situation. Reach out and let's talk.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How fast do we see results?</div>
+    <div class="faq-a">Most shops start seeing qualified lead flow within 2–4 weeks of launch. Social media content builds authority immediately. Tech recruiting campaigns typically produce applications within the first month.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Are the leads exclusive to my shop?</div>
+    <div class="faq-a">Yes. Every lead is 100% exclusive. We don't resell leads, share data with competitors, or work with more than one shop in the same market.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What does it cost?</div>
+    <div class="faq-a">Pricing is custom based on your market size, competition, and goals. We don't post rates publicly — book a 15-minute call and we'll give you a straight answer based on what we'd actually do for your specific shop.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do I have to sign a long-term contract?</div>
+    <div class="faq-a">No long-term contracts. We earn your business month over month. If you're not seeing results, you're not locked in.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How is this different from what I've tried before?</div>
+    <div class="faq-a">Most agencies pitch SEO or Google Ads — one searcher at a time. We run Meta ads that put your name in front of the fleet manager, their spouse, their whole household. The decision to call you happens before they even search. That's the difference.</div>
+  </div>
+</div>
+</section>
+
 <section class="cta" id="cta">
 <div class="cta-glow"></div>
 <div class="cta-inner reveal">
@@ -619,6 +662,16 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
 // Close on Escape key
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeMenu();
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
 });
 
 // ── Lazy-load CSS background images ──────────────────────────────────────────
