@@ -437,9 +437,12 @@ footer a {
   <a class="logo" href="/">
     <span class="mark"></span>TORQUELEADS
   </a>
-  <a class="nav-cta" href="https://calendly.com/torqueleads/30min" target="_blank" rel="noopener">
-    Book a Call
-  </a>
+  <div style="display:flex;align-items:center;gap:1.5rem;">
+    <a href="/" style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(156,163,175,0.8);text-decoration:none;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='rgba(156,163,175,0.8)'">Home</a>
+    <a class="nav-cta" href="https://calendly.com/torqueleads/30min" target="_blank" rel="noopener">
+      Book a Call
+    </a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -461,35 +464,17 @@ footer a {
 <!-- VIDEO SECTION -->
 <section class="video-section">
   <div class="video-wrapper" id="video-wrapper">
-
-    <!-- ─── VIDEO PLACEHOLDER ─────────────────────────────
-         When you have a video ready, replace VIDEO_URL_HERE
-         with your YouTube embed URL or Vimeo embed URL.
-         Example: https://www.youtube.com/embed/XXXXXXXXXXXX?autoplay=1
-         Then remove the placeholder div below.
-    ──────────────────────────────────────────────────── -->
-    <div class="video-placeholder" id="video-placeholder" onclick="playVideo()">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </div>
-      <div class="video-label">Watch the Full Breakdown</div>
-      <div class="video-duration">~8 minutes · No fluff</div>
-    </div>
-
-    <!-- IFRAME: set src to your video embed URL when ready -->
-    <iframe
-      class="video-iframe"
-      id="video-iframe"
-      src=""
-      title="TorqueLeads — VSL"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-
+    <video
+      id="vsl-video"
+      controls
+      preload="metadata"
+      style="position:absolute;inset:0;width:100%;height:100%;border-radius:14px;"
+      onplay="videoPlayed()"
+    >
+      <source src="/vsl/placeholder.mp4" type="video/mp4" />
+    </video>
   </div>
-  <p class="video-note">
-    Skip ahead? <a href="https://calendly.com/torqueleads/30min" target="_blank" rel="noopener">Book a call directly →</a>
-  </p>
+  <p class="video-note">Ready to talk? <a href="https://calendly.com/torqueleads/30min" target="_blank" rel="noopener">Book a strategy call directly →</a></p>
 </section>
 
 <!-- CTA AFTER VIDEO -->
@@ -584,24 +569,8 @@ footer a {
 </footer>
 
 <script>
-  // ─── VIDEO PLAY HANDLER ──────────────────────────────────
-  // When you have a video URL, update VIDEO_EMBED_URL below.
-  // YouTube example:  https://www.youtube.com/embed/XXXXXXXXXXX?autoplay=1&rel=0
-  // Vimeo example:    https://player.vimeo.com/video/XXXXXXXXX?autoplay=1
-  const VIDEO_EMBED_URL = '';  // ← paste your video embed URL here
-
-  function playVideo() {
-    if (!VIDEO_EMBED_URL) {
-      // No video yet — send to booking page
-      window.open('https://calendly.com/torqueleads/30min', '_blank');
-      return;
-    }
-    const placeholder = document.getElementById('video-placeholder');
-    const iframe      = document.getElementById('video-iframe');
-    placeholder.style.display = 'none';
-    iframe.src = VIDEO_EMBED_URL;
-    iframe.style.display = 'block';
-    // Fire Meta Pixel ViewContent event
+  // ─── META PIXEL — video play ─────────────────────────────
+  function videoPlayed() {
     if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'VSL' });
   }
 
