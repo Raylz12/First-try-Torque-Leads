@@ -47,8 +47,14 @@
 <meta name="twitter:description" content="Done-for-you ads, lead generation, and tech recruiting built exclusively for heavy-duty diesel repair shops." />
 <meta name="twitter:image" content="https://cdn.prod.website-files.com/62571f58fea7bbc10a367876/62d0435d404de51e6c9ee2f0_Heavy-Duty%20Diesel%20Truck%20Collision%20Repair%20-%20Step%20By%20Step%20Process.jpg" />
 <meta name="description" content="Done-for-you ads, social media, lead generation, and tech recruiting for heavy-duty diesel repair shops.">
+<!-- Performance: preconnect + LCP preload -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.prod.website-files.com">
+<link rel="preconnect" href="https://images.pexels.com">
+<link rel="preload" as="image" href="https://cdn.prod.website-files.com/62571f58fea7bbc10a367876/62d0435d404de51e6c9ee2f0_Heavy-Duty%20Diesel%20Truck%20Collision%20Repair%20-%20Step%20By%20Step%20Process.jpg" fetchpriority="high">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
 --bg:#040406;--dark:#09090e;--surface:rgba(255,255,255,0.03);
@@ -128,7 +134,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .pain-list{display:grid;gap:0.6rem;margin-top:1.5rem;}
 .pain{display:flex;align-items:center;gap:1rem;font-size:0.95rem;color:var(--gray);padding:1rem 1.4rem;border-left:3px solid var(--red);border-radius:0 8px 8px 0;}
 .pain .x{color:var(--red);font-weight:700;flex-shrink:0;}
-.recruiting{padding:7rem 2.5rem;background:var(--dark);position:relative;overflow:hidden;}
+.recruiting{padding:7rem 2.5rem;background:var(--dark);position:relative;overflow:hidden;content-visibility:auto;contain-intrinsic-size:0 600px;}
 .recruiting::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.5),transparent);}
 .rec-glow{position:absolute;top:0;right:-15%;width:45%;height:100%;background:radial-gradient(ellipse,rgba(34,197,94,0.2),transparent 65%);pointer-events:none;filter:blur(40px);}
 .recruiting-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:2;}
@@ -148,7 +154,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .rs:hover{border-color:rgba(34,197,94,0.3) !important;}
 .rs-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--green);line-height:1;text-shadow:0 0 30px rgba(34,197,94,0.35);}
 .rs-label{font-size:0.78rem;color:var(--gray-dark);margin-top:0.4rem;line-height:1.4;}
-.founder{padding:5rem 2.5rem;position:relative;}
+.founder{padding:5rem 2.5rem;position:relative;content-visibility:auto;contain-intrinsic-size:0 600px;}
 .founder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.4),transparent);}
 .founder-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;}
 .founder-story p{font-size:1.05rem;color:var(--gray);margin-bottom:1rem;font-weight:300;line-height:1.85;}
@@ -159,7 +165,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .fb:hover{border-color:rgba(245,158,11,0.3) !important;transform:translateX(4px);}
 .fb-icon{font-size:1.3rem;}
 .fb-txt{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);}
-.services{padding:7rem 2.5rem;background:var(--dark);position:relative;}
+.services{padding:7rem 2.5rem;background:var(--dark);position:relative;content-visibility:auto;contain-intrinsic-size:0 700px;}
 .services::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);}
 .svc-inner{max-width:1200px;margin:0 auto;}
 .svc-header{text-align:center;margin-bottom:4rem;}
@@ -173,7 +179,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .svc h3{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--white);margin-bottom:0.7rem;}
 .svc p{font-size:0.88rem;color:var(--gray);line-height:1.7;font-weight:300;}
 .svc.newtag::after{content:'NEW';position:absolute;top:0.8rem;right:0.8rem;font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:2px;background:var(--green);color:var(--bg);padding:0.2rem 0.6rem;border-radius:3px;}
-.process{padding:7rem 2.5rem;}
+.process{padding:7rem 2.5rem;content-visibility:auto;contain-intrinsic-size:0 600px;}
 .process-inner{max-width:1200px;margin:0 auto;}
 .process-header{text-align:center;margin-bottom:4rem;}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;}
@@ -191,7 +197,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .pcard .qt::before{content:'\201C';font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);display:block;line-height:1;margin-bottom:0.4rem;text-shadow:0 0 20px rgba(245,158,11,0.3);}
 .pcard .pa{font-family:'Barlow Condensed',sans-serif;font-weight:600;color:var(--white);font-size:0.88rem;text-transform:uppercase;letter-spacing:1px;}
 .pcard .pr{font-size:0.78rem;color:var(--gray-dark);}
-.pricing{padding:7rem 2.5rem;position:relative;}
+.pricing{padding:7rem 2.5rem;position:relative;content-visibility:auto;contain-intrinsic-size:0 800px;}
 .pricing::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glass-border),transparent);}
 .pricing-inner{max-width:1000px;margin:0 auto;}
 .pricing-header{text-align:center;margin-bottom:2rem;}
@@ -362,11 +368,11 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 
 <section class="img-wrap">
 <div class="img-strip">
-<div class="img-i" style="background-image:url('https://cdn.prod.website-files.com/640f9c32df5af39f9287a40a/69713634501fb409db3d1d64_trailer-repair-block-diesel.webp')"></div>
-<div class="img-i" style="background-image:url('https://summitbodies.com/wp-content/uploads/2022/06/B92A175666.png')"></div>
-<div class="img-i" style="background-image:url('https://managedmobile.com/wp-content/uploads/2021/01/IMG_6315copy-web.jpg')"></div>
-<div class="img-i" style="background-image:url('https://images.pexels.com/photos/4481942/pexels-photo-4481942.jpeg?auto=compress&cs=tinysrgb&w=600')"></div>
-<div class="img-i" style="background-image:url('https://scontent-mia3-3.xx.fbcdn.net/v/t39.30808-6/483840326_1051599727006946_7499229233348747350_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=13d280&_nc_ohc=J6eCxoKPsmMQ7kNvwH7_Xk9&_nc_oc=AdnCIbovFTNM4FlVqkaBRVQO24nh3e6rkMuK3i7VzaAWDzHAvbD1nEHUuZeDYkQKxZwSF2DwJtyVe8JxC0Dhyy6D&_nc_zt=23&_nc_ht=scontent-mia3-3.xx&_nc_gid=FVtIFEKIgCKZvm5g3TFUIA&_nc_ss=8&oh=00_Afx09tOKC-rwM0eUycv2EjFWsxLn3RzXr5lrBHIXBrqkiw&oe=69ACE178')"></div>
+<div class="img-i" style="background-color:#1a1a28;" data-bg="https://cdn.prod.website-files.com/640f9c32df5af39f9287a40a/69713634501fb409db3d1d64_trailer-repair-block-diesel.webp"></div>
+<div class="img-i" style="background-color:#1a1a28;" data-bg="https://summitbodies.com/wp-content/uploads/2022/06/B92A175666.png"></div>
+<div class="img-i" style="background-color:#1a1a28;" data-bg="https://managedmobile.com/wp-content/uploads/2021/01/IMG_6315copy-web.jpg"></div>
+<div class="img-i" style="background-color:#1a1a28;" data-bg="https://images.pexels.com/photos/4481942/pexels-photo-4481942.jpeg?auto=compress&cs=tinysrgb&w=600"></div>
+<div class="img-i" style="background-color:#1a1a28;" data-bg="https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=600"></div>
 </div>
 </section>
 
@@ -438,10 +444,10 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 
 <section class="img-wrap dark-bot">
 <div class="img-strip four">
-<div class="img-i" style="background-image:url('https://jmcautomotiveequipment.com/product_images/uploaded_images/shutterstock-25137751-1-.jpg');background-position:top;"></div>
-<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7564861/pexels-photo-7564861.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:left;"></div>
-<div class="img-i" style="background-image:url('https://cdn.prod.website-files.com/64a5b6236f308c44b4f85eb3/64b59cab8e87ba9dc17805da_2200px%20-%20Fleet%20Services%20of%20Utah_S%2C%20Lindon%2C%20UT_20230627-046.webp');background-position:center;"></div>
-<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019372/pexels-photo-7019372.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:bottom;"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:top;" data-bg="https://jmcautomotiveequipment.com/product_images/uploaded_images/shutterstock-25137751-1-.jpg"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:left;" data-bg="https://images.pexels.com/photos/7564861/pexels-photo-7564861.jpeg?auto=compress&cs=tinysrgb&w=600"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:center;" data-bg="https://cdn.prod.website-files.com/64a5b6236f308c44b4f85eb3/64b59cab8e87ba9dc17805da_2200px%20-%20Fleet%20Services%20of%20Utah_S%2C%20Lindon%2C%20UT_20230627-046.webp"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:bottom;" data-bg="https://images.pexels.com/photos/7019372/pexels-photo-7019372.jpeg?auto=compress&cs=tinysrgb&w=600"></div>
 </div>
 </section>
 
@@ -465,10 +471,10 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 
 <section class="img-wrap dark-top">
 <div class="img-strip four">
-<div class="img-i" style="background-image:url('https://static.wixstatic.com/media/5f228d_0bbde27fb5f74144a81160806fd6ed12~mv2.jpg/v1/fill/w_762,h_842,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/5f228d_0bbde27fb5f74144a81160806fd6ed12~mv2.jpg');background-position:right;"></div>
-<div class="img-i" style="background-image:url('https://ctechmanufacturing.com/media/cache/attachment/filter/wysiwyg_original/4dbc178c2ebed276168fb5a715adf9ec/5699/65ca1cc39358f423870645-Editorial-Feature-Image_-Mack-Daddy-Tour.jpg.webp');background-position:center;"></div>
-<div class="img-i" style="background-image:url('https://www.ricochetfuel.com/wp-content/uploads/2024/01/The-Impact-of-Oil-Changes-on-Fuel-Efficiency-1.png');background-position:top;"></div>
-<div class="img-i" style="background-image:url('https://images.pexels.com/photos/7019378/pexels-photo-7019378.jpeg?auto=compress&cs=tinysrgb&w=600');background-position:left;"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:right;" data-bg="https://static.wixstatic.com/media/5f228d_0bbde27fb5f74144a81160806fd6ed12~mv2.jpg/v1/fill/w_762,h_842,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/5f228d_0bbde27fb5f74144a81160806fd6ed12~mv2.jpg"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:center;" data-bg="https://ctechmanufacturing.com/media/cache/attachment/filter/wysiwyg_original/4dbc178c2ebed276168fb5a715adf9ec/5699/65ca1cc39358f423870645-Editorial-Feature-Image_-Mack-Daddy-Tour.jpg.webp"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:top;" data-bg="https://www.ricochetfuel.com/wp-content/uploads/2024/01/The-Impact-of-Oil-Changes-on-Fuel-Efficiency-1.png"></div>
+<div class="img-i" style="background-color:#1a1a28;background-position:left;" data-bg="https://images.pexels.com/photos/7019378/pexels-photo-7019378.jpeg?auto=compress&cs=tinysrgb&w=600"></div>
 </div>
 </section>
 
@@ -614,6 +620,22 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeMenu();
 });
+
+// ── Lazy-load CSS background images ──────────────────────────────────────────
+// Elements with data-bg attribute get their background applied on scroll-into-view
+if ('IntersectionObserver' in window) {
+  const bgObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const bg = el.dataset.bg;
+        if (bg) { el.style.backgroundImage = 'url(' + bg + ')'; el.removeAttribute('data-bg'); }
+        bgObserver.unobserve(el);
+      }
+    });
+  }, { rootMargin: '200px 0px' });
+  document.querySelectorAll('[data-bg]').forEach(el => bgObserver.observe(el));
+}
 </script>
 </body>
 </html>
