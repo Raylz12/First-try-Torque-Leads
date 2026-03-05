@@ -322,6 +322,18 @@ footer a{color:var(--amber);text-decoration:none}
       if(typeof fbq!=='undefined') fbq('track','Lead');
     });
   });
+
+// Calendly booking completion tracking
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.event && e.data.event.indexOf('calendly') === 0) {
+    if (e.data.event === 'calendly.event_scheduled') {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'Schedule', {content_name:'Calendly Booking Completed',content_category:'diesel_lead'});
+        fbq('track', 'Lead', {content_name:'Calendly Booking Confirmed',content_category:'diesel_lead_confirmed'});
+      }
+    }
+  }
+});
 </script>
 </body>
 </html>

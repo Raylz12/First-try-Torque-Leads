@@ -664,6 +664,30 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeMenu();
 });
 
+// ── Calendly booking completion tracking ─────────────────────────────────────
+// Fires when someone COMPLETES a booking on Calendly (not just clicks the button)
+// This fires Schedule + a second Lead event so Meta knows it was a real booking
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.event && e.data.event.indexOf('calendly') === 0) {
+    if (e.data.event === 'calendly.event_scheduled') {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'Schedule', {
+          content_name: 'Calendly Booking Completed',
+          content_category: 'diesel_lead'
+        });
+        fbq('track', 'Lead', {
+          content_name: 'Calendly Booking Confirmed',
+          content_category: 'diesel_lead_confirmed'
+        });
+      }
+      // Also push to dataLayer if GA4 is ever added
+      if (window.dataLayer) {
+        window.dataLayer.push({ event: 'calendly_booking_completed' });
+      }
+    }
+  }
+});
+
 // FAQ accordion
 document.querySelectorAll('.faq-q').forEach(q => {
   q.addEventListener('click', () => {
