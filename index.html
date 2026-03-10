@@ -264,6 +264,36 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .rec-stats{grid-template-columns:1fr;}
 .rs{padding:1.5rem;}
 }
+/* ── Quiz Popup ── */
+.quiz-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:1rem;}
+.quiz-overlay.active{display:flex;}
+.quiz-box{background:var(--dark);border:1px solid var(--glass-border);border-radius:16px;max-width:500px;width:100%;padding:2.5rem;position:relative;box-shadow:0 25px 80px rgba(0,0,0,0.6);}
+.quiz-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--gray);font-size:1.5rem;cursor:pointer;padding:0.5rem;line-height:1;}
+.quiz-close:hover{color:var(--white);}
+.quiz-progress{display:flex;gap:0.5rem;margin-bottom:2rem;}
+.quiz-progress span{flex:1;height:4px;background:var(--glass);border-radius:2px;transition:background 0.3s;}
+.quiz-progress span.done{background:var(--amber);}
+.quiz-progress span.current{background:var(--amber);opacity:0.5;}
+.quiz-q{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);margin-bottom:0.5rem;line-height:1.2;}
+.quiz-sub{color:var(--gray);font-size:0.95rem;margin-bottom:1.5rem;}
+.quiz-opts{display:flex;flex-direction:column;gap:0.75rem;}
+.quiz-opt{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:1rem 1.25rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:1rem;font-size:1rem;color:var(--white);}
+.quiz-opt:hover{background:var(--glass-strong);border-color:var(--amber);}
+.quiz-opt .icon{font-size:1.3rem;}
+.quiz-step{display:none;}
+.quiz-step.active{display:block;}
+.quiz-result{text-align:center;}
+.quiz-result .big-num{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:var(--amber);line-height:1;text-shadow:0 0 40px var(--amber-glow);}
+.quiz-result .big-label{font-size:1rem;color:var(--gray);margin-bottom:1.5rem;}
+.quiz-result p{color:var(--gray);font-size:0.95rem;margin-bottom:2rem;line-height:1.7;}
+.quiz-result .btn{width:100%;text-align:center;font-size:1rem;padding:1rem 2rem;}
+.quiz-highlight{background:var(--amber-soft);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:1rem;margin-bottom:1.5rem;}
+.quiz-highlight strong{color:var(--amber);}
+@media(max-width:600px){
+.quiz-box{padding:1.5rem;margin:0.5rem;}
+.quiz-q{font-size:1.5rem;}
+.quiz-result .big-num{font-size:3.5rem;}
+}
 /* ── FAQ ── */
 .faq-section{padding:6rem 2.5rem;background:var(--dark);position:relative;content-visibility:auto;contain-intrinsic-size:0 500px;}
 .faq-inner{max-width:760px;margin:0 auto;}
@@ -331,7 +361,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <a href="#pricing">Pricing</a>
 <a href="#faq">FAQ</a>
 <a href="/vsl/">Watch This</a>
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn">Get Started</a>
+<a href="javascript:void(0)" onclick="openQuiz()" class="btn">Get My Free Estimate</a>
 </div>
 <div class="mobile-menu" id="menuToggle" aria-label="Open menu" role="button" tabindex="0"><span></span><span></span><span></span></div>
 </nav>
@@ -344,7 +374,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
   <a href="#pricing" class="mobile-nav-link" onclick="closeMenu()">Pricing</a>
   <a href="#faq" class="mobile-nav-link" onclick="closeMenu()">FAQ</a>
   <a href="/vsl/" class="mobile-nav-link" onclick="closeMenu()">Watch This</a>
-  <a href="#cta" class="mobile-nav-link btn" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}closeMenu()">Get Started</a>
+  <a href="javascript:void(0)" class="mobile-nav-link btn" onclick="closeMenu();openQuiz()">Get My Free Estimate</a>
 </div>
 
 <section class="hero">
@@ -357,7 +387,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <h1>YOUR PHONE<br>SHOULD BE<br><span class="hl">RINGING MORE.</span></h1>
 <p class="hero-sub">Built by a shop owner who got tired of empty bays and bad marketing agencies. We run your ads, deliver fleet customers, and recruit your next tech — so you can stay in the bay.</p>
 <div class="hero-actions">
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn">Book a Free Call</a>
+<a href="javascript:void(0)" onclick="openQuiz()" class="btn">See My Lead Estimate →</a>
 <a href="#services" class="btn btn-outline">See What We Do</a>
 </div>
 <div class="hero-trust">
@@ -402,7 +432,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="rf gc"><div class="rf-icon">🎯</div><div><h4>Precision Targeting</h4><p>UTI grads, Lincoln Tech alumni, diesel programs within commute distance</p></div></div>
 <div class="rf gc"><div class="rf-icon">⚡</div><div><h4>Double the Value</h4><p>Every recruiting post also markets your shop to customers. Two birds, one wrench.</p></div></div>
 </div>
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn btn-green" style="margin-top:1.5rem;">Start Recruiting Techs →</a>
+<a href="javascript:void(0)" onclick="openQuiz()" class="btn btn-green" style="margin-top:1.5rem;">See My Estimate →</a>
 </div>
 <div class="rec-stats reveal">
 <div class="rs gc"><div class="rs-num">76%</div><div class="rs-label">of diesel shops report<br>tech shortages</div></div>
@@ -449,7 +479,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <p>Our founder ran a <strong>$16M heavy-duty diesel shop.</strong> He chased fleet accounts. He sat through slow Januaries. He got burned by agencies who'd never seen the inside of a bay.</p>
 <p class="fcta">TorqueLeads is what he built when he got tired of explaining what a fleet manager was to someone who'd never turned a wrench.</p>
 </div>
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn" style="margin-top:1rem;">Book a Free Call →</a>
+<a href="javascript:void(0)" onclick="openQuiz()" class="btn" style="margin-top:1rem;">Get My Lead Estimate →</a>
 </div>
 
 </div>
@@ -607,6 +637,59 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
+<!-- Quiz Popup -->
+<div class="quiz-overlay" id="quizOverlay">
+<div class="quiz-box">
+<button class="quiz-close" onclick="closeQuiz()">&times;</button>
+<div class="quiz-progress"><span></span><span></span><span></span><span></span></div>
+
+<!-- Step 1 -->
+<div class="quiz-step active" data-step="1">
+<div class="quiz-q">HOW MANY BAYS DOES YOUR SHOP HAVE?</div>
+<div class="quiz-sub">This helps us estimate your capacity and lead volume.</div>
+<div class="quiz-opts">
+<div class="quiz-opt" onclick="quizAnswer(1,'1-3')"><span class="icon">🔧</span> 1–3 bays</div>
+<div class="quiz-opt" onclick="quizAnswer(1,'4-8')"><span class="icon">🏭</span> 4–8 bays</div>
+<div class="quiz-opt" onclick="quizAnswer(1,'9+')"><span class="icon">🏗️</span> 9+ bays</div>
+</div>
+</div>
+
+<!-- Step 2 -->
+<div class="quiz-step" data-step="2">
+<div class="quiz-q">WHAT'S YOUR AVERAGE REPAIR TICKET?</div>
+<div class="quiz-sub">Diesel shops typically range from $800 to $3,000+.</div>
+<div class="quiz-opts">
+<div class="quiz-opt" onclick="quizAnswer(2,'low')"><span class="icon">💵</span> $800 – $1,500</div>
+<div class="quiz-opt" onclick="quizAnswer(2,'mid')"><span class="icon">💰</span> $1,500 – $2,500</div>
+<div class="quiz-opt" onclick="quizAnswer(2,'high')"><span class="icon">🤑</span> $2,500+</div>
+</div>
+</div>
+
+<!-- Step 3 -->
+<div class="quiz-step" data-step="3">
+<div class="quiz-q">ARE YOU CURRENTLY RUNNING PAID ADS?</div>
+<div class="quiz-sub">Be honest — it helps us tailor your strategy.</div>
+<div class="quiz-opts">
+<div class="quiz-opt" onclick="quizAnswer(3,'none')"><span class="icon">🚫</span> No, not yet</div>
+<div class="quiz-opt" onclick="quizAnswer(3,'struggling')"><span class="icon">😤</span> Yes, but it's not working</div>
+<div class="quiz-opt" onclick="quizAnswer(3,'working')"><span class="icon">📈</span> Yes, and it's working</div>
+</div>
+</div>
+
+<!-- Results -->
+<div class="quiz-step" data-step="4">
+<div class="quiz-result">
+<div class="quiz-highlight"><strong>Based on your answers...</strong></div>
+<div class="big-num" id="quizLeadNum">18–24</div>
+<div class="big-label">new customers per month</div>
+<p>Shops like yours typically see <strong id="quizRevNum">$32,000–$43,000</strong> in additional monthly revenue with our system. One repair covers the entire cost.</p>
+<a href="#cta" class="btn" onclick="closeQuiz();scrollToCTA();">Book My Free Strategy Call →</a>
+</div>
+</div>
+
+</div>
+</div>
+
 <footer>
 <div class="footer-inner">
 <p>&copy; 2026 TorqueLeads. All Rights Reserved.</p>
@@ -618,6 +701,59 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </footer>
 
 <script>
+// ── Quiz Funnel ──
+var quizData = {};
+function openQuiz(){
+  document.getElementById('quizOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+  resetQuiz();
+  if(typeof fbq!=='undefined')fbq('track','Lead',{content_name:'Quiz Started',content_category:'diesel_lead'});
+}
+function closeQuiz(){
+  document.getElementById('quizOverlay').classList.remove('active');
+  document.body.style.overflow='';
+}
+function resetQuiz(){
+  quizData={};
+  document.querySelectorAll('.quiz-step').forEach(function(s,i){s.classList.toggle('active',i===0);});
+  updateProgress(1);
+}
+function updateProgress(step){
+  document.querySelectorAll('.quiz-progress span').forEach(function(s,i){
+    s.classList.remove('done','current');
+    if(i<step-1)s.classList.add('done');
+    if(i===step-1)s.classList.add('current');
+  });
+}
+function quizAnswer(step,val){
+  quizData['q'+step]=val;
+  var next=step+1;
+  document.querySelector('.quiz-step[data-step="'+step+'"]').classList.remove('active');
+  document.querySelector('.quiz-step[data-step="'+next+'"]').classList.add('active');
+  updateProgress(next);
+  if(next===4)calcResults();
+}
+function calcResults(){
+  var leads,rev,base=12;
+  // Bays multiplier
+  if(quizData.q1==='4-8')base=18;
+  if(quizData.q1==='9+')base=26;
+  // Ticket multiplier for revenue
+  var ticket=1200;
+  if(quizData.q2==='mid')ticket=1800;
+  if(quizData.q2==='high')ticket=2800;
+  // Ads bonus
+  if(quizData.q3==='none')base+=4;
+  if(quizData.q3==='struggling')base+=6;
+  var low=base,high=Math.round(base*1.4);
+  var revLow=(low*ticket),revHigh=(high*ticket);
+  document.getElementById('quizLeadNum').textContent=low+'–'+high;
+  document.getElementById('quizRevNum').textContent='$'+revLow.toLocaleString()+'–$'+revHigh.toLocaleString();
+  if(typeof fbq!=='undefined')fbq('track','Lead',{content_name:'Quiz Completed',content_category:'diesel_lead',value:revLow,currency:'USD'});
+}
+function scrollToCTA(){setTimeout(function(){document.getElementById('cta').scrollIntoView({behavior:'smooth'});},200);}
+document.addEventListener('click',function(e){if(e.target===document.getElementById('quizOverlay'))closeQuiz();});
+
 // ── Mobile Menu (global scope for onclick handlers) ──
 var toggle, mobileNav;
 function openMenu(){toggle.classList.add('open');mobileNav.classList.add('open');document.body.style.overflow='hidden';}
