@@ -239,16 +239,30 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .svc-grid{grid-template-columns:1fr;}.proof-grid{grid-template-columns:1fr;}
 .pgrid{grid-template-columns:1fr;}
 .steps{grid-template-columns:repeat(2,1fr);gap:2rem;}.steps::before{display:none;}
-.nav-links{display:none;}.mobile-menu{display:block;}
+.nav-links{display:none;}.mobile-menu{display:flex;flex-direction:column;justify-content:center;align-items:center;width:44px;height:44px;}
 .img-strip,.img-strip.four{grid-template-columns:repeat(2,1fr);}.img-i{height:170px;}
 .fbadges{flex-direction:row;flex-wrap:wrap;}
 .footer-inner{flex-direction:column;text-align:center;}.footer-links{flex-direction:column;gap:0.5rem;align-items:center;}
+.calendly-inline-widget{height:650px !important;}
 }
 @media(max-width:600px){
 .hero{padding:7rem 1.5rem 3rem;}.hero h1{font-size:3rem;}
 .steps{grid-template-columns:1fr;}nav{padding:0.8rem 1.5rem;}
 .prc{padding:2rem;}.pa{font-size:3rem;}
 .contact-row{flex-direction:column;gap:0.8rem;}
+.calendly-inline-widget{height:580px !important;margin:1.5rem auto 0 !important;}
+.cta{padding:4rem 1.5rem;}
+.cta .stitle{font-size:2rem;}
+.cta p{font-size:1rem;margin-bottom:1.5rem;}
+.mobile-menu{padding:12px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.mobile-menu span{width:26px;height:3px;margin:6px 0;}
+.mobile-nav a{font-size:2.2rem;padding:0.5rem 1rem;-webkit-tap-highlight-color:transparent;}
+.mobile-nav .btn{padding:1.2rem 3rem;font-size:1.1rem;}
+.btn{min-height:48px;padding:1rem 2rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.problem,.recruiting,.founder,.services,.process,.pricing,.faq-section{padding:4rem 1.5rem;}
+.stitle{font-size:2rem;}
+.rec-stats{grid-template-columns:1fr;}
+.rs{padding:1.5rem;}
 }
 /* ── FAQ ── */
 .faq-section{padding:6rem 2.5rem;background:var(--dark);position:relative;content-visibility:auto;contain-intrinsic-size:0 500px;}
@@ -604,26 +618,29 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </footer>
 
 <script>
+// ── Mobile Menu (global scope for onclick handlers) ──
+var toggle, mobileNav;
+function openMenu(){toggle.classList.add('open');mobileNav.classList.add('open');document.body.style.overflow='hidden';}
+function closeMenu(){toggle.classList.remove('open');mobileNav.classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('DOMContentLoaded',function(){
+  toggle = document.getElementById('menuToggle');
+  mobileNav = document.getElementById('mobileNav');
+  toggle.addEventListener('click',function(e){e.stopPropagation();toggle.classList.contains('open')?closeMenu():openMenu();});
+  toggle.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();toggle.classList.contains('open')?closeMenu():openMenu();},{passive:false});
+  toggle.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle.click();}});
+  document.querySelectorAll('.mobile-nav-link').forEach(function(link){
+    link.addEventListener('click',function(e){
+      var href=link.getAttribute('href');
+      if(href&&href.startsWith('#')){e.preventDefault();closeMenu();setTimeout(function(){var t=document.querySelector(href);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});},150);}
+      else{closeMenu();}
+    });
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
+});
+
 // ── INP optimized: use requestIdleCallback for non-critical JS ──
 (function(){
-  // Immediate: Mobile menu (critical for interaction)
-  const toggle = document.getElementById('menuToggle');
-  const mobileNav = document.getElementById('mobileNav');
-  function openMenu(){toggle.classList.add('open');mobileNav.classList.add('open');document.body.style.overflow='hidden';}
-  function closeMenu(){toggle.classList.remove('open');mobileNav.classList.remove('open');document.body.style.overflow='';}
-  toggle.addEventListener('click',()=>{toggle.classList.contains('open')?closeMenu():openMenu();},{passive:true});
-  toggle.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle.click();}});
-  document.querySelectorAll('.mobile-nav-link').forEach(link=>{
-    link.addEventListener('click',(e)=>{
-      const href=link.getAttribute('href');
-      if(href&&href.startsWith('#')){e.preventDefault();closeMenu();setTimeout(()=>{const t=document.querySelector(href);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});},150);}
-      else{closeMenu();}
-    },{passive:false});
-  });
-  document.addEventListener('keydown',(e)=>{if(e.key==='Escape')closeMenu();},{passive:true});
-
-  // Deferred: IntersectionObservers + FAQ (not blocking INP)
-  const ric = window.requestIdleCallback || ((cb)=>setTimeout(cb,1));
+  var ric = window.requestIdleCallback || (function(cb){return setTimeout(cb,1);});
   ric(function(){
     // Scroll reveal
     const o=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible');});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
