@@ -71,7 +71,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .mobile-menu.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .mobile-menu.open span:nth-child(2){opacity:0;}
 .mobile-menu.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(4,4,6,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);z-index:1050;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;}
+.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(4,4,6,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;padding-top:80px;}
 .mobile-nav.open{display:flex;}
 .mobile-nav a{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:4px;color:var(--white);text-decoration:none;transition:color 0.2s;}
 .mobile-nav a:hover,.mobile-nav a:active{color:var(--amber);}
@@ -239,7 +239,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .svc-grid{grid-template-columns:1fr;}.proof-grid{grid-template-columns:1fr;}
 .pgrid{grid-template-columns:1fr;}
 .steps{grid-template-columns:repeat(2,1fr);gap:2rem;}.steps::before{display:none;}
-.nav-links{display:none;}.mobile-menu{display:flex;flex-direction:column;justify-content:center;align-items:center;width:44px;height:44px;}
+.nav-links{display:none;}.mobile-menu{display:block;width:44px;height:44px;padding:10px;}
 .img-strip,.img-strip.four{grid-template-columns:repeat(2,1fr);}.img-i{height:170px;}
 .fbadges{flex-direction:row;flex-wrap:wrap;}
 .footer-inner{flex-direction:column;text-align:center;}.footer-links{flex-direction:column;gap:0.5rem;align-items:center;}
@@ -622,19 +622,15 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 var toggle, mobileNav;
 function openMenu(){toggle.classList.add('open');mobileNav.classList.add('open');document.body.style.overflow='hidden';}
 function closeMenu(){toggle.classList.remove('open');mobileNav.classList.remove('open');document.body.style.overflow='';}
+function toggleMenu(){toggle.classList.contains('open')?closeMenu():openMenu();}
 document.addEventListener('DOMContentLoaded',function(){
   toggle = document.getElementById('menuToggle');
   mobileNav = document.getElementById('mobileNav');
-  toggle.addEventListener('click',function(e){e.stopPropagation();toggle.classList.contains('open')?closeMenu():openMenu();});
-  toggle.addEventListener('touchend',function(e){e.preventDefault();e.stopPropagation();toggle.classList.contains('open')?closeMenu():openMenu();},{passive:false});
-  toggle.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle.click();}});
-  document.querySelectorAll('.mobile-nav-link').forEach(function(link){
-    link.addEventListener('click',function(e){
-      var href=link.getAttribute('href');
-      if(href&&href.startsWith('#')){e.preventDefault();closeMenu();setTimeout(function(){var t=document.querySelector(href);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});},150);}
-      else{closeMenu();}
-    });
-  });
+  // Single handler for both touch and click
+  toggle.onclick = function(e){e.preventDefault();toggleMenu();};
+  toggle.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleMenu();}});
+  // Close when clicking overlay background
+  mobileNav.addEventListener('click',function(e){if(e.target===mobileNav)closeMenu();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
 });
 
