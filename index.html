@@ -291,6 +291,8 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .quiz-result .btn{width:100%;text-align:center;font-size:1rem;padding:1rem 2rem;}
 .quiz-highlight{background:var(--amber-soft);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:1rem;margin-bottom:1.5rem;}
 .quiz-highlight strong{color:var(--amber);}
+.quiz-skip{display:block;text-align:center;margin-top:1.25rem;color:var(--gray);font-size:0.85rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:0.7;transition:opacity 0.2s;}
+.quiz-skip:hover{opacity:1;color:var(--amber);}
 @media(max-width:600px){
 .quiz-box{padding:1.5rem;margin:0.5rem;}
 .quiz-q{font-size:1.5rem;}
@@ -654,6 +656,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="quiz-opt" onclick="quizAnswer(1,'4-8')">4–8 bays</div>
 <div class="quiz-opt" onclick="quizAnswer(1,'9+')">9+ bays</div>
 </div>
+<span class="quiz-skip" onclick="skipToBooking()">Skip — just book the call →</span>
 </div>
 
 <!-- Step 2 -->
@@ -665,6 +668,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="quiz-opt" onclick="quizAnswer(2,'mid')">$1,500 – $2,500</div>
 <div class="quiz-opt" onclick="quizAnswer(2,'high')">$2,500+</div>
 </div>
+<span class="quiz-skip" onclick="skipToBooking()">Skip — just book the call →</span>
 </div>
 
 <!-- Step 3 -->
@@ -676,6 +680,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="quiz-opt" onclick="quizAnswer(3,'struggling')">Yes, but it's not working</div>
 <div class="quiz-opt" onclick="quizAnswer(3,'working')">Yes, and it's working</div>
 </div>
+<span class="quiz-skip" onclick="skipToBooking()">Skip — just book the call →</span>
 </div>
 
 <!-- Results -->
@@ -754,6 +759,7 @@ function calcResults(){
   if(typeof fbq!=='undefined')fbq('track','Lead',{content_name:'Quiz Completed',content_category:'diesel_lead',value:revLow,currency:'USD'});
 }
 function scrollToCTA(){setTimeout(function(){document.getElementById('cta').scrollIntoView({behavior:'smooth'});},200);}
+function skipToBooking(){closeQuiz();scrollToCTA();}
 document.addEventListener('click',function(e){if(e.target===document.getElementById('quizOverlay'))closeQuiz();});
 
 // ── Mobile Menu (global scope for onclick handlers) ──
