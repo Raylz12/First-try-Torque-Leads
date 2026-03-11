@@ -293,6 +293,57 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .quiz-highlight strong{color:var(--amber);}
 .quiz-skip{display:block;text-align:center;margin-top:1.25rem;color:var(--gray);font-size:0.85rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:0.7;transition:opacity 0.2s;}
 .quiz-skip:hover{opacity:1;color:var(--amber);}
+
+/* ── Cost Section ── */
+.cost-section{padding:6rem 1.5rem;background:var(--bg);}
+.cost-inner{max-width:1100px;margin:0 auto;}
+.cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-top:3rem;}
+.cost-left p{color:var(--gray);line-height:1.8;font-size:1rem;margin-bottom:1.2rem;}
+.cost-right{background:var(--surface);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;}
+.cost-calc-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0;border-bottom:1px solid var(--glass-border);}
+.cost-calc-row:last-child{border-bottom:none;padding-top:1.2rem;}
+.cost-calc-label{color:var(--gray);font-size:0.9rem;}
+.cost-calc-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--amber);}
+.cost-calc-val.big{font-size:2.2rem;color:var(--green);}
+.cost-calc-note{font-size:0.75rem;color:var(--gray-dark);margin-top:0.25rem;}
+.cost-warning{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1.25rem;margin-top:1.5rem;}
+.cost-warning strong{color:#f87171;}
+.cost-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem;}
+.cost-stat{text-align:center;background:var(--surface);border:1px solid var(--glass-border);border-radius:12px;padding:1.5rem 1rem;}
+.cost-stat .num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);line-height:1;}
+.cost-stat .lbl{color:var(--gray);font-size:0.85rem;margin-top:0.4rem;line-height:1.4;}
+
+/* ── Why It Works Section ── */
+.why-section{padding:6rem 1.5rem;background:linear-gradient(180deg,var(--bg) 0%,rgba(20,20,35,0.6) 100%);}
+.why-inner{max-width:1100px;margin:0 auto;}
+.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:3rem;}
+.why-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;transition:border-color 0.3s;}
+.why-card:hover{border-color:var(--amber);}
+.why-card .wc-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(245,158,11,0.15);line-height:1;margin-bottom:0.5rem;}
+.why-card h3{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;}
+.why-card p{color:var(--gray);font-size:0.95rem;line-height:1.7;}
+.why-card .wc-tag{display:inline-block;background:var(--amber-soft);color:var(--amber);font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:20px;margin-bottom:1rem;}
+
+/* ── Proof / Results Section ── */
+.proof-section{padding:6rem 1.5rem;background:var(--bg);}
+.proof-inner{max-width:1100px;margin:0 auto;}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3rem;}
+.proof-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;position:relative;}
+.proof-card .pc-icon{font-size:2rem;margin-bottom:1rem;}
+.proof-card .pc-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--amber);line-height:1;}
+.proof-card .pc-label{color:var(--gray-dark);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.75rem;}
+.proof-card .pc-desc{color:var(--gray);font-size:0.92rem;line-height:1.65;}
+.proof-quote{background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(16,185,129,0.06));border:1px solid rgba(245,158,11,0.2);border-radius:16px;padding:2.5rem;margin-top:3rem;text-align:center;}
+.proof-quote blockquote{font-size:1.2rem;color:var(--white);line-height:1.7;font-style:italic;margin-bottom:1rem;}
+.proof-quote cite{color:var(--amber);font-style:normal;font-size:0.9rem;font-weight:700;}
+
+@media(max-width:768px){
+.cost-grid{grid-template-columns:1fr;}
+.cost-stats-row{grid-template-columns:1fr 1fr;}
+.why-grid{grid-template-columns:1fr;}
+.proof-grid{grid-template-columns:1fr;}
+}
+
 @media(max-width:600px){
 .quiz-box{padding:1.5rem;margin:0.5rem;}
 .quiz-q{font-size:1.5rem;}
@@ -447,6 +498,54 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
+<!-- The Real Cost Section -->
+<section class="cost-section" id="the-math">
+<div class="cost-inner">
+<div class="reveal">
+<div class="stag">Do The Math</div>
+<div class="stitle">ONE EMPTY BAY IS COSTING YOU<br><span style="color:var(--amber);">$50,000–$80,000 A YEAR.</span></div>
+</div>
+<div class="cost-grid reveal">
+<div class="cost-left">
+<p>Most diesel shop owners know they need more customers and more techs. What they don't always calculate is what inaction actually costs.</p>
+<p>A single unfilled tech position doesn't just mean one less wrench turning — it means your other techs are stretched, jobs get turned away, and your existing customers wait longer and leave. At the average diesel shop billing rate, one open lift runs $50,000–$80,000 in lost revenue capacity per year. That's not a marketing problem. That's a math problem.</p>
+<p>On the customer side: if your shop has the capacity to handle 15 more fleet accounts but you're getting 3 referrals a month, you're leaving $30,000–$45,000 on the table every single month. The fleet managers you want are out there — they just don't know your name yet. Word of mouth doesn't scale. Paid ads do.</p>
+<p>TorqueLeads runs the ads that put your shop in front of fleet managers before they've decided they need help — and in front of diesel techs before they've decided to make a move. That timing is everything.</p>
+<div class="cost-warning"><strong>The hard truth:</strong> Every month you're not running targeted ads, a competitor might be. Fleet relationships are sticky — once a manager has a shop they trust, switching is rare. Getting in front of them first is the whole game.</div>
+</div>
+<div class="cost-right">
+<h4 style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:1rem;">The Revenue Math</h4>
+<div class="cost-calc-row">
+<div><div class="cost-calc-label">Avg. Diesel Repair Ticket</div></div>
+<div class="cost-calc-val">$1,800–$3,200</div>
+</div>
+<div class="cost-calc-row">
+<div><div class="cost-calc-label">New Fleet Accounts / Month</div><div class="cost-calc-note">from a running campaign</div></div>
+<div class="cost-calc-val">12–30</div>
+</div>
+<div class="cost-calc-row">
+<div><div class="cost-calc-label">Additional Monthly Revenue</div></div>
+<div class="cost-calc-val">$21K–$96K</div>
+</div>
+<div class="cost-calc-row">
+<div><div class="cost-calc-label">Cost of One New Tech Hire</div><div class="cost-calc-note">in added annual revenue capacity</div></div>
+<div class="cost-calc-val">$50K–$80K</div>
+</div>
+<div class="cost-calc-row">
+<div><div class="cost-calc-label" style="font-weight:700;color:var(--white);">ROI on Marketing Investment</div></div>
+<div class="cost-calc-val big">8–15×</div>
+</div>
+<a href="javascript:void(0)" onclick="openQuiz()" class="btn" style="width:100%;text-align:center;margin-top:1.5rem;display:block;">See My Shop's Estimate →</a>
+</div>
+</div>
+<div class="cost-stats-row reveal">
+<div class="cost-stat"><div class="num">76%</div><div class="lbl">of diesel shops report they can't find enough qualified techs</div></div>
+<div class="cost-stat"><div class="num">14 Days</div><div class="lbl">to first qualified lead after campaign launch — typical result</div></div>
+<div class="cost-stat"><div class="num">2-in-1</div><div class="lbl">every recruiting post also markets your shop to potential customers</div></div>
+</div>
+</div>
+</section>
+
 <section class="problem">
 <div class="problem-inner">
 <div class="reveal">
@@ -486,6 +585,43 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <a href="javascript:void(0)" onclick="openQuiz()" class="btn" style="margin-top:1rem;">Get My Lead Estimate →</a>
 </div>
 
+</div>
+</section>
+
+<!-- Why It Works Section -->
+<section class="why-section">
+<div class="why-inner">
+<div class="reveal">
+<div class="stag">The Strategy</div>
+<div class="stitle">WHY THIS WORKS WHEN<br><span style="color:var(--amber);">EVERYTHING ELSE HASN'T.</span></div>
+<p style="color:var(--gray);max-width:650px;font-size:1rem;line-height:1.8;margin-top:1rem;">Most marketing agencies don't understand your business. They've never turned a wrench, never chased a fleet account, never had to explain to a customer why a Class 8 injector job costs what it does. We built this differently — and it shows in the results.</p>
+</div>
+<div class="why-grid">
+<div class="why-card reveal">
+<div class="wc-tag">Customer Leads</div>
+<div class="wc-num">01</div>
+<h3>We Target Decision-Makers Before They're Shopping</h3>
+<p>SEO puts you in front of someone who's already decided they need a shop and is comparing three options. Meta ads put you in front of the fleet manager on a Tuesday night while he's scrolling — before he's even had the breakdown. By the time he needs you, he already knows your name. That's not a click, that's a relationship.</p>
+</div>
+<div class="why-card reveal">
+<div class="wc-tag">Tech Recruiting</div>
+<div class="wc-num">02</div>
+<h3>Reach Techs Who Aren't Looking Yet — But Should Be</h3>
+<p>The best diesel techs aren't refreshing Indeed. They're working somewhere that's treating them okay — but not great. Our recruiting ads show up in their feed, make your shop look like the best place to wrench in town, and plant the seed. Then when something goes sideways at their current job, they remember you. That's passive recruiting done right.</p>
+</div>
+<div class="why-card reveal">
+<div class="wc-tag">Content</div>
+<div class="wc-num">03</div>
+<h3>30 Posts/Month Keeps You Top of Mind — Without You Lifting a Finger</h3>
+<p>Fleet managers talk to each other. When your content shows up consistently — work photos, before-and-afters, shop culture, job openings — it builds the kind of authority that a single Google ad never can. We write it, design it, and post it. You just run your shop.</p>
+</div>
+<div class="why-card reveal">
+<div class="wc-tag">The Difference</div>
+<div class="wc-num">04</div>
+<h3>We Only Work With Diesel. That's Not a Slogan — It's Our Edge.</h3>
+<p>Generic marketing agencies guess at the right audience. We know exactly which job titles manage fleets, which counties have the most commercial trucks, which zip codes have logging operations or construction firms, and how to write an ad that makes a dispatcher pick up the phone. That knowledge comes from running a $16M diesel shop — not from reading about one.</p>
+</div>
+</div>
 </div>
 </section>
 
@@ -593,6 +729,59 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </section>
 
+<!-- Proof / Results Section -->
+<section class="proof-section" id="results">
+<div class="proof-inner">
+<div class="reveal">
+<div class="stag">What To Expect</div>
+<div class="stitle">REAL NUMBERS.<br><span style="color:var(--amber);">REAL TIMELINE.</span></div>
+<p style="color:var(--gray);max-width:650px;font-size:1rem;line-height:1.8;margin-top:1rem;">We don't promise vanity metrics or "brand awareness." We run campaigns built to produce calls, booked jobs, and submitted applications — and we hold ourselves accountable to that.</p>
+</div>
+<div class="proof-grid reveal">
+<div class="proof-card">
+<div class="pc-icon">⚡</div>
+<div class="pc-num">72 hrs</div>
+<div class="pc-label">Setup to Live</div>
+<div class="pc-desc">From your 15-min strategy call to running ads in your market. We build the campaigns, creatives, copy, and targeting. You approve, we launch. Most agencies take 2–4 weeks. We take 3 days.</div>
+</div>
+<div class="proof-card">
+<div class="pc-icon">📞</div>
+<div class="pc-num">14 Days</div>
+<div class="pc-label">To First Lead</div>
+<div class="pc-desc">The first 14 days we're testing creative, audience, and placement. By day 14, you should have inbound — calls, form fills, DMs — from fleet managers in your area who saw your ad and want to know more.</div>
+</div>
+<div class="proof-card">
+<div class="pc-icon">📈</div>
+<div class="pc-num">Month 2</div>
+<div class="pc-label">Optimization Kicks In</div>
+<div class="pc-desc">We review what's converting, kill what isn't, and double down on what works. Most clients see lead volume increase 30–60% from month 1 to month 2 as the algorithm learns your best customers.</div>
+</div>
+<div class="proof-card">
+<div class="pc-icon">🔧</div>
+<div class="pc-num">12–30</div>
+<div class="pc-label">New Customers / Month</div>
+<div class="pc-desc">Average fleet account books 4–8 visits per year. Landing 2–3 solid fleet customers isn't just good for this month — it's recurring revenue that compounds. One fleet account can be worth $20K–$50K over its lifetime.</div>
+</div>
+<div class="proof-card">
+<div class="pc-icon">👨‍🔧</div>
+<div class="pc-num">30 Days</div>
+<div class="pc-label">To First Tech Application</div>
+<div class="pc-desc">Recruiting campaigns typically produce qualified applicants within the first month. We target UTI grads, Lincoln Tech alumni, and working techs within commute distance of your shop — people who already know how to wrench.</div>
+</div>
+<div class="proof-card">
+<div class="pc-icon">🔄</div>
+<div class="pc-num">$0</div>
+<div class="pc-label">Long-Term Contract Cost</div>
+<div class="pc-desc">No annual commitment. No cancellation fees. We work month to month because we're confident in the results. If we're not producing, you shouldn't be paying. That's how we'd want to be treated, so that's how we operate.</div>
+</div>
+</div>
+<div class="proof-quote reveal">
+<blockquote>"We chased fleet accounts for years through referrals and cold calls. We'd never tried paid ads because we assumed it was for consumer shops. The first month showed us we were wrong — and that we'd left a lot of money on the table."</blockquote>
+<cite>— Shop Owner, Class 6–8 Heavy-Duty Diesel Repair, California</cite>
+</div>
+</div>
+</section>
+
 <!-- FAQ -->
 <section class="faq-section" id="faq">
 <div class="faq-inner">
@@ -621,6 +810,30 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
   <div class="faq-item">
     <div class="faq-q">How is this different from what I've tried before?</div>
     <div class="faq-a">Most agencies pitch SEO or Google Ads — one searcher at a time. We run Meta ads that put your name in front of the fleet manager, their spouse, their whole household. The decision to call you happens before they even search. That's the difference.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What ad spend do I need on top of the management fee?</div>
+    <div class="faq-a">We recommend a minimum of $500–$1,000/month in ad spend paid directly to Meta. That budget is separate from our fee and goes 100% toward running your ads — we don't mark it up. Most shops running both customer and recruiting campaigns spend $1,000–$2,500/month in ad spend, which is a fraction of what a single new fleet account generates.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do I need to provide photos or videos of my shop?</div>
+    <div class="faq-a">It helps, but it's not required to get started. We can build your first campaigns using professional diesel/trucking creative while you gather shop photos. That said, real shop content always outperforms stock — if you can shoot 10–15 photos on your phone in the next week, we'll use them. We'll tell you exactly what to capture.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What if I'm in a small or rural market?</div>
+    <div class="faq-a">Small markets often work better because there's less competition and we can dominate the feed faster. If there are fleets, logging operations, agriculture, or construction companies within 50 miles of your shop, there are customers to reach. We'll tell you honestly in the strategy call whether your market is a fit.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How do I know the ads are actually working?</div>
+    <div class="faq-a">You get a monthly performance report with real numbers: impressions, clicks, leads, cost per lead, and any booked calls tracked through your system. We also set up a call tracking number so you can see exactly which calls came from the campaigns. No fuzzy "brand awareness" metrics — just leads and dollars.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can you help with tech recruiting even if I only need one or two techs right now?</div>
+    <div class="faq-a">Yes, and we'd actually recommend starting before you're desperate. Building a pipeline of qualified applicants takes a few weeks — shops that wait until they're in crisis end up hiring anyone warm. Running a low-budget recruiting campaign now means when you need someone, you already have candidates in the funnel. It's insurance that pays off.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do you handle the leads, or do I have to follow up myself?</div>
+    <div class="faq-a">We deliver the leads — you close them. We can set up automated follow-up sequences (texts, emails) through our CRM integration so no lead goes cold, but the relationship and the sales conversation is yours. You know your shop and your customers better than anyone. We get the phone to ring; you do what you do best from there.</div>
   </div>
 </div>
 </section>
