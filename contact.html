@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Started | TorqueLeads</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0d1a;--surface:#13131f;--white:#f0f0f0;--gray:#9ca3af;--amber:#f59e0b;--green:#10b981;--glass-border:rgba(255,255,255,0.07);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;line-height:1.6;}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 2rem;border-bottom:1px solid var(--glass-border);background:rgba(13,13,26,0.95);backdrop-filter:blur(10px);}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--white);text-decoration:none;letter-spacing:2px;}
+  .logo span{color:var(--amber);}
+  .hero{text-align:center;padding:4rem 2rem 2rem;}
+  .hero h1{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:2px;margin-bottom:0.75rem;}
+  .hero h1 span{color:var(--amber);}
+  .hero p{color:var(--gray);font-size:1.05rem;max-width:480px;margin:0 auto;}
+  .form-wrap{max-width:520px;margin:2.5rem auto 4rem;padding:0 1.5rem;}
+  .form-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:16px;padding:2.5rem;}
+  .field{margin-bottom:1.25rem;}
+  .field label{display:block;font-size:0.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:0.4rem;}
+  .field input,.field select{width:100%;background:#0d0d1a;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:0.75rem 1rem;font-size:0.95rem;color:var(--white);font-family:'Inter',sans-serif;transition:border-color 0.2s;}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--amber);}
+  .field input::placeholder{color:#4b5563;}
+  .field select option{background:#13131f;}
+  .divider{border:none;border-top:1px solid var(--glass-border);margin:1.5rem 0;}
+  .consent-item{display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:1rem;}
+  .consent-item input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--amber);cursor:pointer;}
+  .consent-item label{font-size:0.8rem;color:var(--gray);line-height:1.6;cursor:pointer;}
+  .consent-item label strong{color:var(--white);}
+  .consent-item label a{color:var(--amber);text-decoration:none;}
+  .privacy-note{font-size:0.75rem;color:#6b7280;margin-top:0.5rem;margin-bottom:1.5rem;line-height:1.6;}
+  .privacy-note a{color:var(--amber);text-decoration:none;}
+  .submit-btn{width:100%;background:var(--amber);color:#0d0d1a;border:none;border-radius:8px;padding:1rem;font-size:1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:'Barlow Condensed',sans-serif;transition:opacity 0.2s;}
+  .submit-btn:hover{opacity:0.9;}
+  .submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .success{display:none;text-align:center;padding:2rem;}
+  .success h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--green);letter-spacing:2px;margin-bottom:0.5rem;}
+  .success p{color:var(--gray);}
+  .error-msg{color:#ef4444;font-size:0.8rem;margin-top:0.5rem;display:none;}
+  footer{border-top:1px solid var(--glass-border);padding:2rem;text-align:center;color:var(--gray);font-size:0.85rem;}
+  footer a{color:var(--gray);text-decoration:none;}
+  footer a:hover{color:var(--amber);}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="/">Torque<span>Leads</span></a>
+</nav>
+
+<div class="hero">
+  <h1>Get More <span>Fleet Customers</span></h1>
+  <p>Fill out the form below and we'll reach out to schedule your free 15-minute strategy call.</p>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card" id="form-card">
+    <form id="contact-form" novalidate>
+      <div class="field">
+        <label for="firstName">First Name *</label>
+        <input type="text" id="firstName" name="firstName" placeholder="First name" required>
+      </div>
+      <div class="field">
+        <label for="lastName">Last Name *</label>
+        <input type="text" id="lastName" name="lastName" placeholder="Last name" required>
+      </div>
+      <div class="field">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" name="phone" placeholder="(925) 555-0100" required>
+      </div>
+      <div class="field">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" placeholder="you@yourshop.com" required>
+      </div>
+      <div class="field">
+        <label for="business">Business Name</label>
+        <input type="text" id="business" name="business" placeholder="Your shop name">
+      </div>
+
+      <hr class="divider">
+
+      <div class="consent-item">
+        <input type="checkbox" id="consent-transactional" name="consent-transactional">
+        <label for="consent-transactional">
+          I consent to receive account notifications, appointment reminders, and transactional messages from <strong>TorqueLeads LLC</strong> at the phone number provided. Message frequency may vary. Msg &amp; data rates may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to cancel.
+        </label>
+      </div>
+
+      <div class="consent-item">
+        <input type="checkbox" id="consent-marketing" name="consent-marketing">
+        <label for="consent-marketing">
+          I consent to receive marketing and promotional messages from <strong>TorqueLeads LLC</strong> at the phone number provided. Message frequency may vary. Msg &amp; data rates may apply. Reply <strong>HELP</strong> for help or <strong>STOP</strong> to cancel.
+        </label>
+      </div>
+
+      <div id="consent-error" class="error-msg">Please check at least one consent box to continue.</div>
+
+      <div class="privacy-note">
+        SMS opt-in consent is not shared with third parties or affiliates. By submitting this form you agree to our <a href="/privacy.html" target="_blank">Privacy Policy</a> and <a href="/terms.html" target="_blank">Terms of Service</a>.
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Get My Free Strategy Call →</button>
+    </form>
+    <div class="success" id="success-msg">
+      <h2>You're In!</h2>
+      <p>We'll be reaching out shortly to schedule your call.<br>In the meantime, check out <a href="https://torqueleads.net" style="color:var(--amber)">torqueleads.net</a>.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 TorqueLeads LLC &nbsp;|&nbsp;
+  <a href="/privacy.html">Privacy Policy</a> &nbsp;|&nbsp;
+  <a href="/terms.html">Terms of Service</a>
+</footer>
+
+<script>
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('consent-error');
+  const tc = document.getElementById('consent-transactional').checked;
+  const mc = document.getElementById('consent-marketing').checked;
+
+  if (!tc && !mc) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const business = document.getElementById('business').value.trim();
+
+  // Submit to GHL
+  try {
+    await fetch('https://services.leadconnectorhq.com/contacts/upsert', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer pit-d7f5085d-872d-48f5-b891-edbdb45d9686',
+        'Content-Type': 'application/json',
+        'Version': '2021-07-28'
+      },
+      body: JSON.stringify({
+        locationId: 'exHwezTNoKTFavR3ijl3',
+        firstName,
+        lastName,
+        phone,
+        email,
+        companyName: business,
+        source: 'Website Contact Form',
+        tags: ['website-optin', tc ? 'sms-transactional' : '', mc ? 'sms-marketing' : ''].filter(Boolean)
+      })
+    });
+  } catch(err) {
+    console.log('GHL submit error:', err);
+  }
+
+  document.getElementById('contact-form').style.display = 'none';
+  document.getElementById('success-msg').style.display = 'block';
+});
+</script>
+</body>
+</html>
