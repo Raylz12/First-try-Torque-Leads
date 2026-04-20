@@ -49,8 +49,8 @@ window.addEventListener('load', function() {
 :root{
 --bg:#040406;--dark:#09090e;--surface:rgba(255,255,255,0.03);
 --glass:rgba(255,255,255,0.05);--glass-strong:rgba(255,255,255,0.08);--glass-border:rgba(255,255,255,0.1);--glass-border-strong:rgba(255,255,255,0.15);
---amber:#2e7dc9;--amber-soft:rgba(46,125,201,0.1);--amber-glow:rgba(46,125,201,0.25);
---red:#a05c2a;--green:#4a7c59;--green-soft:rgba(74,124,89,0.1);--green-glow:rgba(74,124,89,0.25);--brown:#8B5E3C;--brown-soft:rgba(139,94,60,0.1);--brown-glow:rgba(139,94,60,0.25);
+--amber:#ef4444;--amber-soft:rgba(239,68,68,0.1);--amber-glow:rgba(239,68,68,0.25);
+--red:#ef4444;--green:#22c55e;--green-soft:rgba(34,197,94,0.1);--green-glow:rgba(34,197,94,0.25);
 --white:#f0f0f5;--gray:#9ca3af;--gray-dark:#6b7280;--border:rgba(255,255,255,0.06);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -63,11 +63,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
 .nav-links a:hover{color:var(--amber);}
 .btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;padding:0.75rem 2rem;background:var(--amber);color:var(--bg);border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.3s;border-radius:4px;touch-action:manipulation;}
-.btn:hover{background:#4a97e6;transform:translateY(-2px);box-shadow:0 12px 40px var(--amber-glow);}
+.btn:hover{background:#f87171;transform:translateY(-2px);box-shadow:0 12px 40px var(--amber-glow);}
 .btn-outline{background:transparent;border:1.5px solid var(--amber);color:var(--amber);}
 .btn-outline:hover{background:var(--amber);color:var(--bg);}
 .btn-green{background:var(--green);}
-.btn-green:hover{background:#6a9e7a;box-shadow:0 12px 40px var(--green-glow);}
+.btn-green:hover{background:#4ade80;box-shadow:0 12px 40px var(--green-glow);}
 .mobile-menu{display:none;cursor:pointer;padding:4px;z-index:1100;}
 .mobile-menu span{display:block;width:22px;height:2px;background:var(--white);margin:5px 0;transition:all 0.3s ease;}
 .mobile-menu.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
@@ -80,13 +80,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .mobile-nav .btn{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-size:0.95rem;padding:1rem 3rem;margin-top:0.5rem;}
 .hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2.5rem 4rem;position:relative;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(4,4,6,0.97) 25%,rgba(4,4,6,0.88) 70%),url('https://cdn.prod.website-files.com/62571f58fea7bbc10a367876/62d0435d404de51e6c9ee2f0_Heavy-Duty%20Diesel%20Truck%20Collision%20Repair%20-%20Step%20By%20Step%20Process.jpg') center/cover no-repeat;}
-.hero-glow1{position:absolute;top:-15%;right:-5%;width:55%;height:75%;background:radial-gradient(ellipse,rgba(46,125,201,0.35),transparent 65%);pointer-events:none;filter:blur(40px);}
-.hero-glow2{position:absolute;bottom:-25%;left:-10%;width:45%;height:55%;background:radial-gradient(ellipse,rgba(139,94,60,0.2),transparent 65%);pointer-events:none;filter:blur(50px);}
+.hero-glow1{position:absolute;top:-15%;right:-5%;width:55%;height:75%;background:radial-gradient(ellipse,rgba(239,68,68,0.35),transparent 65%);pointer-events:none;filter:blur(40px);}
+.hero-glow2{position:absolute;bottom:-25%;left:-10%;width:45%;height:55%;background:radial-gradient(ellipse,rgba(34,197,94,0.18),transparent 65%);pointer-events:none;filter:blur(50px);}
 .hero-content{max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:2;display:grid;grid-template-columns:1.1fr 0.9fr;gap:4rem;align-items:center;}
 .hero-tag{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem;display:flex;align-items:center;gap:0.8rem;opacity:0;animation:fadeUp 0.6s 0.2s forwards;}
 .hero-tag::before{content:'';width:30px;height:1.5px;background:var(--amber);}
 .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,7vw,6.5rem);line-height:0.92;letter-spacing:2px;color:var(--white);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.6s 0.35s forwards;}
-.hero h1 .hl{color:var(--amber);text-shadow:0 0 80px rgba(46,125,201,0.5);}
+.hero h1 .hl{color:var(--amber);text-shadow:0 0 80px rgba(239,68,68,0.5);}
 .hero-sub{font-size:1.1rem;font-weight:300;color:var(--gray);max-width:460px;margin-bottom:2.5rem;line-height:1.85;opacity:0;animation:fadeUp 0.6s 0.5s forwards;}
 .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp 0.6s 0.65s forwards;}
 .hero-trust{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;opacity:0;animation:fadeUp 0.6s 0.75s forwards;}
@@ -94,12 +94,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .hero-trust span{color:rgba(156,163,175,0.85);}
 .hero-stats{opacity:0;animation:fadeUp 0.8s 0.8s forwards;}
 .stats-panel{background:rgba(255,255,255,0.07);backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:2.5rem;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);}
-.stats-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(46,125,201,0.5),transparent);}
+.stats-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(239,68,68,0.5),transparent);}
 .stats-panel h3{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:2rem;}
 .stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.06);}
 .stat-row:last-child{border-bottom:none;}
 .stat-label{font-size:0.88rem;color:var(--gray);}
-.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--amber);text-shadow:0 0 20px rgba(139,94,60,0.4);}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--amber);text-shadow:0 0 20px rgba(239,68,68,0.3);}
 .stat-val.wh{color:var(--white);text-shadow:none;}
 .stats-note{margin-top:1.5rem;font-size:0.75rem;color:var(--gray-dark);text-align:center;font-style:italic;}
 .gc{background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.05);transition:all 0.35s;}
@@ -125,34 +125,34 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .pain{display:flex;align-items:center;gap:1rem;font-size:0.95rem;color:var(--gray);padding:1rem 1.4rem;border-left:3px solid var(--red);border-radius:0 8px 8px 0;}
 .pain .x{color:var(--red);font-weight:700;flex-shrink:0;}
 .recruiting{padding:7rem 2.5rem;background:var(--dark);position:relative;overflow:hidden;content-visibility:auto;contain-intrinsic-size:0 600px;}
-.recruiting::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(74,124,89,0.5),transparent);}
-.rec-glow{position:absolute;top:0;right:-15%;width:45%;height:100%;background:radial-gradient(ellipse,rgba(74,124,89,0.2),transparent 65%);pointer-events:none;filter:blur(40px);}
+.recruiting::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.5),transparent);}
+.rec-glow{position:absolute;top:0;right:-15%;width:45%;height:100%;background:radial-gradient(ellipse,rgba(34,197,94,0.2),transparent 65%);pointer-events:none;filter:blur(40px);}
 .recruiting-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:2;}
 .recruiting .stag{color:var(--green);}
 .recruiting .stitle{font-size:clamp(2.5rem,5vw,3.8rem);}
-.recruiting .stitle span{color:var(--green);text-shadow:0 0 50px rgba(74,124,89,0.4);}
+.recruiting .stitle span{color:var(--green);text-shadow:0 0 50px rgba(34,197,94,0.4);}
 .rec-sub{color:var(--gray);font-size:1.05rem;font-weight:300;line-height:1.85;margin-bottom:0.5rem;}
 .rec-sub strong{color:var(--white);font-weight:600;}
 .rec-feats{display:grid;gap:0.8rem;margin-top:2rem;}
 .rf{display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.3rem;border-radius:8px;}
-.rf:hover{border-color:rgba(74,124,89,0.3) !important;}
+.rf:hover{border-color:rgba(34,197,94,0.3) !important;}
 .rf-icon{font-size:1.2rem;flex-shrink:0;margin-top:0.15rem;}
 .rf h4{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);margin-bottom:0.15rem;}
 .rf p{font-size:0.82rem;color:var(--gray-dark);line-height:1.6;}
 .rec-stats{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
 .rs{border-radius:10px;padding:2rem;text-align:center;}
-.rs:hover{border-color:rgba(74,124,89,0.3) !important;}
-.rs-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--green);line-height:1;text-shadow:0 0 30px rgba(74,124,89,0.35);}
+.rs:hover{border-color:rgba(34,197,94,0.3) !important;}
+.rs-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--green);line-height:1;text-shadow:0 0 30px rgba(34,197,94,0.35);}
 .rs-label{font-size:0.78rem;color:var(--gray-dark);margin-top:0.4rem;line-height:1.4;}
 .founder{padding:5rem 2.5rem;position:relative;content-visibility:auto;contain-intrinsic-size:0 600px;}
-.founder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(46,125,201,0.4),transparent);}
+.founder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(239,68,68,0.4),transparent);}
 .founder-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;}
 .founder-story p{font-size:1.05rem;color:var(--gray);margin-bottom:1rem;font-weight:300;line-height:1.85;}
 .founder-story strong{color:var(--white);font-weight:600;}
 .fcta{color:var(--amber);font-weight:500;font-size:1.1rem;margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border);}
 .fbadges{display:flex;flex-direction:column;gap:0.8rem;}
 .fb{border-radius:8px;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:1rem;white-space:nowrap;}
-.fb:hover{border-color:rgba(46,125,201,0.3) !important;transform:translateX(4px);}
+.fb:hover{border-color:rgba(239,68,68,0.3) !important;transform:translateX(4px);}
 .fb-icon{font-size:1.3rem;}
 .fb-txt{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--white);}
 .services{padding:7rem 2.5rem;background:var(--dark);position:relative;content-visibility:auto;contain-intrinsic-size:0 700px;}
@@ -162,7 +162,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .svc-header p{color:var(--gray);font-size:1.05rem;font-weight:300;max-width:520px;margin:0 auto;}
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
 .svc{border-radius:10px;padding:2.2rem;position:relative;overflow:hidden;}
-.svc:hover{border-color:rgba(46,125,201,0.3) !important;transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.svc:hover{border-color:rgba(239,68,68,0.3) !important;transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3);}
 .svc .num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(255,255,255,0.03);position:absolute;top:0.8rem;right:1.2rem;line-height:1;}
 .svc:hover .num{color:var(--amber-soft);}
 .svc-ico{width:44px;height:44px;background:var(--amber-soft);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:1.3rem;font-size:1.2rem;}
@@ -173,18 +173,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .process-inner{max-width:1200px;margin:0 auto;}
 .process-header{text-align:center;margin-bottom:4rem;}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;}
-.steps::before{content:'';position:absolute;top:40px;left:12.5%;right:12.5%;height:1.5px;background:linear-gradient(90deg,var(--amber),var(--brown),var(--green));opacity:0.4;}
+.steps::before{content:'';position:absolute;top:40px;left:12.5%;right:12.5%;height:1.5px;background:linear-gradient(90deg,var(--amber),var(--green));opacity:0.4;}
 .step{text-align:center;position:relative;z-index:1;}
 .step-dot{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--amber);}
-.step:hover .step-dot{border-color:var(--amber) !important;background:rgba(46,125,201,0.1);box-shadow:0 0 40px var(--amber-glow);}
+.step:hover .step-dot{border-color:var(--amber) !important;background:rgba(239,68,68,0.1);box-shadow:0 0 40px var(--amber-glow);}
 .step h4{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:0.4rem;}
 .step p{font-size:0.82rem;color:var(--gray-dark);max-width:180px;margin:0 auto;line-height:1.5;}
 .proof-sec{padding:5rem 2.5rem;background:var(--dark);}
 .proof-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
 .pcard{border-radius:10px;padding:2rem;}
-.pcard:hover{border-color:rgba(46,125,201,0.2) !important;}
+.pcard:hover{border-color:rgba(239,68,68,0.2) !important;}
 .pcard .qt{font-size:0.95rem;font-weight:300;font-style:italic;color:var(--gray);margin-bottom:1.5rem;line-height:1.75;}
-.pcard .qt::before{content:'\201C';font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);display:block;line-height:1;margin-bottom:0.4rem;text-shadow:0 0 20px rgba(139,94,60,0.4);}
+.pcard .qt::before{content:'\201C';font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);display:block;line-height:1;margin-bottom:0.4rem;text-shadow:0 0 20px rgba(239,68,68,0.3);}
 .pcard .pa{font-family:'Barlow Condensed',sans-serif;font-weight:600;color:var(--white);font-size:0.88rem;text-transform:uppercase;letter-spacing:1px;}
 .pcard .pr{font-size:0.78rem;color:var(--gray-dark);}
 .pricing{padding:7rem 2.5rem;position:relative;content-visibility:auto;contain-intrinsic-size:0 800px;}
@@ -193,9 +193,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .pricing-header{text-align:center;margin-bottom:2rem;}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
 .prc{border-radius:12px;padding:3rem;position:relative;overflow:hidden;}
-.prc.ft{border-color:rgba(46,125,201,0.3) !important;}
+.prc.ft{border-color:rgba(239,68,68,0.3) !important;}
 .prc.ft::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--red));border-radius:12px 12px 0 0;}
-.prc.ao{border-color:rgba(74,124,89,0.2) !important;}
+.prc.ao{border-color:rgba(34,197,94,0.2) !important;}
 .prc.ao::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#3b82f6);border-radius:12px 12px 0 0;}
 .pn{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;margin-bottom:0.5rem;}
 .prc.ft .pn{color:var(--amber);}
@@ -209,7 +209,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .fl li .ck{font-weight:700;flex-shrink:0;}
 .prc.ft .ck{color:var(--amber);}
 .prc.ao .ck{color:var(--green);}
-.bundle{background:linear-gradient(135deg,var(--amber-soft),var(--green-soft));border:1px solid rgba(46,125,201,0.2);border-radius:10px;padding:1.5rem 2rem;margin-top:2rem;text-align:center;}
+.bundle{background:linear-gradient(135deg,var(--amber-soft),var(--green-soft));border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1.5rem 2rem;margin-top:2rem;text-align:center;}
 .bundle-price{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--white);}
 .bundle-price span{font-family:'Barlow',sans-serif;font-size:1rem;color:var(--gray);font-weight:300;}
 .bundle p{font-size:0.88rem;color:var(--gray);margin-top:0.3rem;}
@@ -218,7 +218,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .roi p{font-size:0.85rem;color:var(--gray);line-height:1.7;}
 .roi strong{color:var(--amber);}
 .cta{padding:7rem 2.5rem;text-align:center;background:var(--dark);position:relative;overflow:hidden;}
-.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:55%;height:80%;background:radial-gradient(ellipse,rgba(46,125,201,0.2),transparent 65%);pointer-events:none;filter:blur(30px);}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:55%;height:80%;background:radial-gradient(ellipse,rgba(239,68,68,0.2),transparent 65%);pointer-events:none;filter:blur(30px);}
 .cta-inner{max-width:700px;margin:0 auto;position:relative;z-index:2;}
 .cta .stitle{font-size:clamp(2.5rem,5vw,4rem);margin-bottom:1rem;}
 .cta p{font-size:1.1rem;color:var(--gray);font-weight:300;margin-bottom:2.5rem;max-width:520px;margin-left:auto;margin-right:auto;}
@@ -289,7 +289,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .quiz-result .big-label{font-size:1rem;color:var(--gray);margin-bottom:1.5rem;}
 .quiz-result p{color:var(--gray);font-size:0.95rem;margin-bottom:2rem;line-height:1.7;}
 .quiz-result .btn{width:100%;text-align:center;font-size:1rem;padding:1rem 2rem;}
-.quiz-highlight{background:var(--amber-soft);border:1px solid rgba(46,125,201,0.3);border-radius:8px;padding:1rem;margin-bottom:1.5rem;}
+.quiz-highlight{background:var(--amber-soft);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:1rem;margin-bottom:1.5rem;}
 .quiz-highlight strong{color:var(--amber);}
 .quiz-skip{display:block;text-align:center;margin-top:1.25rem;color:var(--gray);font-size:0.85rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:0.7;transition:opacity 0.2s;}
 .quiz-skip:hover{opacity:1;color:var(--amber);}
@@ -306,8 +306,8 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .cost-calc-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--amber);}
 .cost-calc-val.big{font-size:2.2rem;color:var(--green);}
 .cost-calc-note{font-size:0.75rem;color:var(--gray-dark);margin-top:0.25rem;}
-.cost-warning{background:rgba(46,125,201,0.08);border:1px solid rgba(46,125,201,0.2);border-radius:10px;padding:1.25rem;margin-top:1.5rem;}
-.cost-warning strong{color:#4a97e6;}
+.cost-warning{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1.25rem;margin-top:1.5rem;}
+.cost-warning strong{color:#f87171;}
 .cost-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem;}
 .cost-stat{text-align:center;background:var(--surface);border:1px solid var(--glass-border);border-radius:12px;padding:1.5rem 1rem;}
 .cost-stat .num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--amber);line-height:1;}
@@ -319,7 +319,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:3rem;}
 .why-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:16px;padding:2rem;transition:border-color 0.3s;}
 .why-card:hover{border-color:var(--amber);}
-.why-card .wc-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(46,125,201,0.15);line-height:1;margin-bottom:0.5rem;}
+.why-card .wc-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:rgba(239,68,68,0.15);line-height:1;margin-bottom:0.5rem;}
 .why-card h3{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;}
 .why-card p{color:var(--gray);font-size:0.95rem;line-height:1.7;}
 .why-card .wc-tag{display:inline-block;background:var(--amber-soft);color:var(--amber);font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:20px;margin-bottom:1rem;}
@@ -333,7 +333,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .proof-card .pc-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--amber);line-height:1;}
 .proof-card .pc-label{color:var(--gray-dark);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.75rem;}
 .proof-card .pc-desc{color:var(--gray);font-size:0.92rem;line-height:1.65;}
-.proof-quote{background:linear-gradient(135deg,rgba(46,125,201,0.06),rgba(16,185,129,0.06));border:1px solid rgba(46,125,201,0.2);border-radius:16px;padding:2.5rem;margin-top:3rem;text-align:center;}
+.proof-quote{background:linear-gradient(135deg,rgba(239,68,68,0.06),rgba(16,185,129,0.06));border:1px solid rgba(239,68,68,0.2);border-radius:16px;padding:2.5rem;margin-top:3rem;text-align:center;}
 .proof-quote blockquote{font-size:1.2rem;color:var(--white);line-height:1.7;font-style:italic;margin-bottom:1rem;}
 .proof-quote cite{color:var(--amber);font-style:normal;font-size:0.9rem;font-weight:700;}
 
@@ -449,18 +449,16 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <span>✓ No contracts</span>
 <span>✓ Cancel anytime</span>
 <span>✓ Free strategy call</span>
-<span>✓ One client per MSA</span>
 </div>
 </div>
 <div class="hero-stats">
 <div class="stats-panel">
-<h3>Real Results — Month One</h3>
-<div class="stat-row"><span class="stat-label">Ad Spend</span><span class="stat-val">$2,000</span></div>
-<div class="stat-row"><span class="stat-label">Revenue Generated</span><span class="stat-val wh">$20,000+</span></div>
-<div class="stat-row"><span class="stat-label">New Customers</span><span class="stat-val">3</span></div>
-<div class="stat-row"><span class="stat-label">Inbound Calls</span><span class="stat-val wh">50+</span></div>
-<div class="stat-row"><span class="stat-label">Techs Hired</span><span class="stat-val">1</span></div>
-<p class="stats-note" style="color:var(--amber);font-size:0.75rem;margin-top:1rem;">Verified client result — Month 1. One MSA. One client. Exclusive.</p>
+<h3>Why Diesel Shops Choose Us</h3>
+<div class="stat-row"><span class="stat-label">Live In</span><span class="stat-val">72 hrs</span></div>
+<div class="stat-row"><span class="stat-label">New Customers / Mo</span><span class="stat-val wh">12–30</span></div>
+<div class="stat-row"><span class="stat-label">ROI for Clients</span><span class="stat-val">8–15×</span></div>
+<div class="stat-row"><span class="stat-label">You Touch</span><span class="stat-val wh">Nothing.</span></div>
+<p class="stats-note">One new customer covers the entire monthly cost.</p>
 </div>
 </div>
 </div>
@@ -777,43 +775,10 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="pc-desc">No annual commitment. No cancellation fees. We work month to month because we're confident in the results. If we're not producing, you shouldn't be paying. That's how we'd want to be treated, so that's how we operate.</div>
 </div>
 </div>
-<!-- Real Case Study -->
-<div class="reveal" style="margin-top:3rem;">
-  <div style="background:linear-gradient(135deg,rgba(46,125,201,0.08),rgba(46,125,201,0.03));border:1px solid rgba(46,125,201,0.3);border-radius:20px;padding:3rem;position:relative;overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);"></div>
-    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;">
-      <div style="width:10px;height:10px;background:#4ade80;border-radius:50%;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite;"></div>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#4ade80;">Verified Client Result</span>
-    </div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1.4rem,3vw,2rem);color:var(--white);margin-bottom:0.5rem;line-height:1.1;">MONTH 1 RESULTS — HEAVY-DUTY DIESEL SHOP</div>
-    <div style="color:var(--gray);font-size:0.9rem;margin-bottom:2.5rem;">Class 6–8 repair shop. $2,000 total ad spend. No prior paid advertising.</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1.5rem;margin-bottom:2.5rem;">
-      <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--amber);line-height:1;">$20K+</div>
-        <div style="font-size:0.78rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:0.4rem;">Revenue Generated</div>
-      </div>
-      <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--amber);line-height:1;">3</div>
-        <div style="font-size:0.78rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:0.4rem;">New Fleet Customers</div>
-      </div>
-      <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--amber);line-height:1;">50+</div>
-        <div style="font-size:0.78rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:0.4rem;">Inbound Calls</div>
-      </div>
-      <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--amber);line-height:1;">1</div>
-        <div style="font-size:0.78rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:0.4rem;">New Tech Hired</div>
-      </div>
-      <div style="text-align:center;padding:1.25rem;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--amber);line-height:1;">10×</div>
-        <div style="font-size:0.78rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-top:0.4rem;">Return on Ad Spend</div>
-      </div>
-    </div>
-    <blockquote style="font-size:1.05rem;color:var(--white);font-style:italic;line-height:1.75;border-left:3px solid var(--amber);padding-left:1.25rem;margin:0 0 1rem 0;">"We chased fleet accounts for years through referrals and cold calls. We'd never tried paid ads because we assumed it was for consumer shops. The first month showed us we were wrong — and that we'd left a lot of money on the table."</blockquote>
-    <cite style="color:var(--amber);font-style:normal;font-size:0.85rem;font-weight:700;">— Shop Owner, Class 6–8 Heavy-Duty Diesel Repair</cite>
-  </div>
+<div class="proof-quote reveal">
+<blockquote>"We chased fleet accounts for years through referrals and cold calls. We'd never tried paid ads because we assumed it was for consumer shops. The first month showed us we were wrong — and that we'd left a lot of money on the table."</blockquote>
+<cite>— Shop Owner, Class 6–8 Heavy-Duty Diesel Repair, California</cite>
 </div>
-<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}</style>
 </div>
 </section>
 
@@ -832,11 +797,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
   </div>
   <div class="faq-item">
     <div class="faq-q">Are the leads exclusive to my shop?</div>
-    <div class="faq-a">Yes — 100% exclusive. We only take one client per MSA (Metropolitan Statistical Area). If your market is open, you lock it out for every competitor in your metro. We don't resell leads, share data, or work with more than one shop in your area. Ever.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">What's an MSA and do you serve my area?</div>
-    <div class="faq-a">An MSA (Metropolitan Statistical Area) is the metro region around your city — defined by the U.S. Census Bureau. We work with diesel shops in any MSA across the country. Big metros, mid-size markets, rural corridors — if there are fleets in your area, we can run campaigns there. Book a free 15-minute call and we'll tell you whether your market is currently open.</div>
+    <div class="faq-a">Yes. Every lead is 100% exclusive. We don't resell leads, share data with competitors, or work with more than one shop in the same market.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q">What does it cost?</div>
@@ -884,7 +845,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <div class="stitle">STOP LOSING JOBS AND TECHS TO THE SHOP DOWN THE ROAD.</div>
 <p>15-minute call. We'll show you how many fleet customers are in your area and how to start attracting the next generation of techs.</p>
 <!-- Calendly inline widget -->
-<div class="calendly-inline-widget" data-url="https://calendly.com/torqueleads/30min?hide_gdpr_banner=1&background_color=09090e&text_color=f0f0f5&primary_color=2e7dc9" style="min-width:320px;width:100%;max-width:600px;height:700px;margin:2rem auto 0;border-radius:12px;overflow:hidden;"></div>
+<div class="calendly-inline-widget" data-url="https://calendly.com/torqueleads/30min?hide_gdpr_banner=1&background_color=09090e&text_color=f0f0f5&primary_color=ef4444" style="min-width:320px;width:100%;max-width:600px;height:700px;margin:2rem auto 0;border-radius:12px;overflow:hidden;"></div>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <div class="contact-row" style="margin-top:1.5rem;">
 <a href="mailto:TorqueLeads@outlook.com">TorqueLeads@outlook.com</a>
@@ -1058,113 +1019,7 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 
-<!-- AI Chat Widget -->
-<style>
-#tl-chat-btn{position:fixed;bottom:24px;right:24px;z-index:9000;width:58px;height:58px;background:var(--amber);border-radius:50%;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(46,125,201,0.5);display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;}
-#tl-chat-btn:hover{transform:scale(1.08);box-shadow:0 6px 32px rgba(46,125,201,0.7);}
-#tl-chat-btn svg{width:26px;height:26px;fill:#fff;}
-#tl-chat-panel{position:fixed;bottom:90px;right:24px;z-index:9001;width:340px;max-width:calc(100vw - 48px);background:#09090e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,0.6);display:none;flex-direction:column;overflow:hidden;font-family:'Barlow',sans-serif;}
-#tl-chat-panel.open{display:flex;}
-#tl-chat-header{background:var(--amber);padding:1rem 1.2rem;display:flex;align-items:center;gap:0.75rem;}
-#tl-chat-header .ch-dot{width:8px;height:8px;background:#fff;border-radius:50%;animation:pulse 2s infinite;}
-#tl-chat-header .ch-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1px;color:#040406;}
-#tl-chat-header .ch-sub{font-size:0.75rem;color:rgba(4,4,6,0.7);}
-#tl-chat-msgs{flex:1;padding:1rem;overflow-y:auto;max-height:320px;display:flex;flex-direction:column;gap:0.75rem;}
-.tl-msg{max-width:85%;padding:0.65rem 0.9rem;border-radius:12px;font-size:0.88rem;line-height:1.55;}
-.tl-msg.bot{background:rgba(255,255,255,0.06);color:#f0f0f5;align-self:flex-start;border-bottom-left-radius:4px;}
-.tl-msg.user{background:var(--amber);color:#040406;align-self:flex-end;border-bottom-right-radius:4px;}
-.tl-msg.typing{color:var(--gray);font-style:italic;}
-#tl-chat-input-row{display:flex;gap:0.5rem;padding:0.75rem;border-top:1px solid rgba(255,255,255,0.06);}
-#tl-chat-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem 0.85rem;color:#f0f0f5;font-family:'Barlow',sans-serif;font-size:0.88rem;outline:none;resize:none;}
-#tl-chat-input::placeholder{color:var(--gray);}
-#tl-chat-send{background:var(--amber);border:none;border-radius:8px;padding:0.6rem 0.85rem;cursor:pointer;color:#040406;font-weight:700;font-size:0.85rem;transition:background 0.2s;}
-#tl-chat-send:hover{background:#4a97e6;}
-</style>
-
-<button id="tl-chat-btn" aria-label="Chat with us" onclick="tlToggleChat()">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-</button>
-
-<div id="tl-chat-panel">
-  <div id="tl-chat-header">
-    <div class="ch-dot"></div>
-    <div>
-      <div class="ch-title">TorqueLeads AI</div>
-      <div class="ch-sub">Powered by Google AI Studio</div>
-    </div>
-  </div>
-  <div id="tl-chat-msgs">
-    <div class="tl-msg bot">Hey! I'm the TorqueLeads assistant. Are you looking to bring in more fleet customers, fill a tech position, or both?</div>
-  </div>
-  <div id="tl-chat-input-row">
-    <textarea id="tl-chat-input" rows="1" placeholder="Type a message..." onkeydown="tlChatKey(event)"></textarea>
-    <button id="tl-chat-send" onclick="tlSendMsg()">Send</button>
-  </div>
-</div>
-
-<script>
-(function(){
-  var msgs = [];
-  var open = false;
-
-  window.tlToggleChat = function(){
-    open = !open;
-    document.getElementById('tl-chat-panel').classList.toggle('open', open);
-    if(open) document.getElementById('tl-chat-input').focus();
-  };
-
-  window.tlChatKey = function(e){
-    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); tlSendMsg(); }
-  };
-
-  window.tlSendMsg = function(){
-    var input = document.getElementById('tl-chat-input');
-    var text = input.value.trim();
-    if(!text) return;
-    input.value = '';
-
-    // Add user message
-    msgs.push({role:'user', content: text});
-    tlAddMsg(text, 'user');
-
-    // Show typing
-    var typingEl = tlAddMsg('Thinking...', 'bot typing');
-    document.getElementById('tl-chat-send').disabled = true;
-
-    fetch('/api/chat', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({messages: msgs})
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      typingEl.remove();
-      var reply = data.response || 'Sorry, something went wrong. Try again!';
-      msgs.push({role:'assistant', content: reply});
-      tlAddMsg(reply, 'bot');
-    })
-    .catch(function(){
-      typingEl.remove();
-      tlAddMsg('Hmm, having trouble connecting. You can book directly at calendly.com/torqueleads/30min', 'bot');
-    })
-    .finally(function(){
-      document.getElementById('tl-chat-send').disabled = false;
-    });
-  };
-
-  function tlAddMsg(text, cls){
-    var msgs_el = document.getElementById('tl-chat-msgs');
-    var el = document.createElement('div');
-    el.className = 'tl-msg ' + cls;
-    el.textContent = text;
-    msgs_el.appendChild(el);
-    msgs_el.scrollTop = msgs_el.scrollHeight;
-    return el;
-  }
-})();
-</script>
-
-<!-- GHL Chat Widget (backup CRM) -->
+<!-- GHL Chat Widget -->
 <script 
   src="https://widgets.leadconnectorhq.com/loader.js" 
   data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" 
