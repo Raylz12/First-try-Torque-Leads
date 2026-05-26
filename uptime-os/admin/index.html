@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TorqueLeads OS — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0b1628;color:#f1f5f9;font-family:'Barlow',sans-serif;min-height:100vh;}
+.topbar{background:#0f1e38;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+.tl-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;}
+.tl-logo span:first-child{color:#2563eb;}
+.tl-logo span:last-child{color:#cc1f1f;}
+.topbar-right{display:flex;align-items:center;gap:1rem;}
+.badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(204,31,31,0.15);color:#cc1f1f;border:1px solid rgba(204,31,31,0.3);}
+.back-link{font-size:12px;color:#64748b;text-decoration:none;letter-spacing:0.05em;}
+.back-link:hover{color:#94a3b8;}
+.logout-btn{font-size:11px;font-weight:600;padding:5px 12px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:5px;color:#94a3b8;cursor:pointer;}
+.logout-btn:hover{border-color:#cc1f1f;color:#cc1f1f;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;margin-bottom:4px;}
+.sub{font-size:13px;color:#64748b;margin-bottom:2rem;}
+.card{background:#0f1e38;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#64748b;}
+.btn-primary{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:8px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;transition:background 0.15s;}
+.btn-primary:hover{background:#1d4ed8;}
+.btn-danger{background:rgba(204,31,31,0.1);color:#cc1f1f;border:1px solid rgba(204,31,31,0.3);}
+.btn-danger:hover{background:rgba(204,31,31,0.2);}
+.btn-sm{font-size:11px;padding:5px 10px;}
+.shop-table{width:100%;border-collapse:collapse;}
+.shop-table th{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#475569;padding:0 0.75rem 0.75rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06);}
+.shop-table td{padding:0.9rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:middle;}
+.shop-table tr:last-child td{border-bottom:none;}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;}
+.dot-green{background:#22c55e;}
+.dot-gray{background:#475569;}
+.role-badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;}
+.role-admin{background:rgba(37,99,235,0.15);color:#60a5fa;border:1px solid rgba(37,99,235,0.3);}
+.role-client{background:rgba(71,85,105,0.3);color:#94a3b8;border:1px solid rgba(71,85,105,0.4);}
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal{background:#0f1e38;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:2rem;width:100%;max-width:440px;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;margin-bottom:1.5rem;}
+.field{margin-bottom:1rem;}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#64748b;margin-bottom:5px;}
+.field input,.field select{width:100%;background:#0b1628;border:1.5px solid rgba(255,255,255,0.1);border-radius:6px;padding:9px 12px;color:#f1f5f9;font-size:13px;font-family:'Barlow',sans-serif;outline:none;}
+.field input:focus,.field select:focus{border-color:#2563eb;}
+.field select option{background:#0b1628;}
+.modal-actions{display:flex;gap:0.75rem;margin-top:1.5rem;}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-ok{background:#166534;color:#bbf7d0;border:1px solid rgba(34,197,94,0.3);}
+.toast-err{background:#7f1d1d;color:#fecaca;border:1px solid rgba(239,68,68,0.3);}
+.empty-state{text-align:center;padding:3rem;color:#475569;font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl-logo"><span>TORQUE</span><span>LEADS</span> <span style="color:#64748b;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;">OS ADMIN</span></div>
+  <div class="topbar-right">
+    <span class="badge">Admin</span>
+    <a href="/uptime-os/" class="back-link">Back to Portal</a>
+    <button class="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Shop Accounts</h1>
+  <p class="sub">Create and manage client portal logins. Each shop gets their own login and isolated data.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Active Shops</span>
+      <button class="btn-primary" onclick="showAddModal()">+ Add Shop</button>
+    </div>
+    <div id="shops-container">
+      <div class="empty-state">Loading shops...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Shop Modal -->
+<div class="modal-bg" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">Add Shop</div>
+    <div class="field">
+      <label>Shop Name</label>
+      <input id="new-shopname" type="text" placeholder="Superior Equipment Repair" />
+    </div>
+    <div class="field">
+      <label>Username (client login)</label>
+      <input id="new-username" type="text" placeholder="superiorequip" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Temporary Password</label>
+      <input id="new-password" type="text" placeholder="Uptime2026!" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Role</label>
+      <select id="new-role">
+        <option value="client">Client</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Fullbay API Key (optional)</label>
+      <input id="new-fullbay" type="text" placeholder="Leave blank — they'll set it on first login" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="createShop()">Create Shop</button>
+      <button class="btn-primary btn-danger" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-bg" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Shop</div>
+    <div class="field"><label>Shop Name</label><input id="edit-shopname" type="text" /></div>
+    <div class="field"><label>New Password (leave blank to keep current)</label><input id="edit-password" type="text" autocomplete="off" /></div>
+    <div class="field"><label>Role</label><select id="edit-role"><option value="client">Client</option><option value="admin">Admin</option></select></div>
+    <div class="field"><label>Fullbay API Key</label><input id="edit-fullbay" type="text" /></div>
+    <div class="field"><label>Payroll Provider</label>
+      <select id="edit-payroll-provider">
+        <option value="">None</option>
+        <option value="adp">ADP</option>
+        <option value="gusto">Gusto</option>
+        <option value="paylocity">Paylocity</option>
+        <option value="paychex">Paychex</option>
+        <option value="quickbooks">QuickBooks Payroll</option>
+        <option value="heartland">Heartland</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <input type="hidden" id="edit-username" />
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+      <button class="btn-primary btn-danger" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_SECRET = 'tl-admin-2026-uptime';
+const SESSION_KEY = 'uptime_auth_v1';
+
+// Auth guard
+function checkAuth() {
+  const user = sessionStorage.getItem(SESSION_KEY);
+  if (!user) { window.location.href = '/uptime-os/'; return false; }
+  if (user !== 'rhett' && user !== 'admin') {
+    alert('Admin access required');
+    window.location.href = '/uptime-os/';
+    return false;
+  }
+  return true;
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  window.location.href = '/uptime-os/';
+}
+
+function api(method, path, body) {
+  return fetch(path, {
+    method,
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ADMIN_SECRET}` },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(r => r.json());
+}
+
+function sha256(str) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
+    .then(b => Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join(''));
+}
+
+function toast(msg, ok = true) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (ok ? 'toast-ok' : 'toast-err');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+async function loadShops() {
+  const data = await api('GET', '/api/shops');
+  const container = document.getElementById('shops-container');
+  const shops = data.shops || {};
+  const entries = Object.values(shops);
+  if (!entries.length) { container.innerHTML = '<div class="empty-state">No shops yet. Add one above.</div>'; return; }
+  container.innerHTML = `<table class="shop-table">
+    <thead><tr>
+      <th>Shop</th><th>Username</th><th>Role</th><th>Fullbay</th><th>Payroll</th><th>Created</th><th></th>
+    </tr></thead>
+    <tbody>${entries.map(s => `<tr>
+      <td><strong>${s.shopName}</strong></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#94a3b8">${s.username}</span></td>
+      <td><span class="role-badge ${s.role === 'admin' ? 'role-admin' : 'role-client'}">${s.role}</span></td>
+      <td>${s.fullbayKey ? '<span class="dot dot-green"></span>Connected' : '<span class="dot dot-gray"></span>None'}</td>
+      <td>${s.payrollProvider ? '<span class="dot dot-green"></span>' + s.payrollProvider : '<span class="dot dot-gray"></span>None'}</td>
+      <td style="color:#64748b;font-size:12px">${s.createdAt || ''}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn-primary btn-sm" onclick="editShop('${s.username}')">Edit</button>
+        <button class="btn-primary btn-sm btn-danger" onclick="deleteShop('${s.username}')">Remove</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function showAddModal() { document.getElementById('add-modal').classList.add('show'); }
+function closeModal() {
+  document.getElementById('add-modal').classList.remove('show');
+  document.getElementById('edit-modal').classList.remove('show');
+}
+
+async function createShop() {
+  const shopName = document.getElementById('new-shopname').value.trim();
+  const username = document.getElementById('new-username').value.trim().toLowerCase();
+  const password = document.getElementById('new-password').value.trim();
+  const role = document.getElementById('new-role').value;
+  const fullbayKey = document.getElementById('new-fullbay').value.trim();
+  if (!shopName || !username || !password) { toast('Fill in all required fields', false); return; }
+  const passwordHash = await sha256(password);
+  const res = await api('POST', '/api/shops', { username, passwordHash, shopName, role, fullbayKey });
+  if (res.ok) { toast(`Shop "${shopName}" created`); closeModal(); loadShops(); }
+  else toast(res.error || 'Error creating shop', false);
+}
+
+function editShop(username) {
+  // Load from current table data
+  document.getElementById('edit-username').value = username;
+  document.getElementById('edit-shopname').value = '';
+  document.getElementById('edit-password').value = '';
+  document.getElementById('edit-modal').classList.add('show');
+}
+
+async function saveEdit() {
+  const username = document.getElementById('edit-username').value;
+  const updates = {
+    shopName: document.getElementById('edit-shopname').value.trim(),
+    role: document.getElementById('edit-role').value,
+    fullbayKey: document.getElementById('edit-fullbay').value.trim(),
+    payrollProvider: document.getElementById('edit-payroll-provider').value,
+  };
+  const pw = document.getElementById('edit-password').value.trim();
+  if (pw) updates.passwordHash = await sha256(pw);
+  Object.keys(updates).forEach(k => !updates[k] && delete updates[k]);
+  const res = await api('PUT', `/api/shops?username=${username}`, { username, ...updates });
+  if (res.ok) { toast('Shop updated'); closeModal(); loadShops(); }
+  else toast(res.error || 'Error updating', false);
+}
+
+async function deleteShop(username) {
+  if (!confirm(`Remove "${username}"? This cannot be undone.`)) return;
+  const res = await api('DELETE', `/api/shops?username=${username}`);
+  if (res.ok) { toast('Shop removed'); loadShops(); }
+  else toast(res.error || 'Error', false);
+}
+
+// Init
+if (checkAuth()) loadShops();
+</script>
+</body>
+</html>

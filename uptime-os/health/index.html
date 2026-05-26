@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TorqueLeads OS — Shop Health</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height:100vh;}
+.topbar{background:#0f1e38;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.tl-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;text-decoration:none;}
+.tl-logo span:first-child{color:#2563eb;}
+.tl-logo span:last-child{color:#cc1f1f;}
+.topbar-nav{display:flex;align-items:center;gap:1.5rem;}
+.topbar-nav a{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;text-decoration:none;}
+.topbar-nav a:hover,.topbar-nav a.active{color:#fff;}
+.logout-btn{font-size:11px;font-weight:600;padding:5px 12px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:5px;color:#94a3b8;cursor:pointer;}
+.logout-btn:hover{border-color:#cc1f1f;color:#cc1f1f;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
+.page-header{margin-bottom:2rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.page-header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#0f172a;}
+.page-header p{font-size:14px;color:#64748b;margin-top:4px;}
+/* Score ring */
+.score-section{display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center;background:#0f1e38;border-radius:14px;padding:2rem 2.5rem;margin-bottom:2rem;color:#f1f5f9;}
+.score-ring{position:relative;width:130px;height:130px;flex-shrink:0;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring .score-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-number{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:1px;line-height:1;}
+.score-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#94a3b8;margin-top:2px;}
+.score-info h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;}
+.score-info .grade{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:5px;display:inline-block;margin:6px 0 10px;}
+.grade-great{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.grade-good{background:rgba(37,99,235,0.2);color:#60a5fa;border:1px solid rgba(37,99,235,0.3);}
+.grade-fair{background:rgba(234,179,8,0.2);color:#fbbf24;border:1px solid rgba(234,179,8,0.3);}
+.grade-poor{background:rgba(220,38,38,0.2);color:#f87171;border:1px solid rgba(220,38,38,0.3);}
+.score-info p{font-size:13px;color:#94a3b8;line-height:1.6;}
+/* Metric cards */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:2rem;}
+.metric-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1.3rem 1.5rem;cursor:pointer;transition:all 0.15s;}
+.metric-card:hover{border-color:#2563eb;box-shadow:0 2px 12px rgba(37,99,235,0.1);}
+.metric-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;}
+.metric-name{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#64748b;}
+.metric-score{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;}
+.metric-bar-bg{height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden;}
+.metric-bar{height:100%;border-radius:3px;transition:width 1s ease;}
+.metric-insight{font-size:12px;color:#6b7280;margin-top:0.7rem;line-height:1.5;}
+.metric-insight strong{color:#0f172a;}
+.metric-help-icon{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;background:#f1f5f9;color:#94a3b8;display:flex;align-items:center;justify-content:center;cursor:help;transition:all 0.15s;}
+.metric-help-icon:hover{background:#2563eb;color:#fff;}
+/* Action items */
+.actions-section{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1.5rem;margin-bottom:2rem;}
+.actions-title{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#64748b;margin-bottom:1rem;}
+.action-item{display:flex;align-items:flex-start;gap:0.8rem;padding:0.8rem 0;border-bottom:1px solid #f1f5f9;}
+.action-item:last-child{border-bottom:none;}
+.action-priority{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;}
+.pri-high{background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,0.2);}
+.pri-med{background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,0.2);}
+.pri-low{background:#dbeafe;color:#2563eb;border:1px solid rgba(37,99,235,0.2);}
+.action-text{font-size:13px;color:#374151;line-height:1.5;}
+/* Help drawer */
+.help-drawer{position:fixed;right:0;top:0;bottom:0;width:360px;background:#fff;border-left:1px solid #e5e7eb;box-shadow:-8px 0 40px rgba(0,0,0,0.1);transform:translateX(100%);transition:transform 0.3s ease;z-index:200;display:flex;flex-direction:column;}
+.help-drawer.open{transform:translateX(0);}
+.help-drawer-header{padding:1.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;}
+.help-drawer-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;}
+.help-close{width:30px;height:30px;border-radius:6px;background:#f1f5f9;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.help-body{flex:1;overflow-y:auto;padding:1.5rem;}
+.help-section{margin-bottom:1.5rem;}
+.help-section-title{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#94a3b8;margin-bottom:0.5rem;}
+.help-section p,.help-section li{font-size:13px;color:#374151;line-height:1.7;}
+.help-section ul{padding-left:1.2rem;}
+.help-benchmark{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.8rem 1rem;margin-top:0.75rem;}
+.help-benchmark span{font-family:'JetBrains Mono',monospace;font-size:11px;color:#2563eb;font-weight:700;}
+.no-data{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:3rem;text-align:center;}
+.no-data h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:#0f172a;margin-bottom:0.5rem;}
+.no-data p{font-size:13px;color:#6b7280;margin-bottom:1.5rem;}
+.btn-blue{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;text-decoration:none;display:inline-block;}
+.btn-blue:hover{background:#1d4ed8;}
+@media(max-width:600px){.score-section{grid-template-columns:1fr;text-align:center;}.score-ring{margin:0 auto;}.metrics-grid{grid-template-columns:1fr;}.help-drawer{width:100%;}.topbar-nav{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/uptime-os/" class="tl-logo"><span>TORQUE</span><span>LEADS</span></a>
+  <nav class="topbar-nav">
+    <a href="/uptime-os/">Dashboard</a>
+    <a href="/uptime-os/health/" class="active">Health</a>
+    <a href="/uptime-os/integrations/">Integrations</a>
+    <a href="/uptime-os/admin/" id="admin-link" style="display:none">Admin</a>
+  </nav>
+  <div>
+    <button class="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</div>
+
+<div class="container" id="main-container">
+  <div class="page-header">
+    <div>
+      <h1>Shop Health</h1>
+      <p>Your shop's performance score — updated every time you sync data.</p>
+    </div>
+  </div>
+  <div id="content"></div>
+</div>
+
+<!-- Help Drawer -->
+<div class="help-drawer" id="help-drawer">
+  <div class="help-drawer-header">
+    <div class="help-drawer-title" id="help-title">About This Metric</div>
+    <button class="help-close" onclick="closeHelp()">✕</button>
+  </div>
+  <div class="help-body" id="help-body"></div>
+</div>
+
+<script>
+const SESSION_KEY = 'uptime_auth_v1';
+const user = sessionStorage.getItem(SESSION_KEY);
+if (!user) window.location.href = '/uptime-os/';
+function logout() { sessionStorage.removeItem(SESSION_KEY); window.location.href = '/uptime-os/'; }
+if (user === 'rhett' || user === 'admin') document.getElementById('admin-link').style.display = 'block';
+
+// Help content for each metric
+const HELP = {
+  ar: {
+    title: 'AR Health',
+    what: 'Accounts Receivable Health measures how quickly your customers are paying their bills. A high score means most of your invoiced revenue is collected within 30 days.',
+    why: 'Slow-paying customers are one of the biggest cash flow killers for shops. Money sitting in 60+ day buckets is money you cannot use to pay techs, buy parts, or cover overhead.',
+    benchmark: '80+ is healthy. Best-in-class shops collect 90%+ within 30 days.',
+    actions: ['Call any account over 45 days personally — a phone call recovers 3x more than a statement', 'Set up auto-reminders at 15, 30, and 45 days', 'Require credit cards on file for accounts under 6 months old']
+  },
+  revenue: {
+    title: 'Revenue Trend',
+    what: 'Compares your revenue over the last 30 days to your 90-day average. A score above 70 means you are trending above your own baseline.',
+    why: 'Month-to-month revenue swings are normal. The trend score smooths out noise and shows whether the business is genuinely growing or quietly shrinking.',
+    benchmark: '70+ is on-track. 85+ means you are in a strong growth period.',
+    actions: ['If trending down, check estimate conversion first — are more estimates being declined?', 'Look at which customers decreased spend this month', 'Track if specific techs are producing less hours than prior months']
+  },
+  utilization: {
+    title: 'Tech Utilization',
+    what: 'The percentage of available labor hours that are being billed to customers. If a tech works 40 hours but only 28 are billed, that is 70% utilization.',
+    why: 'Labor is your highest-margin product. Unbilled labor hours are pure lost revenue — the tech is already paid, but the shop gets nothing.',
+    benchmark: '75%+ is good. 85%+ is excellent. Under 60% means scheduling or workflow issues.',
+    actions: ['Identify which techs have lowest utilization — is it skill, scheduling, or parts delays?', 'Track "wait time" on ROs to find where techs go idle', 'Add a service advisor to handle customer communication so techs stay on cars']
+  },
+  estimates: {
+    title: 'Estimate Close Rate',
+    what: 'The percentage of written estimates that are approved and converted into repair orders.',
+    why: 'Every declined estimate is money left on the table. A 10% improvement in close rate on 100 estimates per month could mean 10 extra ROs — often $500-2,000 each.',
+    benchmark: '65%+ is average. 80%+ is excellent. Under 50% means the estimate process needs work.',
+    actions: ['Review declined estimates — was it price, timing, or trust?', 'Train service advisors on presenting work visually (photos, inspection reports)', 'Follow up on every declined estimate at 7 and 30 days']
+  },
+  retention: {
+    title: 'Customer Retention',
+    what: 'The percentage of customers from 12 months ago who have returned this year. High retention means customers trust you and keep coming back.',
+    why: 'Acquiring a new fleet customer costs 5-10x more than keeping an existing one. A shop with high retention spends less on marketing and has more predictable revenue.',
+    benchmark: '70%+ is solid. 85%+ is exceptional. Under 50% means service quality or communication issues.',
+    actions: ['Reach out to customers who have not returned in 6+ months', 'Send quarterly fleet inspection reminders to your top 20 accounts', 'Ask for Google reviews right after a completed repair — happy customers forget to leave reviews']
+  },
+  margin: {
+    title: 'Gross Margin',
+    what: 'The percentage of revenue that remains after subtracting direct costs (parts, labor, sublet). This is the money available to cover overhead and profit.',
+    why: 'Many shops focus on revenue growth without noticing their margin is shrinking. A shop doing $2M at 30% margin earns more than a shop doing $3M at 15% margin.',
+    benchmark: '35-45% is healthy for heavy-duty diesel. Under 30% means pricing or parts cost issues.',
+    actions: ['Audit your labor rate — when did you last raise it?', 'Check parts margin on your top 20 part numbers', 'Review any jobs where actual cost exceeded estimate by more than 20%']
+  }
+};
+
+function openHelp(key) {
+  const h = HELP[key];
+  if (!h) return;
+  document.getElementById('help-title').textContent = h.title;
+  document.getElementById('help-body').innerHTML = `
+    <div class="help-section">
+      <div class="help-section-title">What This Measures</div>
+      <p>${h.what}</p>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">Why It Matters</div>
+      <p>${h.why}</p>
+    </div>
+    <div class="help-section">
+      <div class="help-benchmark"><span>Benchmark: </span>${h.benchmark}</div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">How to Improve It</div>
+      <ul>${h.actions.map(a => `<li>${a}</li>`).join('')}</ul>
+    </div>`;
+  document.getElementById('help-drawer').classList.add('open');
+}
+
+function closeHelp() { document.getElementById('help-drawer').classList.remove('open'); }
+
+function getColor(score) {
+  if (score >= 80) return '#22c55e';
+  if (score >= 65) return '#2563eb';
+  if (score >= 50) return '#f59e0b';
+  return '#ef4444';
+}
+
+function getGrade(score) {
+  if (score >= 80) return { label: 'Strong', cls: 'grade-great' };
+  if (score >= 65) return { label: 'Good', cls: 'grade-good' };
+  if (score >= 50) return { label: 'Fair', cls: 'grade-fair' };
+  return { label: 'Needs Attention', cls: 'grade-poor' };
+}
+
+function computeHealthFromStorage() {
+  // Try to read stored dashboard data
+  try {
+    const raw = localStorage.getItem('uptimeStoredData_v2');
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+
+    const scores = {};
+
+    // AR Health: % of AR that is current (0-30 days)
+    if (data.arSummary) {
+      const ar = data.arSummary;
+      const total = (ar.current||0)+(ar.d30||0)+(ar.d60||0)+(ar.d90||0)+(ar.d90plus||0);
+      scores.ar = total > 0 ? Math.round(((ar.current||0) / total) * 100) : null;
+    }
+
+    // Revenue trend: compare recent to older revenue
+    if (data.snapshots && data.snapshots.length > 1) {
+      const recent = data.snapshots.slice(-3).reduce((s,x) => s + (x.revenue||0), 0) / 3;
+      const older  = data.snapshots.slice(0, 3).reduce((s,x) => s + (x.revenue||0), 0) / 3;
+      scores.revenue = older > 0 ? Math.min(100, Math.round((recent / older) * 70)) : null;
+    }
+
+    // Tech utilization: billed hours / total hours from techs
+    if (data.techs && data.techs.length) {
+      const totalBilled = data.techs.reduce((s,t) => s + (t.hours||0), 0);
+      const totalAvail  = data.techs.length * 160; // ~160 hrs/tech/month
+      scores.utilization = Math.min(100, Math.round((totalBilled / totalAvail) * 100));
+    }
+
+    // Customers: just use count to estimate retention proxy
+    if (data.customers && data.customers.length) {
+      const active = data.customers.filter(c => (c.revenue||0) > 0).length;
+      scores.retention = Math.min(100, Math.round((active / data.customers.length) * 100));
+    }
+
+    // Fallback scores if no data
+    return scores;
+  } catch(e) { return null; }
+}
+
+function renderHealth() {
+  const stored = computeHealthFromStorage();
+  const hasData = stored && Object.keys(stored).length > 0;
+
+  // If no data, show placeholder with demo scores
+  const metrics = [
+    { key: 'ar',          label: 'AR Health',          score: stored?.ar          ?? 74, insight: 'Percentage of outstanding invoices under 30 days. Higher is better.' },
+    { key: 'revenue',     label: 'Revenue Trend',      score: stored?.revenue     ?? 68, insight: 'How current revenue compares to your 90-day average.' },
+    { key: 'utilization', label: 'Tech Utilization',   score: stored?.utilization ?? 71, insight: 'Billed hours as a percentage of available tech hours.' },
+    { key: 'estimates',   label: 'Estimate Close Rate', score: null,               insight: 'Estimates approved vs. written. Connect Fullbay to calculate.' },
+    { key: 'retention',   label: 'Customer Retention', score: stored?.retention   ?? 77, insight: 'Customers who returned compared to prior period.' },
+    { key: 'margin',      label: 'Gross Margin',       score: null,               insight: 'Revenue minus direct costs. Connect Fullbay to calculate.' },
+  ];
+
+  const validScores = metrics.filter(m => m.score !== null).map(m => m.score);
+  const overall = validScores.length ? Math.round(validScores.reduce((a,b) => a+b, 0) / validScores.length) : 72;
+  const color = getColor(overall);
+  const grade = getGrade(overall);
+  const circumference = 2 * Math.PI * 54;
+  const dashOffset = circumference - (overall / 100) * circumference;
+
+  const actions = [];
+  metrics.forEach(m => {
+    if (m.score !== null && m.score < 60) {
+      actions.push({ priority: 'high', text: `${m.label} is at ${m.score}/100. Click the metric card to see how to improve it.` });
+    } else if (m.score !== null && m.score < 75) {
+      actions.push({ priority: 'med', text: `${m.label} (${m.score}/100) has room to improve. Click for specific actions.` });
+    }
+  });
+  if (!hasData) {
+    actions.unshift({ priority: 'high', text: 'Connect Fullbay in Integrations to unlock real-time health data for your shop.' });
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="score-section">
+      <div class="score-ring">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+          <circle cx="65" cy="65" r="54" fill="none" stroke="${color}" stroke-width="10"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"
+            stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
+        </svg>
+        <div class="score-text">
+          <div class="score-number" style="color:${color}">${overall}</div>
+          <div class="score-label">/ 100</div>
+        </div>
+      </div>
+      <div class="score-info">
+        <h2>Shop Health Score</h2>
+        <span class="grade ${grade.cls}">${grade.label}</span>
+        <p>${hasData ? 'Calculated from your live Fullbay data.' : 'Connect Fullbay for live data. Scores below are estimates.'} ${validScores.length} of ${metrics.length} metrics active.</p>
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      ${metrics.map(m => {
+        const s = m.score;
+        const c = s !== null ? getColor(s) : '#e2e8f0';
+        return `<div class="metric-card" onclick="openHelp('${m.key}')">
+          <div class="metric-header">
+            <span class="metric-name">${m.label}</span>
+            <span class="metric-help-icon" title="Learn more">?</span>
+          </div>
+          <div class="metric-score" style="color:${c}">${s !== null ? s : '—'}</div>
+          <div class="metric-bar-bg"><div class="metric-bar" style="width:${s ?? 0}%;background:${c}"></div></div>
+          <div class="metric-insight">${m.insight}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    ${actions.length ? `<div class="actions-section">
+      <div class="actions-title">Recommended Actions</div>
+      ${actions.map(a => `<div class="action-item">
+        <span class="action-priority pri-${a.priority}">${a.priority === 'high' ? 'High' : a.priority === 'med' ? 'Medium' : 'Low'}</span>
+        <div class="action-text">${a.text}</div>
+      </div>`).join('')}
+    </div>` : ''}
+  `;
+}
+
+renderHealth();
+</script>
+</body>
+</html>

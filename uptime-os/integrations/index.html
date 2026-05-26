@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TorqueLeads OS — Integrations</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height:100vh;}
+.topbar{background:#0f1e38;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.tl-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;}
+.tl-logo span:first-child{color:#2563eb;}
+.tl-logo span:last-child{color:#cc1f1f;}
+.topbar-nav{display:flex;align-items:center;gap:1.5rem;}
+.topbar-nav a{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;text-decoration:none;transition:color 0.15s;}
+.topbar-nav a:hover,.topbar-nav a.active{color:#fff;}
+.topbar-right{display:flex;align-items:center;gap:1rem;}
+.logout-btn{font-size:11px;font-weight:600;padding:5px 12px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:5px;color:#94a3b8;cursor:pointer;}
+.logout-btn:hover{border-color:#cc1f1f;color:#cc1f1f;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
+.page-header{margin-bottom:2rem;}
+.page-header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#0f172a;}
+.page-header p{font-size:14px;color:#64748b;margin-top:4px;}
+.section{margin-bottom:2rem;}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#94a3b8;margin-bottom:0.75rem;padding-left:4px;}
+.integrations-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.int-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1.2rem 1.4rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:all 0.15s;}
+.int-card:hover{border-color:#2563eb;box-shadow:0 2px 12px rgba(37,99,235,0.1);}
+.int-card.connected{border-color:rgba(34,197,94,0.4);background:#f0fdf4;}
+.int-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.int-info{flex:1;min-width:0;}
+.int-name{font-weight:700;font-size:14px;color:#0f172a;}
+.int-desc{font-size:11px;color:#6b7280;margin-top:2px;line-height:1.4;}
+.int-status{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.status-connected{background:#dcfce7;color:#16a34a;border:1px solid rgba(34,197,94,0.3);}
+.status-none{background:#f1f5f9;color:#94a3b8;border:1px solid #e2e8f0;}
+.status-soon{background:#fefce8;color:#ca8a04;border:1px solid rgba(234,179,8,0.3);}
+/* Connect Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.modal-bg.show{display:flex;}
+.modal{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:2rem;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.modal-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:#0f172a;}
+.modal-sub{font-size:13px;color:#6b7280;}
+.field{margin-bottom:1rem;}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280;margin-bottom:5px;}
+.field input,.field select{width:100%;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:7px;padding:10px 12px;font-size:14px;color:#0f172a;outline:none;font-family:'Barlow',sans-serif;}
+.field input:focus,.field select:focus{border-color:#2563eb;}
+.help-text{font-size:11px;color:#94a3b8;margin-top:4px;line-height:1.5;}
+.modal-actions{display:flex;gap:0.75rem;margin-top:1.5rem;}
+.btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 18px;border:none;border-radius:6px;cursor:pointer;transition:all 0.15s;}
+.btn-blue{background:#2563eb;color:#fff;}
+.btn-blue:hover{background:#1d4ed8;}
+.btn-ghost{background:transparent;border:1.5px solid #e2e8f0;color:#6b7280;}
+.btn-ghost:hover{border-color:#94a3b8;}
+.btn-red{background:transparent;border:1.5px solid rgba(220,38,38,0.3);color:#dc2626;}
+.btn-red:hover{background:rgba(220,38,38,0.05);}
+.test-result{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 12px;border-radius:6px;margin-top:10px;display:none;}
+.test-ok{background:#dcfce7;color:#16a34a;border:1px solid rgba(34,197,94,0.3);}
+.test-fail{background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,0.3);}
+.test-result.show{display:block;}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-ok{background:#166534;color:#bbf7d0;}
+.toast-err{background:#7f1d1d;color:#fecaca;}
+@media(max-width:600px){.integrations-grid{grid-template-columns:1fr;}.topbar-nav{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tl-logo"><span>TORQUE</span><span>LEADS</span></div>
+  <nav class="topbar-nav">
+    <a href="/uptime-os/">Dashboard</a>
+    <a href="/uptime-os/health/">Health</a>
+    <a href="/uptime-os/integrations/" class="active">Integrations</a>
+    <a href="/uptime-os/admin/" id="admin-link" style="display:none">Admin</a>
+  </nav>
+  <div class="topbar-right">
+    <span id="shop-name" style="font-size:12px;color:#64748b;font-family:'JetBrains Mono',monospace;"></span>
+    <button class="logout-btn" onclick="logout()">Sign out</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <h1>Integrations</h1>
+    <p>Connect your shop management, payroll, and accounting systems. Your data stays synced automatically.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Shop Management</div>
+    <div class="integrations-grid" id="shop-mgmt"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Payroll</div>
+    <div class="integrations-grid" id="payroll"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Accounting</div>
+    <div class="integrations-grid" id="accounting"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Coming Soon</div>
+    <div class="integrations-grid" id="coming-soon"></div>
+  </div>
+</div>
+
+<!-- Connect Modal -->
+<div class="modal-bg" id="connect-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-icon" id="modal-icon">🔗</div>
+      <div><div class="modal-title" id="modal-title">Connect</div><div class="modal-sub" id="modal-sub"></div></div>
+    </div>
+    <div id="modal-fields"></div>
+    <div class="test-result" id="test-result"></div>
+    <div class="modal-actions">
+      <button class="btn btn-blue" onclick="testAndSave()">Connect</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" id="disconnect-btn" onclick="disconnect()" style="display:none">Disconnect</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SESSION_KEY = 'uptime_auth_v1';
+let currentProvider = null;
+let shopConfig = {};
+
+// Auth guard
+const user = sessionStorage.getItem(SESSION_KEY);
+if (!user) window.location.href = '/uptime-os/';
+
+function logout() { sessionStorage.removeItem(SESSION_KEY); window.location.href = '/uptime-os/'; }
+
+// All integrations
+const INTEGRATIONS = {
+  shopMgmt: [
+    { id: 'fullbay', name: 'Fullbay', icon: '🔧', color: '#dbeafe', desc: 'Sync service orders, invoices, AR aging, and tech performance', fields: [{ key: 'apiKey', label: 'API Key', placeholder: 'Your Fullbay API key', help: 'Found in Fullbay → Settings → Integrations → API' }], testFn: 'testFullbay' },
+    { id: 'shopware', name: 'Shop-Ware', icon: '🏪', color: '#ede9fe', desc: 'Service orders, estimates, and customer data', fields: [{ key: 'apiKey', label: 'API Key', placeholder: 'Shop-Ware API key' }], soon: true },
+    { id: 'mitchell1', name: 'Mitchell 1', icon: '🛠', color: '#fce7f3', desc: 'Repair orders and labor tracking', fields: [], soon: true },
+    { id: 'protractor', name: 'Protractor', icon: '📐', color: '#fff7ed', desc: 'Service management and parts ordering', fields: [], soon: true },
+  ],
+  payroll: [
+    { id: 'adp', name: 'ADP', icon: '💼', color: '#fee2e2', desc: 'Employee pay rates, hours, and labor cost analysis', fields: [{ key: 'clientId', label: 'Client ID', placeholder: 'ADP client ID' }, { key: 'clientSecret', label: 'Client Secret', placeholder: 'ADP client secret', type: 'password' }], soon: true, soonNote: 'OAuth setup in progress' },
+    { id: 'gusto', name: 'Gusto', icon: '🌿', color: '#dcfce7', desc: 'Employee wages, hours, and compensation data', fields: [{ key: 'apiKey', label: 'API Key', placeholder: 'Gusto API key' }], soon: true, soonNote: 'Available Q3 2026' },
+    { id: 'paylocity', name: 'Paylocity', icon: '📊', color: '#dbeafe', desc: 'Payroll data and employee insights', fields: [{ key: 'companyId', label: 'Company ID', placeholder: 'Paylocity company ID' }, { key: 'apiKey', label: 'API Key', placeholder: 'API key', type: 'password' }], soon: true },
+    { id: 'paychex', name: 'Paychex', icon: '💰', color: '#fef3c7', desc: 'Employee compensation and tax data', fields: [], soon: true },
+    { id: 'qb-payroll', name: 'QuickBooks Payroll', icon: '📗', color: '#dcfce7', desc: 'Employee pay tied to QBO accounting', fields: [], soon: true },
+    { id: 'heartland', name: 'Heartland', icon: '❤️', color: '#fce7f3', desc: 'Payroll and HR management', fields: [], soon: true },
+  ],
+  accounting: [
+    { id: 'quickbooks', name: 'QuickBooks Online', icon: '📗', color: '#dcfce7', desc: 'P&L, balance sheet, and cash flow data', fields: [{ key: 'realmId', label: 'Company ID (Realm ID)', placeholder: 'QBO company ID' }], soon: true, soonNote: 'OAuth available Q3 2026' },
+    { id: 'xero', name: 'Xero', icon: '💹', color: '#dbeafe', desc: 'Accounting, invoices, and cash flow', fields: [], soon: true },
+  ],
+  comingSoon: [
+    { id: 'fleet', name: 'FleetPlex', icon: '🚛', color: '#f1f5f9', desc: 'Fleet management and preventive maintenance', soon: true },
+    { id: 'samsara', name: 'Samsara', icon: '📡', color: '#f1f5f9', desc: 'Vehicle telematics and fleet tracking', soon: true },
+    { id: 'parttech', name: 'PartsTech', icon: '⚙️', color: '#f1f5f9', desc: 'Parts ordering and pricing data', soon: true },
+  ]
+};
+
+function loadConnectedState() {
+  try {
+    const stored = localStorage.getItem(`tlos_integrations_${user}`) || '{}';
+    return JSON.parse(stored);
+  } catch(e) { return {}; }
+}
+
+function saveConnectedState(state) {
+  try { localStorage.setItem(`tlos_integrations_${user}`, JSON.stringify(state)); } catch(e) {}
+}
+
+function renderGrid(containerId, items, connected) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = items.map(p => {
+    const isConnected = !!connected[p.id];
+    const statusLabel = p.soon ? 'Coming Soon' : (isConnected ? 'Connected' : 'Not Connected');
+    const statusClass = p.soon ? 'status-soon' : (isConnected ? 'status-connected' : 'status-none');
+    return `<div class="int-card ${isConnected ? 'connected' : ''}" onclick="${p.soon ? '' : `openModal('${p.id}')`}" style="${p.soon ? 'cursor:default;opacity:0.6' : ''}">
+      <div class="int-icon" style="background:${p.color}">${p.icon}</div>
+      <div class="int-info">
+        <div class="int-name">${p.name}</div>
+        <div class="int-desc">${p.desc}</div>
+      </div>
+      <span class="int-status ${statusClass}">${statusLabel}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  const connected = loadConnectedState();
+  renderGrid('shop-mgmt', INTEGRATIONS.shopMgmt, connected);
+  renderGrid('payroll', INTEGRATIONS.payroll, connected);
+  renderGrid('accounting', INTEGRATIONS.accounting, connected);
+  renderGrid('coming-soon', INTEGRATIONS.comingSoon, connected);
+}
+
+function findProvider(id) {
+  const all = [...INTEGRATIONS.shopMgmt, ...INTEGRATIONS.payroll, ...INTEGRATIONS.accounting, ...INTEGRATIONS.comingSoon];
+  return all.find(p => p.id === id);
+}
+
+function openModal(id) {
+  const p = findProvider(id);
+  if (!p || p.soon) return;
+  currentProvider = p;
+  const connected = loadConnectedState();
+  const current = connected[id] || {};
+
+  document.getElementById('modal-icon').textContent = p.icon;
+  document.getElementById('modal-icon').style.background = p.color;
+  document.getElementById('modal-title').textContent = p.name;
+  document.getElementById('modal-sub').textContent = p.desc;
+  document.getElementById('test-result').className = 'test-result';
+
+  document.getElementById('modal-fields').innerHTML = (p.fields || []).map(f => `
+    <div class="field">
+      <label>${f.label}</label>
+      <input id="field-${f.key}" type="${f.type || 'text'}" placeholder="${f.placeholder || ''}" value="${current[f.key] ? (f.type === 'password' ? '' : current[f.key]) : ''}" />
+      ${f.help ? `<div class="help-text">${f.help}</div>` : ''}
+    </div>`).join('');
+
+  const disconnectBtn = document.getElementById('disconnect-btn');
+  disconnectBtn.style.display = connected[id] ? 'block' : 'none';
+
+  document.getElementById('connect-modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('connect-modal').classList.remove('show');
+  currentProvider = null;
+}
+
+async function testAndSave() {
+  if (!currentProvider) return;
+  const fields = currentProvider.fields || [];
+  const values = {};
+  for (const f of fields) {
+    values[f.key] = document.getElementById(`field-${f.key}`)?.value?.trim() || '';
+  }
+
+  // Test connection for Fullbay
+  if (currentProvider.id === 'fullbay' && values.apiKey) {
+    const resultEl = document.getElementById('test-result');
+    resultEl.textContent = 'Testing connection...';
+    resultEl.className = 'test-result show';
+    try {
+      const r = await fetch('/api/fullbay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getStatus', key: values.apiKey })
+      });
+      const d = await r.json();
+      if (d.error) { resultEl.textContent = 'Connection failed: ' + d.error; resultEl.className = 'test-result show test-fail'; return; }
+      resultEl.textContent = 'Connection successful!'; resultEl.className = 'test-result show test-ok';
+    } catch(e) { resultEl.textContent = 'Connection failed: ' + e.message; resultEl.className = 'test-result show test-fail'; return; }
+  }
+
+  // Save to localStorage (keyed by user)
+  const connected = loadConnectedState();
+  connected[currentProvider.id] = { ...values, connectedAt: new Date().toISOString() };
+  saveConnectedState(connected);
+
+  // Also save fullbay key to legacy key for proxy
+  if (currentProvider.id === 'fullbay' && values.apiKey) {
+    try { localStorage.setItem('uptimeFullbayKey', values.apiKey); } catch(e) {}
+  }
+
+  toast(`${currentProvider.name} connected`);
+  closeModal();
+  renderAll();
+}
+
+function disconnect() {
+  if (!currentProvider) return;
+  const connected = loadConnectedState();
+  delete connected[currentProvider.id];
+  saveConnectedState(connected);
+  if (currentProvider.id === 'fullbay') try { localStorage.removeItem('uptimeFullbayKey'); } catch(e) {}
+  toast(`${currentProvider.name} disconnected`);
+  closeModal();
+  renderAll();
+}
+
+function toast(msg, ok = true) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (ok ? 'toast-ok' : 'toast-err');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Init
+document.getElementById('shop-name').textContent = user;
+const role = sessionStorage.getItem('tlos_role');
+if (role === 'admin' || user === 'rhett' || user === 'admin') {
+  document.getElementById('admin-link').style.display = 'block';
+}
+renderAll();
+</script>
+</body>
+</html>

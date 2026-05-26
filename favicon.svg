@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="5" fill="#040406"/>
+  <!-- amber accent bar -->
+  <rect x="4" y="4" width="4" height="24" rx="1.5" fill="#f59e0b"/>
+  <!-- T letter -->
+  <rect x="11" y="7" width="12" height="3.5" rx="1" fill="#f0f0f5"/>
+  <rect x="15.5" y="10.5" width="3" height="8" rx="1" fill="#f0f0f5"/>
+  <!-- L letter -->
+  <rect x="11" y="21.5" width="12" height="3.5" rx="1" fill="#f0f0f5"/>
+  <rect x="11" y="21.5" width="3" height="3.5" rx="1" fill="#f0f0f5"/>
+</svg>
