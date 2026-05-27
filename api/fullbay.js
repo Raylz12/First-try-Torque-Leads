@@ -10,15 +10,26 @@ import { createHash } from 'crypto';
 
 const BASE = 'https://app.fullbay.com/services';
 
-// Use cached env var — eliminates ipify.org round-trip that causes timeouts
-const SERVER_IP = process.env.FULLBAY_SERVER_IP || '32.196.231.106';
+const FALLBACK_IP = process.env.FULLBAY_SERVER_IP || '32.196.231.106';
+
+// Always fetch real outbound IP — Vercel IPs rotate between invocations.
+// 3s hard timeout so we never hang the whole function on ipify.
+async function getServerIp() {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json',
+      { signal: AbortSignal.timeout(3000) });
+    const { ip } = await res.json();
+    if (ip) return ip;
+  } catch(e) { /* fall through */ }
+  return FALLBACK_IP;
+}
 
 function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function makeToken(key) {
-  return createHash('sha1').update(key + today() + SERVER_IP).digest('hex');
+function makeToken(key, serverIp) {
+  return createHash('sha1').update(key + today() + serverIp).digest('hex');
 }
 
 function daysAgo(n) {
@@ -38,8 +49,8 @@ function chunkDates(startDate, endDate) {
   return chunks;
 }
 
-async function callFullbay(phpFile, key, extraParams = {}) {
-  const token = makeToken(key);
+async function callFullbay(phpFile, key, serverIp, extraParams = {}) {
+  const token = makeToken(key, serverIp);
   const params = new URLSearchParams({ key, token, ...extraParams });
   const url = `${BASE}/${phpFile}?${params}`;
   const res = await fetch(url, {
@@ -52,11 +63,11 @@ async function callFullbay(phpFile, key, extraParams = {}) {
   catch(e) { throw new Error('Non-JSON response: ' + text.slice(0, 200)); }
 }
 
-async function fetchRange(phpFile, key, startDate, endDate, extra = {}) {
+async function fetchRange(phpFile, key, serverIp, startDate, endDate, extra = {}) {
   const chunks = chunkDates(startDate, endDate);
   const all = [];
   for (const [s, e] of chunks) {
-    const data = await callFullbay(phpFile, key, { startDate: s, endDate: e, ...extra });
+    const data = await callFullbay(phpFile, key, serverIp, { startDate: s, endDate: e, ...extra });
     if (data.status === 'FAIL') throw new Error(data.message || 'Fullbay API error');
     if (data.resultSet) all.push(...data.resultSet);
   }
@@ -95,6 +106,9 @@ export default async function handler(req, res) {
 
   if (!key) return res.status(400).json({ error: 'key required' });
 
+  // Fetch real server IP once per invocation (Vercel IPs rotate)
+  const serverIp = await getServerIp();
+
   // Default: last 30 days (manageable, ~5 chunks)
   const defaultEnd   = today();
   const defaultStart = daysAgo(30);
@@ -104,7 +118,7 @@ export default async function handler(req, res) {
   try {
     if (action === 'proxy') {
       // Forward app's request, regenerating token server-side
-      const data = await fetchRange(phpFile, key, start, end, extra);
+      const data = await fetchRange(phpFile, key, serverIp, start, end, extra);
       return res.json(data);
     }
 
@@ -112,38 +126,38 @@ export default async function handler(req, res) {
       case 'getStatus': {
         // Use a known-small date range to avoid timeout
         const testDate = daysAgo(400); // ~1 year ago, small result set
-        const d = await callFullbay('getInvoices.php', key, { startDate: testDate, endDate: testDate });
+        const d = await callFullbay('getInvoices.php', key, serverIp, { startDate: testDate, endDate: testDate });
         if (d.status === 'FAIL') return res.json({ ok: false, error: d.message });
-        return res.json({ ok: true, serverIp: SERVER_IP, message: 'Connected' });
+        return res.json({ ok: true, serverIp: serverIp, message: 'Connected' });
       }
 
       case 'getInvoices':
-        return res.json(await fetchRange('getInvoices.php', key, start, end, extra));
+        return res.json(await fetchRange('getInvoices.php', key, serverIp, start, end, extra));
       case 'getPayments':
-        return res.json(await fetchRange('getCustomerPayments.php', key, start, end, extra));
+        return res.json(await fetchRange('getCustomerPayments.php', key, serverIp, start, end, extra));
       case 'getAdjustments':
-        return res.json(await fetchRange('getAdjustments.php', key, start, end, extra));
+        return res.json(await fetchRange('getAdjustments.php', key, serverIp, start, end, extra));
       case 'getCounterSales':
-        return res.json(await fetchRange('getCounterSales.php', key, start, end, extra));
+        return res.json(await fetchRange('getCounterSales.php', key, serverIp, start, end, extra));
       case 'getCustomerCredits':
-        return res.json(await fetchRange('getCustomerCredits.php', key, start, end, extra));
+        return res.json(await fetchRange('getCustomerCredits.php', key, serverIp, start, end, extra));
       case 'getVendorBills':
-        return res.json(await fetchRange('getVendorBills.php', key, start, end, extra));
+        return res.json(await fetchRange('getVendorBills.php', key, serverIp, start, end, extra));
       case 'getVendorCredits':
-        return res.json(await fetchRange('getVendorCredits.php', key, start, end, extra));
+        return res.json(await fetchRange('getVendorCredits.php', key, serverIp, start, end, extra));
 
       case 'fullSync': {
         // Pull 30 days of invoices + payments in parallel
         const syncStart = daysAgo(30);
         const [invoices, payments] = await Promise.all([
-          fetchRange('getInvoices.php', key, syncStart, defaultEnd),
-          fetchRange('getCustomerPayments.php', key, syncStart, defaultEnd),
+          fetchRange('getInvoices.php', key, serverIp, syncStart, defaultEnd),
+          fetchRange('getCustomerPayments.php', key, serverIp, syncStart, defaultEnd),
         ]);
         return res.json({
           ok: true,
           invoices: invoices.resultSet,
           payments: payments.resultSet,
-          serverIp: SERVER_IP,
+          serverIp: serverIp,
         });
       }
 
