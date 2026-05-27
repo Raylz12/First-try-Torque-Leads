@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TorqueLeads OS — Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#0b1628;color:#f1f5f9;font-family:'Barlow',sans-serif;min-height:100vh;}
@@ -55,11 +55,21 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;margin-
 .toast-err{background:#7f1d1d;color:#fecaca;border:1px solid rgba(239,68,68,0.3);}
 .empty-state{text-align:center;padding:3rem;color:#475569;font-size:13px;}
 </style>
+<style id="tl-site-fonts">
+body{font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
+.tl-logo{font-family:'Bebas Neue',sans-serif!important;font-size:1.5rem!important;letter-spacing:4px!important;}
+.tl-logo .tq{color:#2563eb;}
+.tl-logo .tl{color:#cc1f1f;}
+.topbar-nav a,.tl-nav-item a{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2.5px!important;font-weight:700!important;}
+h1,h2,.page-title{font-family:'Bebas Neue',sans-serif!important;letter-spacing:3px!important;}
+.section-label,.card-title,.tl-lbl,.tl-label,.metric-name,.int-status,.role-badge,.badge{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;}
+.btn,.btn-primary,.tl-btn,.tl-ob-btn,.logout-btn{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;font-weight:700!important;}
+</style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="tl-logo"><span>TORQUE</span><span>LEADS</span> <span style="color:#64748b;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;">OS ADMIN</span></div>
+  <div class="tl-logo"><span class="tq">TORQUE</span><span class="tl">LEADS</span> <span style="color:#64748b;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;">OS ADMIN</span></div>
   <div class="topbar-right">
     <span class="badge">Admin</span>
     <a href="/uptime-os/" class="back-link">Back to Portal</a>

@@ -54,86 +54,106 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style id="tl-auth-styles">
-body{margin:0;padding:0;background:#0b1628;}
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+body{margin:0;padding:0;background:#0b1628;font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
 #tl-gate{
   position:fixed;top:0;left:0;width:100%;height:100%;
-  background:#0b1628;
+  background:linear-gradient(135deg,rgba(4,4,6,0.98) 30%,rgba(11,22,40,0.95) 100%);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Barlow','Helvetica Neue',Arial,sans-serif;
-  z-index:99999;
+  font-family:'Barlow',sans-serif;z-index:99999;
 }
 #tl-gate.gone{display:none;}
 .tl-card{
-  width:380px;max-width:calc(100vw - 2rem);
-  background:#ffffff;border-radius:12px;
-  padding:44px 40px;
-  box-shadow:0 24px 64px rgba(0,0,0,0.5);
+  width:420px;max-width:calc(100vw - 2rem);
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px;padding:48px 44px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.07);
+  backdrop-filter:blur(20px);
 }
 .tl-brand{
-  font-size:11px;font-weight:700;letter-spacing:0.16em;
-  text-transform:uppercase;color:#64748b;margin-bottom:32px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.9rem;letter-spacing:4px;
+  margin-bottom:2rem;display:flex;align-items:center;gap:0;
 }
-.tl-brand b{color:#2563eb;font-weight:700;}
-.tl-brand s{color:#cc1f1f;text-decoration:none;font-style:normal;}
-.tl-heading{font-size:26px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.2;}
-.tl-sub{font-size:13px;color:#64748b;margin-bottom:32px;}
+.tl-brand .tq{color:#2563eb;}
+.tl-brand .tl{color:#cc1f1f;}
+.tl-brand .os{
+  font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;
+  font-weight:700;letter-spacing:4px;color:rgba(255,255,255,0.4);
+  margin-left:10px;text-transform:uppercase;align-self:flex-end;margin-bottom:3px;
+}
+.tl-heading{
+  font-family:'Bebas Neue',sans-serif;font-size:2.4rem;
+  letter-spacing:3px;color:#fff;margin-bottom:6px;line-height:1;
+}
+.tl-sub{
+  font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;
+  font-weight:600;letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:36px;
+}
 .tl-label{
-  display:block;font-size:9px;font-weight:700;
-  letter-spacing:0.12em;text-transform:uppercase;
-  color:#94a3b8;margin-bottom:6px;
+  display:block;font-family:'Barlow Condensed',sans-serif;
+  font-size:0.7rem;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:7px;
 }
 .tl-input{
   display:block;width:100%;box-sizing:border-box;
-  background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;
-  padding:12px 14px;font-size:15px;color:#0f172a;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);border-radius:4px;
+  padding:13px 16px;font-size:15px;color:#fff;
   outline:none;margin-bottom:16px;
-  font-family:'Barlow','Helvetica Neue',Arial,sans-serif;
-  transition:border-color 0.15s,background 0.15s;
+  font-family:'Barlow',sans-serif;
+  transition:border-color 0.2s,background 0.2s;
 }
-.tl-input:focus{border-color:#2563eb;background:#fff;}
+.tl-input::placeholder{color:rgba(255,255,255,0.25);}
+.tl-input:focus{border-color:#2563eb;background:rgba(37,99,235,0.08);}
 .tl-btn{
-  display:block;width:100%;padding:14px;
-  background:#2563eb;color:#fff;border:none;border-radius:8px;
-  font-size:15px;font-weight:700;cursor:pointer;
-  letter-spacing:0.04em;
-  font-family:'Barlow Condensed','Barlow','Helvetica Neue',Arial,sans-serif;
-  transition:background 0.15s;margin-top:4px;
+  display:block;width:100%;padding:14px;margin-top:6px;
+  background:#cc1f1f;color:#fff;border:none;border-radius:4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  cursor:pointer;transition:background 0.2s,transform 0.15s;
+  touch-action:manipulation;
 }
-.tl-btn:hover{background:#1d4ed8;}
-.tl-btn:disabled{background:#94a3b8;cursor:not-allowed;}
+.tl-btn:hover{background:#e02020;transform:translateY(-1px);}
+.tl-btn:disabled{background:#475569;cursor:not-allowed;transform:none;}
 .tl-error{
-  font-size:12px;color:#dc2626;text-align:center;
-  margin-top:14px;display:none;
-  font-family:'JetBrains Mono',monospace;
+  font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;
+  font-weight:600;letter-spacing:1px;
+  color:#f87171;text-align:center;margin-top:14px;display:none;
 }
 .tl-error.show{display:block;}
 </style>
 <style id="tl-nav-styles">
 #tl-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;height:54px;
-  background:#0f1e38;border-top:1px solid rgba(255,255,255,0.08);
+  display:none;position:fixed;bottom:0;left:0;right:0;height:56px;
+  background:rgba(4,4,6,0.95);backdrop-filter:blur(40px);
+  border-top:1px solid rgba(255,255,255,0.08);
   align-items:center;justify-content:center;gap:0;z-index:500;
 }
 .tl-ni{
   flex:1;max-width:130px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:3px;
-  padding:6px 4px;text-decoration:none;color:#64748b;
-  transition:color 0.15s;cursor:pointer;border:none;background:transparent;
+  padding:6px 4px;text-decoration:none;color:rgba(255,255,255,0.4);
+  transition:color 0.2s;cursor:pointer;border:none;background:transparent;
   font-family:inherit;
 }
-.tl-ni:hover{color:#fff;}
-.tl-ni.active{color:#fff;}
-.tl-ni svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;}
-.tl-ni span{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
-.tl-nsep{width:1px;height:26px;background:rgba(255,255,255,0.08);flex-shrink:0;}
+.tl-ni:hover,.tl-ni.active{color:#fff;}
+.tl-ni svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;}
+.tl-ni span{
+  font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;
+  font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
+.tl-nsep{width:1px;height:26px;background:rgba(255,255,255,0.06);flex-shrink:0;}
 </style>
 </head>
 <body>
 <div id="tl-gate">
   <div class="tl-card">
-    <div class="tl-brand"><b>TORQUE</b><s>LEADS</s>&nbsp;OS</div>
-    <div class="tl-heading">Welcome back</div>
-    <div class="tl-sub">Sign in to your client portal</div>
+    <div class="tl-brand"><span class="tq">TORQUE</span><span class="tl">LEADS</span><span class="os">OS</span></div>
+    <div class="tl-heading">WELCOME BACK</div>
+    <div class="tl-sub">Client Portal</div>
     <label class="tl-label" for="tl-u">Username</label>
     <input id="tl-u" class="tl-input" type="text" placeholder="your username" autocomplete="username" spellcheck="false" />
     <label class="tl-label" for="tl-p">Password</label>
