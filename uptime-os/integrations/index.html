@@ -69,17 +69,14 @@ body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height
 <style id="tl-site-fonts">
 body{font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
 .tl-logo{font-family:'Bebas Neue',sans-serif!important;font-size:1.5rem!important;letter-spacing:4px!important;}
-.tl-logo .tq{color:#2563eb;}
-.tl-logo .tl{color:#cc1f1f;}
-
+.tl-logo .tq{color:#2563eb;}.tl-logo .tl{color:#cc1f1f;}
 h1,h2,.page-title{font-family:'Bebas Neue',sans-serif!important;letter-spacing:3px!important;}
 .section-label,.card-title,.tl-lbl,.tl-label,.metric-name,.int-status,.role-badge,.badge{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;}
-.btn,.btn-primary,.tl-btn,.tl-ob-btn,
+.btn,.btn-primary,.tl-btn,.tl-ob-btn{font-family:'Barlow Condensed',sans-serif!important;}
 </style>
 
 
 <style id="tl-nav-float">
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap');
 #tl-fab{
   position:fixed;bottom:18px;right:18px;z-index:9000;
 }
@@ -175,7 +172,6 @@ let shopConfig = {};
 const user = sessionStorage.getItem(SESSION_KEY);
 if (!user) window.location.href = '/uptime-os/';
 
-function logout() { sessionStorage.removeItem(SESSION_KEY); window.location.href = '/uptime-os/'; }
 
 // All integrations
 const INTEGRATIONS = {

@@ -58,17 +58,14 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;margin-
 <style id="tl-site-fonts">
 body{font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
 .tl-logo{font-family:'Bebas Neue',sans-serif!important;font-size:1.5rem!important;letter-spacing:4px!important;}
-.tl-logo .tq{color:#2563eb;}
-.tl-logo .tl{color:#cc1f1f;}
-
+.tl-logo .tq{color:#2563eb;}.tl-logo .tl{color:#cc1f1f;}
 h1,h2,.page-title{font-family:'Bebas Neue',sans-serif!important;letter-spacing:3px!important;}
 .section-label,.card-title,.tl-lbl,.tl-label,.metric-name,.int-status,.role-badge,.badge{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;}
-.btn,.btn-primary,.tl-btn,.tl-ob-btn,
+.btn,.btn-primary,.tl-btn,.tl-ob-btn{font-family:'Barlow Condensed',sans-serif!important;}
 </style>
 
 
 <style id="tl-nav-float">
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap');
 #tl-fab{
   position:fixed;bottom:18px;right:18px;z-index:9000;
 }
@@ -195,9 +192,7 @@ const SESSION_KEY = 'uptime_auth_v1';
 // Auth guard
 function checkAuth() {
   const user = sessionStorage.getItem(SESSION_KEY);
-  if (!user) { window.location.href = '/uptime-os/'; return false; }
-  if (user !== 'rhett' && user !== 'admin') {
-    alert('Admin access required');
+  if (!user || (user !== 'rhett' && user !== 'admin')) {
     window.location.href = '/uptime-os/';
     return false;
   }
@@ -229,6 +224,8 @@ function toast(msg, ok = true) {
   setTimeout(() => el.classList.remove('show'), 3000);
 }
 
+let _shopsCache = {};
+
 async function loadShops() {
   const container = document.getElementById('shops-container');
   container.innerHTML = '<div class="empty-state">Loading...</div>';
@@ -239,6 +236,7 @@ async function loadShops() {
     return;
   }
   const shops = data.shops || {};
+  _shopsCache = shops;
   const entries = Object.values(shops);
   if (!entries.length) { container.innerHTML = '<div class="empty-state">No shops yet. Add one above.</div>'; return; }
   container.innerHTML = `<table class="shop-table">
@@ -280,10 +278,13 @@ async function createShop() {
 }
 
 function editShop(username) {
-  // Load from current table data
+  const s = _shopsCache[username] || {};
   document.getElementById('edit-username').value = username;
-  document.getElementById('edit-shopname').value = '';
+  document.getElementById('edit-shopname').value = s.shopName || '';
   document.getElementById('edit-password').value = '';
+  document.getElementById('edit-role').value = s.role || 'client';
+  document.getElementById('edit-fullbay').value = (s.fullbayKey && s.fullbayKey !== '••••') ? s.fullbayKey : '';
+  document.getElementById('edit-payroll-provider').value = s.payrollProvider || '';
   document.getElementById('edit-modal').classList.add('show');
 }
 
