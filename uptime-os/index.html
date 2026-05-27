@@ -195,18 +195,12 @@ body{margin:0;padding:0;font-family:'Barlow',sans-serif;-webkit-font-smoothing:a
   }
 
   function showNav(user){
-    var nav=document.getElementById('tl-nav');
-    if(nav) nav.style.display='flex';
+    // #tl-nav removed — navigation handled by React sidebar + FAB
     if(user==='rhett'||user==='admin'){
       var ab=document.getElementById('tl-admin-btn'), as_=document.getElementById('tl-admin-sep');
       if(ab) ab.style.display='flex';
       if(as_) as_.style.display='block';
     }
-    var so=document.getElementById('tl-signout');
-    if(so) so.onclick=function(){
-      try{sessionStorage.removeItem(K);}catch(e){}
-      window.location.href='/uptime-os/?t='+Date.now();
-    };
     window.__TL_Logout=function(){
       try{sessionStorage.removeItem(K);}catch(e){}
       window.location.href='/uptime-os/?t='+Date.now();
@@ -324,9 +318,7 @@ window.addEventListener('load', function() {
   var user = '';
   try { user = sessionStorage.getItem('uptime_auth_v1') || ''; } catch(e) {}
   if (!user) return;
-  // Show nav bar
-  var nav = document.getElementById('tl-nav');
-  if (nav) nav.style.display = 'flex';
+  // #tl-nav removed — nav handled by React sidebar + FAB
   // Clear body bg in case unlock ran before nav was in DOM
   document.body.style.background = '';
   // ── Seed Fullbay localStorage config so AnvilFullbay.call() can reach our proxy ──
