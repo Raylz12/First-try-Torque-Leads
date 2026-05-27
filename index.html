@@ -192,6 +192,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .pricing-inner{max-width:1000px;margin:0 auto;}
 .pricing-header{text-align:center;margin-bottom:2rem;}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
+.pgrid-3{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:900px){.pgrid-3{grid-template-columns:1fr;}}
+.pa-mo{font-size:1rem;font-weight:400;color:var(--gray-dark);margin-left:2px;}
+.prc-badge{
+  display:inline-block;background:var(--red);color:#fff;
+  font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:20px;
+  margin-bottom:0.75rem;
+}
+.btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+.btn-outline:hover{background:var(--blue);color:#fff;}
 .prc{border-radius:12px;padding:3rem;position:relative;overflow:hidden;}
 .prc.ft{border-color:rgba(46,125,201,0.3) !important;}
 .prc.ft::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--red));border-radius:12px 12px 0 0;}
@@ -659,50 +670,61 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 <section class="pricing" id="pricing">
 <div class="pricing-inner">
 <div class="pricing-header reveal">
-<div class="stag">What You Get</div>
-<div class="stitle">CHOOSE YOUR PACKAGE.</div>
-<p>Pricing is custom to your shop book a call and we'll build the right package around your market and goals.</p>
+<div class="stag">Pricing</div>
+<div class="stitle">THREE TIERS. ONE PLATFORM.</div>
+<p>Every package runs on the same platform. Pick the level that matches where your shop is right now.</p>
 </div>
-<div class="pgrid reveal">
-<div class="prc gc ft">
-<div class="pn">Full Throttle Customers</div>
-<div class="pa" style="font-size:2rem;padding:0.8rem 0;letter-spacing:1px;">Custom Pricing</div>
+<div class="pgrid pgrid-3 reveal">
+
+<div class="prc gc">
+<div class="pn">Starter</div>
+<div class="pa">$500<span class="pa-mo">/mo</span></div>
 <p class="psub">+ ad spend paid directly to Meta</p>
 <ul class="fl">
 <li><span class="ck">&#10003;</span> Complete Meta ad management</li>
-<li><span class="ck">&#10003;</span> 4&#8211;6 custom ad creatives/month</li>
-<li><span class="ck">&#10003;</span> 30 social media posts (FB + IG)</li>
-<li><span class="ck">&#10003;</span> Fleet lead list for your area</li>
+<li><span class="ck">&#10003;</span> 4 custom ad creatives per month</li>
+<li><span class="ck">&#10003;</span> Fleet lead targeting for your market</li>
 <li><span class="ck">&#10003;</span> Google Business optimization</li>
 <li><span class="ck">&#10003;</span> Monthly performance report</li>
-<li><span class="ck">&#10003;</span> 72-hour setup &#183; Cancel anytime</li>
+<li><span class="ck">&#10003;</span> 72-hour setup. Cancel anytime.</li>
 </ul>
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn" style="width:100%;text-align:center;">Book a Call for Pricing</a>
+<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Starter',content_category:'diesel_lead'});}" class="btn btn-outline" style="width:100%;text-align:center;">Get Started</a>
 </div>
-<div class="prc gc ao">
-<div class="pn">Crew Builder &#8212; Recruiting</div>
-<div class="pa" style="font-size:2rem;padding:0.8rem 0;letter-spacing:1px;">Custom Pricing</div>
-<p class="psub">+ recruiting ad spend paid to Meta</p>
+
+<div class="prc gc ft">
+<div class="prc-badge">Most Popular</div>
+<div class="pn">Pro</div>
+<div class="pa">$800<span class="pa-mo">/mo</span></div>
+<p class="psub">Everything in Starter, plus:</p>
 <ul class="fl">
-<li><span class="ck">&#10003;</span> Recruiting ads on IG, FB &amp; TikTok</li>
-<li><span class="ck">&#10003;</span> Shop culture content</li>
-<li><span class="ck">&#10003;</span> Trade school &amp; tech program targeting</li>
-<li><span class="ck">&#10003;</span> Application funnel &#8212; techs apply direct</li>
-<li><span class="ck">&#10003;</span> 10 recruiting posts/month</li>
-<li><span class="ck">&#10003;</span> Gen Z creative (reels, stories)</li>
+<li><span class="ck">&#10003;</span> TorqueLeads OS dashboard access</li>
+<li><span class="ck">&#10003;</span> Live AR aging and revenue tracking</li>
+<li><span class="ck">&#10003;</span> Tech scoreboard and utilization data</li>
+<li><span class="ck">&#10003;</span> Fullbay integration for live shop data</li>
+<li><span class="ck">&#10003;</span> Shop health score and alerts</li>
+<li><span class="ck">&#10003;</span> 30 social posts per month (FB + IG)</li>
+</ul>
+<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Pro',content_category:'diesel_lead'});}" class="btn" style="width:100%;text-align:center;">Get Started</a>
+</div>
+
+<div class="prc gc ao">
+<div class="pn">Elite</div>
+<div class="pa">$1,200<span class="pa-mo">/mo</span></div>
+<p class="psub">Everything in Pro, plus:</p>
+<ul class="fl">
+<li><span class="ck">&#10003;</span> Tech recruiting ads on IG, FB and TikTok</li>
+<li><span class="ck">&#10003;</span> Shop culture content and Gen Z creative</li>
+<li><span class="ck">&#10003;</span> Trade school and tech program targeting</li>
+<li><span class="ck">&#10003;</span> Direct application funnel for techs</li>
+<li><span class="ck">&#10003;</span> 10 recruiting posts per month</li>
 <li><span class="ck">&#10003;</span> Every post also markets your shop</li>
 </ul>
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn btn-green" style="width:100%;text-align:center;">Book a Call for Pricing</a>
+<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Elite',content_category:'diesel_lead'});}" class="btn btn-green" style="width:100%;text-align:center;">Get Started</a>
 </div>
-</div>
-<div class="bundle reveal">
-<p style="font-size:0.7rem;color:var(--gray-dark);text-transform:uppercase;letter-spacing:3px;font-family:'Barlow Condensed',sans-serif;margin-bottom:0.3rem;">Bundle Both &amp; Save</p>
-<div class="bundle-price">Best Value<span> &#8212; ask about bundle pricing</span></div>
-<p>Customers <strong>+</strong> Techs in one package. Most shops choose this.</p>
-<a href="#cta" onclick="if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Book a Call',content_category:'diesel_lead'});}" class="btn" style="margin-top:1rem;display:inline-block;">Get Bundle Pricing &#8594;</a>
+
 </div>
 <div class="roi reveal">
-<p><strong>The math:</strong> One repair ticket covers the whole month. One good tech hire adds $50K&#8211;$80K/year in revenue capacity. This pays for itself before month one is over.</p>
+<p><strong>The math:</strong> One repair ticket covers the whole month. One good tech hire adds $50K to $80K per year in revenue capacity. This pays for itself before month one is over.</p>
 </div>
 </div>
 </section>
