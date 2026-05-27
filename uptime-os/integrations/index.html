@@ -7,15 +7,15 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height:100vh;}
-.topbar{background:#0f1e38;border-bottom:1px solid rgba(255,255,255,0.08);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+
 .tl-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:3px;}
 .tl-logo span:first-child{color:#2563eb;}
 .tl-logo span:last-child{color:#cc1f1f;}
-.topbar-nav{display:flex;align-items:center;gap:1.5rem;}
+
 .topbar-nav a{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;text-decoration:none;transition:color 0.15s;}
 .topbar-nav a:hover,.topbar-nav a.active{color:#fff;}
-.topbar-right{display:flex;align-items:center;gap:1rem;}
-.logout-btn{font-size:11px;font-weight:600;padding:5px 12px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:5px;color:#94a3b8;cursor:pointer;}
+
+
 .logout-btn:hover{border-color:#cc1f1f;color:#cc1f1f;}
 .container{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
 .page-header{margin-bottom:2rem;}
@@ -64,7 +64,7 @@ body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height
 .toast.show{opacity:1;transform:translateY(0);}
 .toast-ok{background:#166534;color:#bbf7d0;}
 .toast-err{background:#7f1d1d;color:#fecaca;}
-@media(max-width:600px){.integrations-grid{grid-template-columns:1fr;}.topbar-nav{display:none;}}
+@media(max-width:600px){.integrations-grid{grid-template-columns:1fr;}}
 </style>
 <style id="tl-site-fonts">
 body{font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
@@ -74,13 +74,36 @@ body{font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
 .topbar-nav a,.tl-nav-item a{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2.5px!important;font-weight:700!important;}
 h1,h2,.page-title{font-family:'Bebas Neue',sans-serif!important;letter-spacing:3px!important;}
 .section-label,.card-title,.tl-lbl,.tl-label,.metric-name,.int-status,.role-badge,.badge{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;}
-.btn,.btn-primary,.tl-btn,.tl-ob-btn,.logout-btn{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;font-weight:700!important;}
+.btn,.btn-primary,.tl-btn,.tl-ob-btn,
+</style>
+<style id="tl-bottom-nav">
+#tl-portal-bottom{
+  position:fixed;bottom:0;left:0;right:0;height:56px;
+  background:rgba(4,4,6,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  z-index:500;
+}
+.pb-item{
+  flex:1;max-width:130px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  padding:6px 4px;text-decoration:none;
+  color:rgba(255,255,255,0.4);transition:color 0.2s;
+  cursor:pointer;border:none;background:transparent;font-family:inherit;
+}
+.pb-item:hover,.pb-item.pb-active{color:#fff;}
+.pb-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;}
+.pb-item span{
+  font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;
+  font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
+.pb-sep{width:1px;height:26px;background:rgba(255,255,255,0.07);flex-shrink:0;}
+body{padding-bottom:56px;} /* prevent content hiding behind nav */
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="tl-logo"><span class="tq">TORQUE</span><span class="tl">LEADS</span></div>
+
   <nav class="topbar-nav">
     <a href="/uptime-os/">Dashboard</a>
     <a href="/uptime-os/health/">Health</a>

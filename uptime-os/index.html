@@ -55,7 +55,8 @@
 
 <style id="tl-auth-styles">
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
-body{margin:0;padding:0;background:#0b1628;font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
+body{margin:0;padding:0;font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
+#root{background:#f4f5f7;min-height:100vh;}
 #tl-gate{
   position:fixed;top:0;left:0;width:100%;height:100%;
   background:linear-gradient(135deg,rgba(4,4,6,0.98) 30%,rgba(11,22,40,0.95) 100%);
@@ -175,7 +176,12 @@ body{margin:0;padding:0;background:#0b1628;font-family:'Barlow',sans-serif;-webk
     // Nav shown by post-load script (DOM not ready yet here)
     window.__TL_AUTHED_USER = u;
   }
-  try{var s=sessionStorage.getItem(K);if(s&&U[s]){unlock(s);return;}else if(s){sessionStorage.removeItem(K);}}catch(e){}
+  // Clear stale sessions from previous auth system versions
+  try{
+    var s=sessionStorage.getItem(K);
+    if(s&&U[s]){unlock(s);return;}
+    else{sessionStorage.removeItem(K);}// stale or invalid — show login
+  }catch(e){}
   var ui=document.getElementById("tl-u"),pi=document.getElementById("tl-p"),btn=document.getElementById("tl-go"),er=document.getElementById("tl-err");
   function go(){
     var u=(ui.value||"").trim().toLowerCase(),pw=pi.value||"";
