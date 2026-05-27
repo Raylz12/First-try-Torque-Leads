@@ -276,6 +276,27 @@ window.addEventListener('load', function() {
   if (nav) nav.style.display = 'flex';
   // Clear body bg in case unlock ran before nav was in DOM
   document.body.style.background = '';
+  // ── Seed Fullbay localStorage config so AnvilFullbay.call() can reach our proxy ──
+  // The app checks all three before making any API call
+  try {
+    // 1. Proxy URL — always point to our Vercel serverless function
+    if (!localStorage.getItem('uptimeFullbayProxy')) {
+      localStorage.setItem('uptimeFullbayProxy', '/api/fullbay');
+    }
+    // 2. Server IP — proxy regenerates the token with its real IP and ignores this,
+    //    but the app hard-checks that it's set before even calling the proxy.
+    //    We set a placeholder; the proxy always overrides the token server-side.
+    if (!localStorage.getItem('uptimeFullbayServerIp')) {
+      localStorage.setItem('uptimeFullbayServerIp', '32.196.231.106');
+    }
+    // 3. Key — use what was saved in integrations page (uptimeFullbayKey)
+    //    If not set yet, Jon's key is the default for this install
+    if (!localStorage.getItem('uptimeFullbayKey')) {
+      localStorage.setItem('uptimeFullbayKey', 'faf7e049-5dad-fa59-6e70-6117d3f8ae5f');
+    }
+    // Ensure proxy URL is always correct even if a stale value was stored
+    localStorage.setItem('uptimeFullbayProxy', '/api/fullbay');
+  } catch(e) {}
   // Show admin links for admins
   if (user === 'rhett' || user === 'admin') {
     var ab = document.getElementById('tl-admin-btn');

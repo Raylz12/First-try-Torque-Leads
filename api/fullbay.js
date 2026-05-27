@@ -1,27 +1,24 @@
 // /api/fullbay.js — Fullbay API proxy
-// Auth: sha1(key + YYYY-MM-DD + serverPublicIP) — IP-bound, must be server-side
-// All endpoints: https://app.fullbay.com/services/*.php
-// Max date range per request: 7 days — proxy chunks automatically
+// Accepts TWO formats:
+//   1. App format (AnvilFullbay internal): { path: "getInvoices.php", params: { key, token (ignored), ... } }
+//   2. Direct format: { action: "getStatus"|"getInvoices"|..., key, startDate, endDate }
+//
+// Token is ALWAYS regenerated server-side using this server's real outbound IP.
+// The client-computed token (if provided) is discarded — the app can't know our real IP.
 
 import { createHash } from 'crypto';
 
 const BASE = 'https://app.fullbay.com/services';
-const ENDPOINTS = {
-  getInvoices:       'getInvoices.php',
-  getPayments:       'getCustomerPayments.php',
-  getAdjustments:    'getAdjustments.php',
-  getCounterSales:   'getCounterSales.php',
-  getCustomerCredits:'getCustomerCredits.php',
-  getVendorBills:    'getVendorBills.php',
-  getVendorCredits:  'getVendorCredits.php',
-};
 
-function makeToken(key, serverIp) {
-  const today = new Date().toISOString().slice(0, 10);
-  return createHash('sha1').update(key + today + serverIp).digest('hex');
+function today() {
+  return new Date().toISOString().slice(0, 10);
 }
 
-// Split a date range into 7-day chunks (Fullbay's max)
+function makeToken(key, serverIp) {
+  return createHash('sha1').update(key + today() + serverIp).digest('hex');
+}
+
+// Split a date range into ≤7-day chunks (Fullbay's max before timeouts)
 function chunkDates(startDate, endDate) {
   const chunks = [];
   let cur = new Date(startDate + 'T00:00:00Z');
@@ -34,26 +31,31 @@ function chunkDates(startDate, endDate) {
   return chunks;
 }
 
-async function callFullbay(endpoint, key, token, startDate, endDate, extraParams = {}) {
-  const params = new URLSearchParams({ key, token, startDate, endDate, ...extraParams });
-  const url = `${BASE}/${endpoint}?${params}`;
-  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+async function callFullbay(phpFile, key, token, extraParams = {}) {
+  const params = new URLSearchParams({ key, token, ...extraParams });
+  const url = `${BASE}/${phpFile}?${params}`;
+  const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) throw new Error(`Fullbay HTTP ${res.status}`);
   const text = await res.text();
   try { return JSON.parse(text); }
   catch(e) { throw new Error('Fullbay returned non-JSON: ' + text.slice(0, 200)); }
 }
 
-// Fetch all records for a date range, chunking automatically
-async function fetchAll(endpoint, key, token, startDate, endDate, extraParams = {}) {
+async function fetchRange(phpFile, key, token, startDate, endDate, extra = {}) {
   const chunks = chunkDates(startDate, endDate);
   const all = [];
   for (const [s, e] of chunks) {
-    const data = await callFullbay(endpoint, key, token, s, e, extraParams);
+    const data = await callFullbay(phpFile, key, token, { startDate: s, endDate: e, ...extra });
     if (data.status === 'FAIL') throw new Error(data.message || 'Fullbay API error');
     if (data.resultSet) all.push(...data.resultSet);
   }
-  return { status: 'SUCCESS', resultCount: all.length, records: all };
+  return { status: 'SUCCESS', resultCount: all.length, resultSet: all };
+}
+
+async function getServerIp() {
+  const res = await fetch('https://api.ipify.org?format=json');
+  const { ip } = await res.json();
+  return ip;
 }
 
 export default async function handler(req, res) {
@@ -63,62 +65,89 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
-  const { action, key, startDate, endDate, ...extra } = req.body || {};
+  const body = req.body || {};
+
+  // ── Detect which format was sent ──
+  // App format: { path: "getInvoices.php", params: { key, token, startDate, endDate } }
+  // Direct format: { action: "getInvoices", key, startDate, endDate }
+  let phpFile, key, startDate, endDate, action, extra = {};
+
+  if (body.path) {
+    // App (AnvilFullbay) format
+    phpFile = body.path;
+    const p = body.params || {};
+    key = p.key;
+    startDate = p.startDate;
+    endDate = p.endDate;
+    // pass through any extra params the app sends (excluding key/token/dates)
+    const { key: _k, token: _t, startDate: _s, endDate: _e, ...rest } = p;
+    extra = rest;
+    action = 'proxy'; // internal label
+  } else {
+    // Direct format
+    action = body.action;
+    key = body.key;
+    startDate = body.startDate;
+    endDate = body.endDate;
+    const { action: _a, key: _k, startDate: _s, endDate: _e, ...rest } = body;
+    extra = rest;
+  }
+
   if (!key) return res.status(400).json({ error: 'key required' });
 
-  // Get public IP of THIS Vercel server for token generation
+  // Always generate token server-side (discard any client-provided token)
   let serverIp;
   try {
-    const ipRes = await fetch('https://api.ipify.org?format=json');
-    const ipData = await ipRes.json();
-    serverIp = ipData.ip;
+    serverIp = await getServerIp();
   } catch(e) {
     return res.status(500).json({ error: 'Could not determine server IP: ' + e.message });
   }
-
   const token = makeToken(key, serverIp);
 
-  try {
-    // Default: last 90 days if no dates given
-    const today = new Date();
-    const defaultEnd = today.toISOString().slice(0, 10);
-    const defaultStart = new Date(today - 90 * 86400000).toISOString().slice(0, 10);
-    const start = startDate || defaultStart;
-    const end = endDate || defaultEnd;
+  const defaultEnd = today();
+  const defaultStart = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+  const start = startDate || defaultStart;
+  const end = endDate || defaultEnd;
 
+  try {
+    // ── App format: forward to specified PHP endpoint ──
+    if (action === 'proxy') {
+      const data = await fetchRange(phpFile, key, token, start, end, extra);
+      return res.json(data);
+    }
+
+    // ── Direct format actions ──
     switch (action) {
-      case 'getInvoices':
-        return res.json(await fetchAll('getInvoices.php', key, token, start, end));
-      case 'getPayments':
-        return res.json(await fetchAll('getCustomerPayments.php', key, token, start, end));
-      case 'getAdjustments':
-        return res.json(await fetchAll('getAdjustments.php', key, token, start, end));
-      case 'getCounterSales':
-        return res.json(await fetchAll('getCounterSales.php', key, token, start, end));
-      case 'getCustomerCredits':
-        return res.json(await fetchAll('getCustomerCredits.php', key, token, start, end));
-      case 'getVendorBills':
-        return res.json(await fetchAll('getVendorBills.php', key, token, start, end));
-      case 'getVendorCredits':
-        return res.json(await fetchAll('getVendorCredits.php', key, token, start, end));
       case 'getStatus': {
-        // Quick test: fetch 1 day of invoices to confirm auth works
-        const testDate = new Date(today - 365 * 86400000).toISOString().slice(0, 10);
-        const d = await callFullbay('getInvoices.php', key, token, testDate, testDate);
-        if (d.status === 'FAIL') return res.json({ error: d.message });
+        const testDate = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10);
+        const d = await callFullbay('getInvoices.php', key, token, { startDate: testDate, endDate: testDate });
+        if (d.status === 'FAIL') return res.json({ ok: false, error: d.message });
         return res.json({ ok: true, serverIp, message: 'Connected' });
       }
+      case 'getInvoices':
+        return res.json(await fetchRange('getInvoices.php', key, token, start, end, extra));
+      case 'getPayments':
+        return res.json(await fetchRange('getCustomerPayments.php', key, token, start, end, extra));
+      case 'getAdjustments':
+        return res.json(await fetchRange('getAdjustments.php', key, token, start, end, extra));
+      case 'getCounterSales':
+        return res.json(await fetchRange('getCounterSales.php', key, token, start, end, extra));
+      case 'getCustomerCredits':
+        return res.json(await fetchRange('getCustomerCredits.php', key, token, start, end, extra));
+      case 'getVendorBills':
+        return res.json(await fetchRange('getVendorBills.php', key, token, start, end, extra));
+      case 'getVendorCredits':
+        return res.json(await fetchRange('getVendorCredits.php', key, token, start, end, extra));
       case 'fullSync': {
-        // Pull 120 days of invoices + payments
-        const syncStart = new Date(today - 120 * 86400000).toISOString().slice(0, 10);
+        const syncStart = new Date(Date.now() - 120 * 86400000).toISOString().slice(0, 10);
         const [invoices, payments] = await Promise.all([
-          fetchAll('getInvoices.php', key, token, syncStart, defaultEnd),
-          fetchAll('getCustomerPayments.php', key, token, syncStart, defaultEnd),
+          fetchRange('getInvoices.php', key, token, syncStart, defaultEnd),
+          fetchRange('getCustomerPayments.php', key, token, syncStart, defaultEnd),
         ]);
-        return res.json({ ok: true, invoices: invoices.records, payments: payments.records });
+        return res.json({ ok: true, invoices: invoices.resultSet, payments: payments.resultSet, serverIp });
       }
       default:
-        return res.status(400).json({ error: `Unknown action: ${action}` });
+        return res.status(400).json({ error: `Unknown action: ${action}. Use path format or action: getInvoices|getPayments|getStatus|fullSync` });
     }
   } catch(e) {
     return res.status(500).json({ error: e.message });
