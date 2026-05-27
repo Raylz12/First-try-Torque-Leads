@@ -1202,6 +1202,327 @@ window.AnvilErrorBoundary=class extends React.Component{constructor(props){super
       console.log('[Fleet PM] SchedulingPage override OK, '+getFleet().units.length+' units');
     })();
 
+
+
+
+    // ── 12. TECH LOAD — day-click shows all techs + Completed tab ───────────
+    (function() {
+      var origTechLoad = window.AnvilPages && window.AnvilPages.TechLoadPage;
+      if (!origTechLoad) { console.warn('[TechLoad] no original found'); return; }
+      window.AnvilPages.TechLoadPage = function TechLoadV2() {
+        var R = React, uS = R.useState, uM = R.useMemo;
+        var n = window.AnvilStore ? window.AnvilStore.get.bind(window.AnvilStore) : function(){return [];};
+        var orders = n('orders') || [];
+        var emps   = n('employees') || n('techs') || [];
+        var tabR = uS('open');   var tab  = tabR[0]; var setTab  = tabR[1];
+        var selR = uS(null);     var sel  = selR[0]; var setSel  = selR[1];
+        var sortR = uS('ros');   var sort = sortR[0]; var setSort = sortR[1];
+
+        var today = new Date(); today.setHours(0,0,0,0);
+
+        var days = uM(function() {
+          var out = [];
+          for (var i = 0; i < 14; i++) {
+            var d = new Date(today.getTime() + i * 86400000);
+            out.push({
+              off: i,
+              label: d.toLocaleDateString('en-US', {weekday:'short', month:'numeric', day:'numeric'}),
+              iso: d.toISOString().slice(0,10),
+              isWknd: d.getDay()===0 || d.getDay()===6
+            });
+          }
+          return out;
+        }, []);
+
+        var techList = uM(function() {
+          var m = {};
+          orders.forEach(function(o) {
+            var t = o.tech || o.writer || o.advisor || 'Unassigned';
+            if (!m[t]) m[t] = {name:t, ros:[], totalEst:0};
+            m[t].ros.push(o);
+            m[t].totalEst += parseFloat(o.est || o.estHours || 0) || 0;
+          });
+          var list = Object.values(m);
+          if (sort==='name') list.sort(function(a,b){return a.name.localeCompare(b.name);});
+          else if (sort==='est') list.sort(function(a,b){return b.totalEst - a.totalEst;});
+          else list.sort(function(a,b){return b.ros.length - a.ros.length;});
+          return list;
+        }, [orders.length, sort]);
+
+        function rosOnDay(ros, off) {
+          return ros.filter(function(o) {
+            var start = parseInt(o.startDay || o.dayOffset || 0) || 0;
+            var est   = parseFloat(o.est || o.estHours || 0) || 0;
+            var end   = start + Math.ceil(est / 8) || start;
+            return off >= start && off <= Math.max(end, start);
+          });
+        }
+
+        function intensity(n) {
+          if (!n) return '';
+          if (n === 1) return 'low';
+          if (n <= 3) return 'med';
+          return 'high';
+        }
+
+        var dayGroups = uM(function() {
+          if (sel === null) return [];
+          var out = [];
+          techList.forEach(function(t) {
+            var ros = rosOnDay(t.ros, sel.off);
+            if (ros.length) out.push({tech:t.name, ros:ros});
+          });
+          return out;
+        }, [sel, techList]);
+
+        var totalOnDay = dayGroups.reduce(function(s,g){return s+g.ros.length;}, 0);
+
+        var empRows = uM(function() {
+          return emps.slice().sort(function(a,b) {
+            var bv = parseFloat(b['Invoiced Hours']||b.invoicedHours||0)||0;
+            var av = parseFloat(a['Invoiced Hours']||a.invoicedHours||0)||0;
+            return bv - av;
+          });
+        }, [emps.length]);
+
+        function fmtH(v) { return (parseFloat(v)||0).toFixed(1); }
+        function fmtMon(v) { return v ? '$'+(parseFloat(v)||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}) : '—'; }
+
+        return R.createElement(R.Fragment, null,
+
+          R.createElement('div', {className:'dx-page-head'},
+            R.createElement('div', null,
+              R.createElement('div', {className:'dx-page-title'}, 'Tech ', R.createElement('em',null,'Utilization')),
+              R.createElement('div', {className:'dx-page-sub'}, techList.length+' techs · '+orders.length+' open ROs')
+            ),
+            R.createElement('div', {className:'dx-pagebar'},
+              R.createElement('button', {className:'dx-tab'+(tab==='open'?' active':''), onClick:function(){setTab('open');}}, 'Open ROs'),
+              R.createElement('button', {className:'dx-tab'+(tab==='completed'?' active':''), onClick:function(){setTab('completed'); setSel(null);}}, 'Completed'),
+              tab==='open' ? R.createElement('select', {className:'dx-finput', value:sort, onChange:function(e){setSort(e.target.value);}, style:{fontSize:11,padding:'3px 8px'}},
+                R.createElement('option',{value:'ros'},'Sort: ROs'),
+                R.createElement('option',{value:'name'},'Sort: Name'),
+                R.createElement('option',{value:'est'},'Sort: Est Hours')
+              ) : null
+            )
+          ),
+
+          tab==='open' ? R.createElement('div', {className:'dx-cal-wrap'},
+            R.createElement('div', {className:'dx-panel', style:{marginBottom:12}},
+              R.createElement('div', {style:{overflowX:'auto'}},
+                R.createElement('table', {className:'dx-tbl', style:{minWidth:680, tableLayout:'auto'}},
+                  R.createElement('thead', null,
+                    R.createElement('tr', null,
+                      R.createElement('th', {style:{minWidth:120}}, 'Tech'),
+                      R.createElement('th', {style:{textAlign:'center', minWidth:40}}, 'ROs'),
+                      days.map(function(d) {
+                        var isSelDay = sel && sel.off === d.off;
+                        return R.createElement('th', {key:d.off,
+                          style:{textAlign:'center', fontSize:9, fontWeight:700, letterSpacing:'0.05em',
+                            cursor:'pointer', minWidth:48, whiteSpace:'nowrap', padding:'6px 4px',
+                            background: isSelDay ? 'var(--accent-bg)' : d.isWknd ? 'var(--surface-warm)' : '',
+                            color: isSelDay ? 'var(--accent)' : 'inherit'},
+                          onClick:function(){setSel(isSelDay ? null : {off:d.off, iso:d.iso, label:d.label});}},
+                          d.label,
+                          isSelDay ? R.createElement('div',{style:{width:'100%',height:2,background:'var(--accent)',marginTop:2,borderRadius:1}}) : null
+                        );
+                      })
+                    )
+                  ),
+                  R.createElement('tbody', null,
+                    techList.map(function(t) {
+                      return R.createElement('tr', {key:t.name},
+                        R.createElement('td', {className:'dx-row-title'}, t.name),
+                        R.createElement('td', {style:{textAlign:'center', fontFamily:"'JetBrains Mono',monospace", fontSize:11, fontWeight:700}}, t.ros.length),
+                        days.map(function(d) {
+                          var ros = rosOnDay(t.ros, d.off);
+                          var cls = intensity(ros.length);
+                          var bg = cls==='high' ? 'var(--neg)' : cls==='med' ? '#f59e0b' : cls==='low' ? 'var(--accent-bg)' : '';
+                          var col = cls==='high' ? '#fff' : cls==='med' ? '#1c1a16' : cls==='low' ? 'var(--accent)' : 'var(--faint)';
+                          var isSelDay = sel && sel.off === d.off;
+                          return R.createElement('td', {key:d.off,
+                            style:{textAlign:'center', cursor:'pointer', fontSize:10,
+                              fontFamily:"'JetBrains Mono',monospace", fontWeight:700,
+                              padding:'6px 2px', background: isSelDay ? (bg||'var(--accent-bg,#eff6ff)') : bg,
+                              color: isSelDay ? (col||'var(--accent)') : col,
+                              outline: isSelDay ? '2px solid var(--accent)' : 'none'},
+                            onClick:function(){setSel(isSelDay ? null : {off:d.off, iso:d.iso, label:d.label});}},
+                            ros.length || String.fromCharCode(183)
+                          );
+                        })
+                      );
+                    })
+                  )
+                )
+              )
+            ),
+
+            sel ? R.createElement('div', {className:'dx-day-panel'},
+              R.createElement('div', {className:'dx-day-panel-head'},
+                R.createElement('div', {className:'dx-day-panel-date'}, sel.label),
+                R.createElement('div', {className:'dx-day-panel-sum'},
+                  totalOnDay+' open RO'+(totalOnDay===1?'':'s')+' across '+dayGroups.length+' tech'+(dayGroups.length===1?'':'s'),
+                  R.createElement('button', {className:'dx-cal-btn', style:{marginLeft:8}, onClick:function(){setSel(null);}}, String.fromCharCode(215))
+                )
+              ),
+              R.createElement('div', {className:'dx-day-panel-list'},
+                dayGroups.length === 0 ?
+                  R.createElement('div', {className:'dx-day-panel-empty'}, 'No active ROs projected for this day') :
+                  dayGroups.map(function(g, gi) {
+                    return R.createElement('div', {key:gi, style:{marginBottom:14}},
+                      R.createElement('div', {style:{
+                        fontFamily:"'JetBrains Mono',monospace", fontSize:10, fontWeight:700,
+                        letterSpacing:'0.08em', textTransform:'uppercase',
+                        color:'var(--muted)', marginBottom:5, paddingBottom:4,
+                        borderBottom:'1px solid var(--hairline)'}},
+                        g.tech, ' ', String.fromCharCode(183), ' ', g.ros.length, ' RO'+(g.ros.length===1?'':'s')
+                      ),
+                      g.ros.map(function(o, oi) {
+                        return R.createElement('div', {key:oi, className:'dx-day-panel-row', style:{paddingLeft:8}},
+                          R.createElement('div', {className:'dx-row-title'}, o.ro||o.id||o.order||('RO '+(oi+1))),
+                          R.createElement('div', {className:'dx-row-meta'},
+                            [o.customer||o.name, o.vehicle||o.unit, o.status].filter(Boolean).join(' '+String.fromCharCode(183)+' ')
+                          )
+                        );
+                      })
+                    );
+                  })
+              )
+            ) : null
+          ) : null,
+
+          tab==='completed' ? R.createElement('div', {className:'dx-panel'},
+            empRows.length === 0 ?
+              R.createElement('div', {style:{padding:'2rem', textAlign:'center', color:'var(--faint)', fontStyle:'italic'}},
+                'No employee stats in current data. Completed view shows monthly Fullbay stats.') :
+              R.createElement(R.Fragment, null,
+                R.createElement('div', {className:'dx-panel-head'},
+                  R.createElement('div', {className:'dx-panel-h-title'}, 'Completed Work — Current Period'),
+                  R.createElement('div', {className:'dx-panel-h-meta'}, empRows.length+' techs')
+                ),
+                R.createElement('table', {className:'dx-tbl'},
+                  R.createElement('thead', null,
+                    R.createElement('tr', null,
+                      R.createElement('th', null, 'Technician'),
+                      R.createElement('th', {style:{textAlign:'right'}}, 'Invoiced Hrs'),
+                      R.createElement('th', {style:{textAlign:'right'}}, 'Completed Hrs'),
+                      R.createElement('th', {style:{textAlign:'right'}}, 'Expected Hrs'),
+                      R.createElement('th', {style:{textAlign:'right'}}, 'Utilization'),
+                      R.createElement('th', {style:{textAlign:'right'}}, 'Labor Rev')
+                    )
+                  ),
+                  R.createElement('tbody', null,
+                    empRows.map(function(e, i) {
+                      var inv  = parseFloat(e['Invoiced Hours']||e.invoicedHours||0)||0;
+                      var comp = parseFloat(e['Completed Hours']||e.completedHours||0)||0;
+                      var exp  = parseFloat(e['Expected Hours']||e.expectedHours||160)||160;
+                      var util = exp > 0 ? inv/exp*100 : 0;
+                      var rev  = parseFloat(e['Invoiced Labor Revenue']||e.laborRevenue||e.revenue||0)||0;
+                      var nm   = e.name||e.Name||e['Tech Name']||e.technician||('Tech '+(i+1));
+                      return R.createElement('tr', {key:i},
+                        R.createElement('td', {className:'dx-row-title'}, nm),
+                        R.createElement('td', {style:{textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:11}}, fmtH(inv)),
+                        R.createElement('td', {style:{textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:11}}, fmtH(comp)),
+                        R.createElement('td', {style:{textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:11}}, fmtH(exp)),
+                        R.createElement('td', {style:{textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:11,fontWeight:700,color:util>=90?'var(--pos)':util<70?'var(--neg)':'inherit'}}, util.toFixed(0)+'%'),
+                        R.createElement('td', {style:{textAlign:'right',fontFamily:"'JetBrains Mono',monospace",fontSize:11}}, fmtMon(rev))
+                      );
+                    })
+                  )
+                )
+              )
+          ) : null
+
+        );
+      };
+      console.log('[TechLoad] Override installed');
+    })();
+
+    // ── 13. WIP — inject "Techs" tab via MutationObserver ──────────────────
+    (function() {
+      function buildTechPanel() {
+        var orders = (window.AnvilStore && window.AnvilStore.get('orders')) || [];
+        var m = {};
+        orders.forEach(function(o) {
+          var t = o.tech || o.writer || o.advisor || 'Unassigned';
+          if (!m[t]) m[t] = {name:t, open:0, ros:[]};
+          m[t].open++; m[t].ros.push(o);
+        });
+        var rows = Object.values(m).sort(function(a,b){return b.open-a.open;});
+        var div = document.createElement('div');
+        div.id = '_wip-tech-panel';
+        div.style.cssText = 'margin-top:0';
+        var html = '<div class="dx-panel"><div class="dx-panel-head"><div class="dx-panel-h-title">Open ROs by Technician</div><div class="dx-panel-h-meta">'+rows.length+' techs &middot; '+orders.length+' ROs</div></div>';
+        html += '<table class="dx-tbl"><thead><tr><th>Technician</th><th style="text-align:center">Open ROs</th><th>Active Jobs</th></tr></thead><tbody>';
+        if (!rows.length) {
+          html += '<tr><td colspan="3" style="padding:30px;text-align:center;color:var(--faint);font-style:italic">No WIP data</td></tr>';
+        } else {
+          rows.forEach(function(t) {
+            var preview = t.ros.slice(0,3).map(function(o){return o.ro||o.customer||'RO';}).join(', ');
+            if (t.ros.length>3) preview += ' +\u00a0'+(t.ros.length-3)+' more';
+            html += '<tr><td class="dx-row-title">'+t.name+'</td>';
+            html += '<td style="text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700">'+t.open+'</td>';
+            html += '<td style="font-size:11px;color:var(--muted)">'+preview+'</td></tr>';
+          });
+        }
+        html += '</tbody></table></div>';
+        div.innerHTML = html;
+        return div;
+      }
+
+      var _wipTechTab = null;
+      var _wipActive = false;
+
+      function maybeInjectWipTechTab() {
+        var pagebar = document.querySelector('.dx-page-head .dx-pagebar');
+        if (!pagebar) return;
+        var title = document.querySelector('.dx-page-title');
+        if (!title || !(title.textContent||'').match(/WIP|Work.In.Progress/i)) {
+          _wipTechTab = null; _wipActive = false;
+          var old = document.getElementById('_wip-tech-panel');
+          if (old) old.remove();
+          return;
+        }
+        // Check for existing Techs tab
+        var tabs = Array.from(pagebar.querySelectorAll('.dx-tab'));
+        var existing = tabs.find(function(b){return b.textContent.trim()==='Techs';});
+        if (!existing) {
+          var btn = document.createElement('button');
+          btn.className = 'dx-tab';
+          btn.textContent = 'Techs';
+          btn.addEventListener('click', function() {
+            tabs.concat([btn]).forEach(function(b){b.classList.remove('active');});
+            btn.classList.add('active');
+            _wipActive = true;
+            showWipTechPanel();
+          });
+          pagebar.appendChild(btn);
+          _wipTechTab = btn;
+        }
+        // If techs tab is active, keep the panel visible
+        if (_wipActive) showWipTechPanel();
+      }
+
+      function showWipTechPanel() {
+        var root = document.getElementById('root');
+        if (!root) return;
+        var existing = document.getElementById('_wip-tech-panel');
+        if (existing) existing.remove();
+        // Find the main content area and append the tech panel
+        var mainContent = root.querySelector('.dx-page-head');
+        if (!mainContent) return;
+        var container = mainContent.parentNode;
+        if (!container) return;
+        var panel = buildTechPanel();
+        container.appendChild(panel);
+      }
+
+      var wipObs = new MutationObserver(function() {
+        setTimeout(maybeInjectWipTechTab, 150);
+      });
+      wipObs.observe(document.getElementById('root'), {childList:true, subtree:true});
+      console.log('[WIP] Techs tab observer installed');
+    })();
+
     console.log('[Uptime OS patch] ✓ Tech/rep/status dropdowns · Role nav · Score tips · Call sheet · C360 writer · Auto snapshot · Sparklines');
   });
 
