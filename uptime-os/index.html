@@ -199,6 +199,79 @@ body{margin:0;padding:0;font-family:'Barlow',sans-serif;-webkit-font-smoothing:a
 })();
 </script>
 <div id="root" style="display:none"></div>
+
+<div id="tl-nav" style="display:none">
+  <a href="/uptime-os/" class="tl-ni active">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <div class="tl-nsep"></div>
+  <a href="/uptime-os/health/" class="tl-ni">
+    <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    <span>Health</span>
+  </a>
+  <div class="tl-nsep"></div>
+  <a href="/uptime-os/integrations/" class="tl-ni">
+    <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    <span>Integrations</span>
+  </a>
+  <div class="tl-nsep" id="tl-admin-sep" style="display:none"></div>
+  <a href="/uptime-os/admin/" class="tl-ni" id="tl-admin-btn" style="display:none">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>Admin</span>
+  </a>
+  <div class="tl-nsep"></div>
+  <button class="tl-ni" id="tl-signout">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <span>Sign Out</span>
+  </button>
+</div>
+<script>
+// Run immediately — before React — so localStorage is seeded at render time
+(function() {
+  var K = 'uptime_auth_v1';
+  var user = '';
+  try { user = sessionStorage.getItem(K) || ''; } catch(e) {}
+  if (!user) return;
+
+  // ── Seed Fullbay localStorage config BEFORE React renders ──
+  try {
+    localStorage.setItem('uptimeFullbayProxy', '/api/fullbay');
+    if (!localStorage.getItem('uptimeFullbayServerIp')) {
+      localStorage.setItem('uptimeFullbayServerIp', '32.196.231.106');
+    }
+    if (!localStorage.getItem('uptimeFullbayKey')) {
+      localStorage.setItem('uptimeFullbayKey', 'faf7e049-5dad-fa59-6e70-6117d3f8ae5f');
+    }
+  } catch(e) {}
+
+  // ── Show nav immediately (it's in the DOM now) ──
+  var nav = document.getElementById('tl-nav');
+  if (nav) nav.style.display = 'flex';
+
+  // ── Show admin link ──
+  if (user === 'rhett' || user === 'admin') {
+    var ab = document.getElementById('tl-admin-btn');
+    var as = document.getElementById('tl-admin-sep');
+    if (ab) ab.style.display = 'flex';
+    if (as) as.style.display = 'block';
+  }
+
+  // ── Wire sign-out button ──
+  var so = document.getElementById('tl-signout');
+  if (so) so.onclick = function() {
+    try { sessionStorage.removeItem(K); } catch(e) {}
+    window.location.href = '/uptime-os/?t=' + Date.now();
+  };
+
+  // ── Expose logout globally for the app's own sign-out buttons ──
+  window.__TL_Logout = function() {
+    try { sessionStorage.removeItem(K); } catch(e) {}
+    window.location.href = '/uptime-os/?t=' + Date.now();
+  };
+})();
+</script>
+
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script>
@@ -221,20 +294,6 @@ window.AnvilErrorBoundary=class extends React.Component{constructor(props){super
   const root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(React.createElement(window.AnvilApp));
 })();
-</script>
-<script>
-window.__TL_Logout=function(){try{sessionStorage.removeItem('uptime_auth_v1');}catch(e){}window.location.href=window.location.pathname+'?t='+Date.now();};
-window.addEventListener('load',function(){
-  var orig=window.AnvilFullbay||{};
-  window.AnvilFullbay=Object.assign({},orig,{
-    _proxyUrl:'/api/fullbay',
-    getStatus:function(){var k='';try{k=localStorage.getItem('uptimeFullbayKey')||'';}catch(e){}return{configured:!!k,lastSync:localStorage.getItem('uptimeFullbayLastSync')||'',key:k};},
-    getCfg:function(){var k='';try{k=localStorage.getItem('uptimeFullbayKey')||'';}catch(e){}return{key:k,auto:parseInt(localStorage.getItem('uptimeFullbayAuto')||'0',10)};},
-    setCfg:function(o){if(o.key!==undefined)try{localStorage.setItem('uptimeFullbayKey',o.key.trim());}catch(e){}if(o.auto!==undefined)try{localStorage.setItem('uptimeFullbayAuto',String(o.auto));}catch(e){}}
-  });
-  var top=document.querySelector('.app-topbar')||document.querySelector('header[class]');
-  if(top&&!document.querySelector('.tl-out-btn')){var btn=document.createElement('button');btn.className='tl-out-btn';btn.textContent='Sign out';btn.style.cssText='font-size:11px;font-weight:600;padding:5px 11px;background:transparent;border:1px solid rgba(0,0,0,0.18);border-radius:5px;color:#6b7280;cursor:pointer;white-space:nowrap;margin-left:8px;';btn.onmouseover=function(){this.style.borderColor='#dc2626';this.style.color='#dc2626';};btn.onmouseout=function(){this.style.borderColor='rgba(0,0,0,0.18)';this.style.color='#6b7280';};btn.onclick=window.__TL_Logout;top.appendChild(btn);}
-});
 </script>
 <div id="tl-nav">
   <a href="/uptime-os/" class="tl-ni active">
