@@ -388,7 +388,8 @@ window.addEventListener('load', function() {
 (function(){
   var K='uptime_auth_v1';
   var u='';try{u=sessionStorage.getItem(K)||'';}catch(e){}
-  if(!u){window.location.href='/uptime-os/';return;}
+  // Only redirect if we're on a sub-page — the main /uptime-os/ page handles its own gate
+  if(!u && window.location.pathname.replace(/\/$/,'') !== '/uptime-os'){window.location.href='/uptime-os/';return;}
   if(u==='rhett'||u==='admin'){
     var adm=document.getElementById('tl-fm-admin');
     if(adm)adm.style.display='flex';
