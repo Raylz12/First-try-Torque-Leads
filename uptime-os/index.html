@@ -359,29 +359,60 @@ window.addEventListener('load', function() {
 });
 </script>
 <script id="tl-fullbay-override">
-// Patch AnvilFullbay so proxy URL and server IP are always set — no manual config needed.
-// The key still comes from localStorage (user can change it), but proxy routes are fixed.
+// Override AnvilFullbay sync methods:
+// Instead of N sequential proxy calls (one per chunk), make ONE direct call per endpoint.
+// Each proxy call handles chunking in parallel server-side — ipify runs once per call, not N times.
+// Sequential flow: syncInvoices (~13s) → syncPayments (~13s) = ~26s total < 30s limit.
 (function patch(){
-  if(!window.AnvilFullbay){ 
-    setTimeout(patch, 100); // retry until bundle loads
-    return;
-  }
+  if(!window.AnvilFullbay){setTimeout(patch,100);return;}
   var orig = window.AnvilFullbay;
-  var _getCfg = orig.getCfg.bind(orig);
-  var _setCfg = orig.setCfg.bind(orig);
 
+  // ── Fix getCfg so proxy/serverIp never show "not set" ──
+  var _getCfg = orig.getCfg.bind(orig);
   orig.getCfg = function(){
     var cfg = _getCfg();
     cfg.proxy    = '/api/fullbay';
-    cfg.serverIp = '54.208.31.211'; // proxy regenerates token server-side; this is just a placeholder
+    cfg.serverIp = '54.208.31.211';
     return cfg;
   };
+  try{
+    localStorage.setItem('uptimeFullbayProxy','/api/fullbay');
+    localStorage.setItem('uptimeFullbayServerIp','54.208.31.211');
+  }catch(e){}
 
-  // Also force-write proxy + serverIp into localStorage so the UI shows them as set
-  try {
-    localStorage.setItem('uptimeFullbayProxy',   '/api/fullbay');
-    localStorage.setItem('uptimeFullbayServerIp', '54.208.31.211');
-  } catch(e) {}
+  // ── Single-call proxy helper ──
+  async function proxyCall(action, startDate, endDate){
+    var key = orig.getCfg().key;
+    if(!key) throw new Error('No Fullbay API key configured. Add one in Settings.');
+    var res = await fetch('/api/fullbay',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action:action, key:key, startDate:startDate, endDate:endDate})
+    });
+    if(!res.ok){
+      var txt = await res.text();
+      throw new Error('Proxy returned '+res.status+': '+txt.slice(0,200));
+    }
+    var data = await res.json();
+    if(data.error) throw new Error(data.error);
+    return data.resultSet || data.records || [];
+  }
+
+  // ── Override syncInvoices: 1 proxy call instead of N sequential chunks ──
+  orig.syncInvoices = async function(startDate, endDate, onProgress){
+    if(onProgress) onProgress({stage:'invoices', startDate:startDate, endDate:endDate});
+    var records = await proxyCall('getInvoices', startDate, endDate);
+    if(onProgress) onProgress({stage:'invoices_done', count:records.length});
+    return records;
+  };
+
+  // ── Override syncPayments: 1 proxy call instead of N sequential chunks ──
+  orig.syncPayments = async function(startDate, endDate, onProgress){
+    if(onProgress) onProgress({stage:'payments', startDate:startDate, endDate:endDate});
+    var records = await proxyCall('getPayments', startDate, endDate);
+    if(onProgress) onProgress({stage:'payments_done', count:records.length});
+    return records;
+  };
 })();
 </script>
 </body>
