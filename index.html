@@ -144,11 +144,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2.5rem;display
 .rs:hover{border-color:rgba(74,124,89,0.3) !important;}
 .rs-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--green);line-height:1;text-shadow:0 0 30px rgba(74,124,89,0.35);}
 .rs-label{font-size:0.78rem;color:var(--gray-dark);margin-top:0.4rem;line-height:1.4;}
-.founder{padding:5rem 2.5rem;position:relative;content-visibility:auto;contain-intrinsic-size:0 600px;}
-.founder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(46,125,201,0.4),transparent);}
-.founder-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;}
-.founder-story p{font-size:1.05rem;color:var(--gray);margin-bottom:1rem;font-weight:300;line-height:1.85;}
-.founder-story strong{color:var(--white);font-weight:600;}
+
+
+
+
+
 .fcta{color:var(--red);font-weight:500;font-size:1.1rem;margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border);}
 .fbadges{display:flex;flex-direction:column;gap:0.8rem;}
 .fb{border-radius:8px;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:1rem;white-space:nowrap;}
@@ -237,7 +237,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .reveal.visible{opacity:1;transform:translateY(0);}
 @media(max-width:900px){
 .hero-content{grid-template-columns:1fr;}.hero-stats{display:none;}
-.problem-inner,.founder-inner,.recruiting-inner{grid-template-columns:1fr;}
+.problem-inner,
 .svc-grid{grid-template-columns:1fr;}.proof-grid{grid-template-columns:1fr;}
 .pgrid{grid-template-columns:1fr;}
 .steps{grid-template-columns:repeat(2,1fr);gap:2rem;}.steps::before{display:none;}
@@ -261,7 +261,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 .mobile-nav a{font-size:2.2rem;padding:0.5rem 1rem;-webkit-tap-highlight-color:transparent;}
 .mobile-nav .btn{padding:1.2rem 3rem;font-size:1.1rem;}
 .btn{min-height:48px;padding:1rem 2rem;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-.problem,.recruiting,.founder,.services,.process,.pricing,.faq-section{padding:4rem 1.5rem;}
+.problem,.recruiting,
 .stitle{font-size:2rem;}
 .rec-stats{grid-template-columns:1fr;}
 .rs{padding:1.5rem;}
@@ -461,7 +461,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 
 <div class="mobile-nav" id="mobileNav">
   <a href="#recruiting" class="mobile-nav-link" onclick="closeMenu()">Tech Recruiting</a>
-  <a href="#why-us" class="mobile-nav-link" onclick="closeMenu()">About Us</a>
+  <a href="#pricing" class="mobile-nav-link" onclick="closeMenu()">About Us</a>
   <a href="#services" class="mobile-nav-link" onclick="closeMenu()">What We Do</a>
   <a href="#process" class="mobile-nav-link" onclick="closeMenu()">How It Works</a>
   <a href="#pricing" class="mobile-nav-link" onclick="closeMenu()">Pricing</a>
@@ -624,18 +624,7 @@ footer p{font-size:0.75rem;color:var(--gray-dark);font-family:'Barlow Condensed'
 </div>
 </div>
 </section>
-<section class="founder" id="why-us">
-<div class="founder-inner reveal">
-  <div class="founder-photo"></div>
-  <div class="founder-text">
-    <div class="stag">Why TorqueLeads</div>
-    <h2>BUILT BY A SHOP OWNER.<br>NOT A MARKETER.</h2>
-    <p>I ran a $16 million diesel repair shop. I know what it costs when a fleet customer goes 90 days past due. I know what happens when a tech calls out and you have 40 open ROs. I built TorqueLeads because every tool I tried was made for someone else.</p>
-    <p>We are not an agency. We are a platform built specifically for this industry by someone who lived it.</p>
-    <a href="javascript:void(0)" onclick="openQuiz()" class="btn">Talk to Rhett</a>
-  </div>
-</div>
-</section>
+
 <section class="recruiting" id="recruiting">
 <div class="rec-glow"></div>
 <div class="recruiting-inner">
