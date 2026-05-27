@@ -77,29 +77,45 @@ h1,h2,.page-title{font-family:'Bebas Neue',sans-serif!important;letter-spacing:3
 .btn,.btn-primary,.tl-btn,.tl-ob-btn,
 </style>
 
-<style id="tl-bottom-nav">
-#tl-portal-bottom{
-  position:fixed;bottom:0;left:0;right:0;height:48px;
-  background:rgba(4,4,6,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
-  border-top:1px solid rgba(255,255,255,0.08);
+
+<style id="tl-nav-float">
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap');
+#tl-fab{
+  position:fixed;bottom:18px;right:18px;z-index:9000;
+}
+#tl-fab-btn{
+  width:48px;height:48px;border-radius:50%;
+  background:#0f1e38;border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
   display:flex;align-items:center;justify-content:center;
-  z-index:500;
+  cursor:pointer;color:#fff;transition:background 0.2s,transform 0.15s;
 }
-.pb-item{
-  flex:1;max-width:110px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:2px;
-  padding:5px 4px;text-decoration:none;
-  color:rgba(255,255,255,0.4);transition:color 0.2s;
-  cursor:pointer;border:none;background:transparent;font-family:inherit;
+#tl-fab-btn:hover{background:#1e3a5f;transform:scale(1.05);}
+#tl-fab-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8;}
+#tl-fab-menu{
+  position:absolute;bottom:60px;right:0;
+  background:#0f1e38;border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  min-width:160px;
+  display:none;flex-direction:column;
+  animation:tlFabIn 0.15s ease-out;
 }
-.pb-item:hover,.pb-item.pb-active{color:#fff;}
-.pb-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;}
-.pb-item span{
-  font-family:'Barlow Condensed',sans-serif;font-size:0.55rem;
-  font-weight:700;letter-spacing:2px;text-transform:uppercase;
+#tl-fab-menu.open{display:flex;}
+@keyframes tlFabIn{from{opacity:0;transform:translateY(8px) scale(0.96)}to{opacity:1;transform:none}}
+.tl-fm-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 16px;color:rgba(255,255,255,0.75);
+  text-decoration:none;font-family:'Barlow Condensed',sans-serif;
+  font-size:0.85rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,0.06);transition:background 0.15s,color 0.15s;
+  cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
 }
-.pb-sep{width:1px;height:22px;background:rgba(255,255,255,0.07);flex-shrink:0;}
-body{padding-bottom:52px;}
+.tl-fm-item:last-child{border-bottom:none;}
+.tl-fm-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.tl-fm-item.active{color:#fff;}
+.tl-fm-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;}
+.tl-fm-sep{height:1px;background:rgba(255,255,255,0.08);margin:2px 0;}
 </style>
 </head>
 <body>
@@ -326,29 +342,30 @@ if (role === 'admin' || user === 'rhett' || user === 'admin') {
 }
 renderAll();
 </script>
-<div id="tl-portal-bottom">
-  <a href="/uptime-os/" class="pb-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a>
-  <div class="pb-sep"></div>
-  <a href="/uptime-os/health/" class="pb-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Health</span></a>
-  <div class="pb-sep"></div>
-  <a href="/uptime-os/integrations/" class="pb-item pb-active"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Integrations</span></a>
-  <div class="pb-sep" id="pb-admin-sep" style="display:none"></div>
-  <a href="/uptime-os/admin/" class="pb-item" id="pb-admin-btn" style="display:none"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Admin</span></a>
-  <div class="pb-sep"></div>
-  <button class="pb-item" onclick="(function(){try{sessionStorage.removeItem('uptime_auth_v1');}catch(e){}window.location.href='/uptime-os/';})();"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+
+<div id="tl-fab">
+  <div id="tl-fab-menu">
+    <a href="/uptime-os/" class="tl-fm-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a><a href="/uptime-os/health/" class="tl-fm-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Health</a><a href="/uptime-os/integrations/" class="tl-fm-item active"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Integrations</a><div class="tl-fm-sep"></div><a href="/uptime-os/admin/" class="tl-fm-item" id="tl-fm-admin" style="display:none"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin</a><button class="tl-fm-item" id="tl-fm-signout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+  <div id="tl-fab-btn">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
 </div>
 <script>
 (function(){
   var K='uptime_auth_v1';
-  var u='';
-  try{u=sessionStorage.getItem(K)||'';}catch(e){}
+  var u='';try{u=sessionStorage.getItem(K)||'';}catch(e){}
   if(!u){window.location.href='/uptime-os/';return;}
   if(u==='rhett'||u==='admin'){
-    var ab=document.getElementById('pb-admin-btn');
-    var as=document.getElementById('pb-admin-sep');
-    if(ab)ab.style.display='flex';
-    if(as)as.style.display='block';
+    var adm=document.getElementById('tl-fm-admin');
+    if(adm)adm.style.display='flex';
   }
+  var so=document.getElementById('tl-fm-signout');
+  if(so)so.onclick=function(){try{sessionStorage.removeItem(K);}catch(e){}window.location.href='/uptime-os/';};
+  var btn=document.getElementById('tl-fab-btn');
+  var menu=document.getElementById('tl-fab-menu');
+  btn.onclick=function(e){e.stopPropagation();menu.classList.toggle('open');};
+  document.addEventListener('click',function(){menu.classList.remove('open');});
 })();
 </script>
 </body>
