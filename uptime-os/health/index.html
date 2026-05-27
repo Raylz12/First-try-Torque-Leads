@@ -254,22 +254,32 @@ function computeHealthFromStorage() {
     // AR Health: % of AR that is current (0-30 days)
     if (data.arSummary) {
       const ar = data.arSummary;
-      const total = (ar.current||0)+(ar.d30||0)+(ar.d60||0)+(ar.d90||0)+(ar.d90plus||0);
-      scores.ar = total > 0 ? Math.round(((ar.current||0) / total) * 100) : null;
+      // Portal field names: d0_30 (current), d1_30 (1-30 past due), d31_60, d61_90, d90 (90+)
+      const curr  = ar.current || ar.d0_30 || 0;
+      const p30   = ar.d1_30   || ar.d30   || 0;
+      const p60   = ar.d31_60  || ar.d60   || 0;
+      const p90   = ar.d61_90  || 0;
+      const p90p  = ar.d90     || ar.d90plus || 0;
+      const total = curr + p30 + p60 + p90 + p90p;
+      scores.ar = total > 0 ? Math.round((curr / total) * 100) : null;
     }
 
     // Revenue trend: compare recent to older revenue
     if (data.snapshots && data.snapshots.length > 1) {
-      const recent = data.snapshots.slice(-3).reduce((s,x) => s + (x.revenue||0), 0) / 3;
-      const older  = data.snapshots.slice(0, 3).reduce((s,x) => s + (x.revenue||0), 0) / 3;
-      scores.revenue = older > 0 ? Math.min(100, Math.round((recent / older) * 70)) : null;
+      // snapshots have: arTotal, pastDue, openROs, wipValue
+      const recent = data.snapshots.slice(-3).reduce((s,x) => s + (x.arTotal||x.revenue||0), 0) / 3;
+      const older  = data.snapshots.slice(0, 3).reduce((s,x) => s + (x.arTotal||x.revenue||0), 0) / 3;
+      scores.revenue = older > 0 ? Math.min(100, Math.round((recent / older) * 80)) : null;
+    } else if (data.arSummary && data.arSummary.total > 0) {
+      // No snapshots yet — use AR total as a rough proxy (50-80 range)
+      scores.revenue = 65;
     }
 
     // Tech utilization: billed hours / total hours from techs
     if (data.techs && data.techs.length) {
-      const totalBilled = data.techs.reduce((s,t) => s + (t.hours||0), 0);
+      const totalBilled = data.techs.reduce((s,t) => s + (t.hours||t.billable||0), 0);
       const totalAvail  = data.techs.length * 160; // ~160 hrs/tech/month
-      scores.utilization = Math.min(100, Math.round((totalBilled / totalAvail) * 100));
+      scores.utilization = totalBilled > 0 ? Math.min(100, Math.round((totalBilled / totalAvail) * 100)) : null;
     }
 
     // Customers: just use count to estimate retention proxy

@@ -207,7 +207,15 @@ const INTEGRATIONS = {
 function loadConnectedState() {
   try {
     const stored = localStorage.getItem(`tlos_integrations_${user}`) || '{}';
-    return JSON.parse(stored);
+    const state = JSON.parse(stored);
+    // Auto-detect Fullbay as connected if legacy key is set but integration not recorded
+    if (!state.fullbay) {
+      const fbKey = localStorage.getItem('uptimeFullbayKey');
+      if (fbKey) {
+        state.fullbay = { apiKey: fbKey, connectedAt: 'auto-configured', autoDetected: true };
+      }
+    }
+    return state;
   } catch(e) { return {}; }
 }
 

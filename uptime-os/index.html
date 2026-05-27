@@ -324,17 +324,59 @@ window.AnvilErrorBoundary=class extends React.Component{constructor(props){super
     // Override AnvilEditableCell: when placeholder="unassigned" AND no options
     // are provided, inject the tech list from the store as a select dropdown.
     const _origCell = window.AnvilEditableCell;
+    const AR_STATUS_OPTS = ['', 'Current', 'Net Terms', 'Watch', 'Late', 'In Collections', 'Dispute', 'Cash Only', 'Write-off'];
     window.AnvilEditableCell = function (props) {
-      if (!props.type && props.placeholder === 'unassigned') {
+      // Detect field by inspecting the onSave function source
+      const saveSrc = props.onSave ? props.onSave.toString() : '';
+      const fieldMatch = saveSrc.match(/"(\w+)"[,)]/);
+      const field = (fieldMatch && fieldMatch[1]) || '';
+
+      // Tech dropdown
+      if (field === 'tech' || props.placeholder === 'unassigned') {
         const techs     = (window.AnvilStore && window.AnvilStore.get('techs')) || [];
         const techNames = techs.map(t => (t && t.name) || t).filter(n => n && n !== '—' && n !== 'Unassigned');
         if (techNames.length > 0) {
           return React.createElement(_origCell, Object.assign({}, props, {
-            type:    'select',
-            options: ['', 'Unassigned', ...techNames.sort()],
+            type: 'select', options: ['', 'Unassigned', ...techNames.sort()],
           }));
         }
       }
+
+      // Sales rep dropdown
+      if (field === 'rep' || props.placeholder === 'Assign rep') {
+        const custs   = (window.AnvilStore && window.AnvilStore.get('customers')) || [];
+        const repSet  = new Set(custs.map(c => c.rep).filter(r => r && r !== '—'));
+        const repList = [...repSet].sort();
+        if (repList.length > 0) {
+          return React.createElement(_origCell, Object.assign({}, props, {
+            type: 'select', options: ['', ...repList, 'Unassigned'],
+          }));
+        }
+      }
+
+      // AR Status dropdown
+      if (field === 'arStatus') {
+        return React.createElement(_origCell, Object.assign({}, props, {
+          type: 'select', options: AR_STATUS_OPTS,
+        }));
+      }
+
+      // Service writer dropdown (on customer record)
+      if (field === 'writer' && saveSrc.includes('AnvilUpdate.customer')) {
+        const writers = (window.AnvilStore && window.AnvilStore.get('writers')) || [];
+        const orders  = (window.AnvilStore && window.AnvilStore.get('orders'))  || [];
+        const writerSet = new Set([
+          ...writers.map(w => w.name || w).filter(Boolean),
+          ...orders.map(o => o.writer).filter(w => w && w !== '—'),
+        ]);
+        const writerList = [...writerSet].sort();
+        if (writerList.length > 0) {
+          return React.createElement(_origCell, Object.assign({}, props, {
+            type: 'select', options: ['', ...writerList, 'Unassigned'],
+          }));
+        }
+      }
+
       return React.createElement(_origCell, props);
     };
 
@@ -732,7 +774,129 @@ window.AnvilErrorBoundary=class extends React.Component{constructor(props){super
     _c360Obs.observe(document.getElementById('root'), { childList: true, subtree: true });
     setTimeout(enhanceC360, 400);
 
-    console.log('[Uptime OS patch] ✓ Tech dropdown · Role nav · Score tips · Call sheet CSS · C360 dropdowns');
+    // ── 9. SERVICE WRITER field on C360 customer detail ─────────────────────
+    // Inject a "Service writer" row into the C360 detail meta grid if not already there
+    function injectWriterField() {
+      // Find the "// Credit terms" meta label — inject writer row after it
+      document.querySelectorAll('[style*="fontFamily"][style*="JetBrains"]').forEach(el => {
+        if (el.textContent.trim() !== '// Credit terms') return;
+        const card = el.closest('[class]')?.parentElement;
+        if (!card || card.dataset.writerInjected) return;
+        card.dataset.writerInjected = '1';
+
+        // Build a simple writer select that saves to AnvilUpdate.customer
+        const custName = window.AnvilStore && window.AnvilStore.get('c360Selected');
+        if (!custName) return;
+
+        const writers  = (window.AnvilStore && window.AnvilStore.get('writers'))  || [];
+        const orders   = (window.AnvilStore && window.AnvilStore.get('orders'))   || [];
+        const writerSet = new Set([
+          ...writers.map(w => w.name || w).filter(Boolean),
+          ...orders.map(o => o.writer).filter(w => w && w !== '—'),
+        ]);
+        const opts = ['', ...[...writerSet].sort(), 'Unassigned'];
+
+        const custs = (window.AnvilStore && window.AnvilStore.get('customers')) || [];
+        const cust  = custs.find(c => c.name === custName) || {};
+
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">// Service writer</div>
+          <select class="dx-edit-input" style="font-size:13px;padding:4px 8px;border-radius:5px;border:1px solid var(--hairline);background:var(--surface);cursor:pointer;width:100%">
+            ${opts.map(o => `<option value="${o}" ${o === (cust.writer||'') ? 'selected' : ''}>${o || '—'}</option>`).join('')}
+          </select>`;
+        const sel = wrap.querySelector('select');
+        sel.onchange = () => {
+          if (window.AnvilUpdate) window.AnvilUpdate.customer(custName, 'writer', sel.value);
+        };
+        const parent = el.closest('div[style]');
+        if (parent) parent.insertAdjacentElement('afterend', wrap);
+      });
+    }
+    const _writerObs = new MutationObserver(() => setTimeout(injectWriterField, 100));
+    _writerObs.observe(document.getElementById('root'), { childList: true, subtree: true });
+
+    // ── 10. AUTO DAILY SNAPSHOT ───────────────────────────────────────────────
+    // Silently capture a snapshot once per day when portal loads with data
+    function maybeAutoSnapshot() {
+      const snaps  = (window.AnvilStore && window.AnvilStore.get('snapshots')) || [];
+      const today  = new Date().toISOString().slice(0, 10);
+      if (snaps.some(s => (s.taken || s.id || '').includes(today))) return; // already have one
+
+      const ar     = (window.AnvilStore && window.AnvilStore.get('arSummary')) || {};
+      const orders = (window.AnvilStore && window.AnvilStore.get('orders'))    || [];
+      if (!ar.total && !orders.length) return; // no data yet
+
+      const snap = {
+        id:            'snap-' + Date.now(),
+        label:         'Auto · ' + today,
+        taken:         new Date().toISOString(),
+        arTotal:       ar.total    || 0,
+        pastDue:       ar.pastDue  || 0,
+        openROs:       orders.length,
+        wipValue:      orders.reduce((s, o) => s + (o.value || 0), 0),
+        employeeAvgEff: 0,
+      };
+      window.AnvilStore.set('snapshots', [...snaps, snap]);
+    }
+    // Run after data is ready
+    document.addEventListener('uptime-data-ready', () => setTimeout(maybeAutoSnapshot, 1500));
+    setTimeout(maybeAutoSnapshot, 3000); // fallback for restored sessions
+
+    // ── 11. TREND SPARKLINES on Today page ────────────────────────────────────
+    function injectSparklines() {
+      const snaps = (window.AnvilStore && window.AnvilStore.get('snapshots')) || [];
+      if (snaps.length < 2) return; // need at least 2 points
+
+      // Find the Today page strip cells (dx-strip) and inject mini SVG charts
+      const cells = document.querySelectorAll('.dx-strip-cell');
+      if (!cells.length || document.querySelector('.uptime-spark')) return;
+
+      // Compute 30-day trend data from snapshots
+      const recent = snaps.slice(-30).sort((a, b) => (a.taken||'').localeCompare(b.taken||''));
+
+      function sparkSVG(values, color) {
+        if (values.length < 2) return '';
+        const max = Math.max(...values, 1);
+        const min = Math.min(...values);
+        const range = max - min || 1;
+        const W = 80, H = 28, pad = 2;
+        const pts = values.map((v, i) => {
+          const x = pad + (i / (values.length - 1)) * (W - pad*2);
+          const y = H - pad - ((v - min) / range) * (H - pad*2);
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(' ');
+        const trend = values[values.length-1] >= values[0] ? '#16a34a' : '#dc2626';
+        return `<svg class="uptime-spark" viewBox="0 0 ${W} ${H}" style="display:block;margin-top:4px;opacity:0.7" width="${W}" height="${H}">
+          <polyline points="${pts}" fill="none" stroke="${color||trend}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="${pts.split(' ').pop().split(',')[0]}" cy="${pts.split(' ').pop().split(',')[1]}" r="2.5" fill="${color||trend}"/>
+        </svg>`;
+      }
+
+      const arVals  = recent.map(s => s.arTotal   || 0);
+      const wipVals = recent.map(s => s.wipValue   || 0);
+      const roVals  = recent.map(s => s.openROs    || 0);
+      const pdVals  = recent.map(s => s.pastDue    || 0);
+
+      // Inject into strip cells by matching label text
+      cells.forEach(cell => {
+        const label = cell.querySelector('.dx-strip-label');
+        if (!label || cell.querySelector('.uptime-spark')) return;
+        const txt = label.textContent.trim().toLowerCase();
+        let svg = '';
+        if (txt.includes('total a/r') || txt.includes('total ar'))  svg = sparkSVG(arVals);
+        else if (txt.includes('past due'))                           svg = sparkSVG(pdVals, '#dc2626');
+        else if (txt.includes('open ro') || txt.includes('wip'))    svg = sparkSVG(roVals, '#2563eb');
+        else if (txt.includes('open repair'))                        svg = sparkSVG(wipVals, '#b45309');
+        if (svg) cell.insertAdjacentHTML('beforeend', svg);
+      });
+    }
+
+    const _sparkObs = new MutationObserver(() => setTimeout(injectSparklines, 200));
+    _sparkObs.observe(document.getElementById('root'), { childList: true, subtree: true });
+    setTimeout(injectSparklines, 1500);
+
+    console.log('[Uptime OS patch] ✓ Tech/rep/status dropdowns · Role nav · Score tips · Call sheet · C360 writer · Auto snapshot · Sparklines');
   });
 
 })();
