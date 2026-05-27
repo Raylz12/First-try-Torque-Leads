@@ -644,7 +644,95 @@ window.AnvilErrorBoundary=class extends React.Component{constructor(props){super
     `;
     document.head.appendChild(css);
 
-    console.log('[Uptime OS patch] ✓ Tech dropdown · Role nav · Score tips · Call sheet CSS');
+    // ── 8. CUSTOMER 360 — Tier + Rep dropdowns ───────────────────────────────
+    function enhanceC360() {
+      // Look for the C360 full-page search input (the one on the list view)
+      const wrap = document.querySelector('[style*="background: var(--surface)"][style*="border-radius"]') ||
+                   document.querySelector('[style*="background:var(--surface)"][style*="borderRadius"]');
+      const input = document.querySelector('.dx-finput[placeholder*="customers"]') ||
+                    document.querySelector('.dx-finput[placeholder*="Search"]');
+      if (!input || input.dataset.c360Dropdowns) return;
+
+      const customers = (window.AnvilStore && window.AnvilStore.get('customers')) || [];
+      if (!customers.length) return;
+
+      input.dataset.c360Dropdowns = '1';
+
+      // Collect unique tiers and reps
+      const TIER_ORDER = ['Preferred','Standard','Conditional','Prepay','Unscored'];
+      const tiers = ['All Tiers', ...TIER_ORDER.filter(t => customers.some(c => c.tier === t))];
+      const reps  = ['All Reps', ...[...new Set(customers.map(c => c.rep).filter(Boolean))].sort()];
+
+      function mkSel(opts, onChange) {
+        const s = document.createElement('select');
+        s.className = 'dx-finput';
+        s.style.cssText = 'flex:1;font-size:12px;min-width:0;cursor:pointer;';
+        opts.forEach(o => {
+          const el = document.createElement('option');
+          el.value = el.textContent = o;
+          s.appendChild(el);
+        });
+        s.onchange = onChange;
+        return s;
+      }
+
+      // State
+      let activeTier = '', activeRep = '';
+
+      function applyFilters() {
+        // Tag and filter rows in the customer list
+        const listContainer = input.closest('[style]')?.nextElementSibling ||
+                              input.parentElement?.querySelector('[style*="maxHeight"]') ||
+                              document.querySelector('[style*="maxHeight: 540"]') ||
+                              document.querySelector('[style*="maxHeight:540"]');
+        if (!listContainer) return;
+
+        Array.from(listContainer.children).forEach(row => {
+          // Get customer name from the bold div
+          const nameEl = row.querySelector('[style*="fontWeight: 600"]') ||
+                         row.querySelector('[style*="font-weight:600"]') ||
+                         row.querySelector('[style*="fontWeight:600"]');
+          if (!nameEl) return;
+          const name = nameEl.textContent.trim();
+          const cust = customers.find(c => c.name === name);
+          if (!cust) return;
+
+          const tierOk = !activeTier || cust.tier === activeTier;
+          const repOk  = !activeRep  || (cust.rep || '—') === activeRep;
+          row.style.display = tierOk && repOk ? '' : 'none';
+        });
+      }
+
+      const tierSel = mkSel(tiers, () => {
+        activeTier = tierSel.value === 'All Tiers' ? '' : tierSel.value;
+        applyFilters();
+      });
+      const repSel = mkSel(reps, () => {
+        activeRep = repSel.value === 'All Reps' ? '' : repSel.value;
+        applyFilters();
+      });
+
+      const bar = document.createElement('div');
+      bar.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+      bar.appendChild(tierSel);
+      bar.appendChild(repSel);
+
+      // Insert below the search input
+      const parent = input.parentElement;
+      const nextSib = input.nextElementSibling;
+      if (nextSib) {
+        parent.insertBefore(bar, nextSib);
+      } else {
+        parent.appendChild(bar);
+      }
+    }
+
+    // Run enhanceC360 whenever the DOM changes (page navigation)
+    const _c360Obs = new MutationObserver(() => enhanceC360());
+    _c360Obs.observe(document.getElementById('root'), { childList: true, subtree: true });
+    setTimeout(enhanceC360, 400);
+
+    console.log('[Uptime OS patch] ✓ Tech dropdown · Role nav · Score tips · Call sheet CSS · C360 dropdowns');
   });
 
 })();
