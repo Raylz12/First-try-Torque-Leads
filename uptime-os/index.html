@@ -909,393 +909,297 @@ window.AnvilErrorBoundary=class extends React.Component{constructor(props){super
     setTimeout(injectSparklines, 1500);
 
 
+    })();
+
+
     // ── 11. FLEET PM SCHEDULING PAGE OVERRIDE ──────────────────────────────
     (function() {
-      var _fleetData = null;
-      function getFleetData() {
-        if (_fleetData) return _fleetData;
-        try {
-          var stored = localStorage.getItem('uptimeFleetData');
-          if (stored) { _fleetData = JSON.parse(stored); return _fleetData; }
-        } catch(e) {}
-        try {
-          if (window.__UPTIME_SEED__ && window.__UPTIME_SEED__.fleet) {
-            _fleetData = JSON.parse(window.__UPTIME_SEED__.fleet);
-            return _fleetData;
+      var _fleetCache = null;
+      function getFleet() {
+        if (_fleetCache) return _fleetCache;
+        try { var s=localStorage.getItem('uptimeFleetData'); if(s){_fleetCache=JSON.parse(s);return _fleetCache;} } catch(e) {}
+        try { if(window.__UPTIME_SEED__&&window.__UPTIME_SEED__.fleet){_fleetCache=JSON.parse(window.__UPTIME_SEED__.fleet);return _fleetCache;} } catch(e) {}
+        return {asOf:'—',units:[]};
+      }
+      function daysOut(iso){var d=new Date(iso+'T00:00:00'),t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
+      function cc(days){return days<0?'overdue':days<=30?'dot':days<=90?'pma':'pmb';}
+      function cs(days){return days<0?'overdue':days<=30?'soon':days<=90?'upcoming':'future';}
+      function fmt(iso){return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+      var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      function parseCSV(text) {
+        var rows=[],row=[],field='',inQ=false,ch;
+        for(var i=0;i<text.length;i++){
+          ch=text[i];
+          if(inQ){if(ch==='"'&&text[i+1]==='"'){field+='"';i++;}else if(ch==='"'){inQ=false;}else{field+=ch;}}
+          else if(ch==='"'){inQ=true;}
+          else if(ch===','){row.push(field);field='';}
+          else if(ch.charCodeAt(0)===10||ch.charCodeAt(0)===13){if(field||row.length){row.push(field);rows.push(row);}row=[];field='';}
+          else{field+=ch;}
+        }
+        if(field||row.length){row.push(field);rows.push(row);}
+        return rows;
+      }
+      function importCSV(text) {
+        var rows=parseCSV(text),header=rows[0],svcs=[];
+        for(var i=9;i<header.length;i+=2){var sn=(header[i]||'').trim();if(!sn||sn.endsWith('- Next Due')){i-=1;continue;}svcs.push({name:sn,col:i});}
+        var out=[];
+        for(var r=1;r<rows.length;r++){
+          var rw=rows[r],cu=(rw[3]||'').trim(),ve=(rw[7]||'').trim();
+          if(!cu||!ve)continue;
+          var ss=[];
+          for(var j=0;j<svcs.length;j++){
+            var col=svcs[j].col,lr=(rw[col]||'').trim(),nr=(rw[col+1]||'').trim();
+            if(!lr||lr==='Never Performed')continue;
+            var nd=null,dm=nr.match(/^(\d+\/\d+\/\d+)$/);
+            if(dm){try{nd=new Date(dm[1]).toISOString().slice(0,10);}catch(e){}}
+            if(!nd)continue;
+            ss.push({n:svcs[j].name,d:nd,l:null,i:null});
           }
-        } catch(e) {}
-        return { asOf: '—', units: [] };
+          if(!ss.length)continue;
+          out.push({c:cu,v:ve,vin:(rw[6]||'').trim(),u:(rw[4]||'').trim(),n:(rw[5]||'').trim(),m:(rw[8]||'').trim(),s:ss});
+        }
+        return out;
       }
-      function daysBetween(isoDate) {
-        var d = new Date(isoDate + 'T00:00:00'); var t = new Date(); t.setHours(0,0,0,0);
-        return Math.round((d - t) / 86400000);
-      }
-      function colorClass(days) {
-        if (days < 0) return 'overdue';
-        if (days <= 30) return 'dot';
-        if (days <= 90) return 'pma';
-        return 'pmb';
-      }
-      function fmtDate(iso) {
-        var d = new Date(iso + 'T00:00:00');
-        return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-      }
-      var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       window.AnvilPages = window.AnvilPages || {};
-      window.AnvilPages.SchedulingPage = function() {
-        var R = React;
-        var useState = R.useState, useMemo = R.useMemo, useCallback = R.useCallback;
-        var fleet = getFleetData();
-        var units = fleet.units || [];
-        var _today = new Date(); _today.setHours(0,0,0,0);
+      window.AnvilPages.SchedulingPage = function FleetPMPage() {
+        var R=React,uS=R.useState,uM=R.useMemo;
+        var fleet=getFleet(),units=fleet.units||[];
+        var t0=new Date();t0.setHours(0,0,0,0);
+        var cR=uS(''),custF=cR[0],setCustF=cR[1];
+        var sR=uS(''),svcF=sR[0],setSvcF=sR[1];
+        var stR=uS(''),statF=stR[0],setStatF=stR[1];
+        var vR=uS('cal'),view=vR[0],setView=vR[1];
+        var calR=uS({y:t0.getFullYear(),m:t0.getMonth()}),cal=calR[0],setCal=calR[1];
+        var popR=uS(null),popDay=popR[0],setPop=popR[1];
+        var exR=uS(null),exIdx=exR[0],setEx=exR[1];
+        var revR=uS(0),setRev=revR[1];
 
-        var custState = useState('');
-        var custFilter = custState[0]; var setCust = custState[1];
-        var svcState = useState('');
-        var svcFilter = svcState[0]; var setSvc = svcState[1];
-        var statusState = useState('');
-        var statusFilter = statusState[0]; var setStatus = statusState[1];
-        var viewState = useState('cal');
-        var view = viewState[0]; var setView = viewState[1];
-        var calState = useState({y: _today.getFullYear(), m: _today.getMonth()});
-        var cal = calState[0]; var setCal = calState[1];
-        var popState = useState(null);
-        var popDay = popState[0]; var setPopDay = popState[1];
-        var expandState = useState(null);
-        var expandIdx = expandState[0]; var setExpand = expandState[1];
-        var dataState = useState({asOf: fleet.asOf, count: units.length});
-        var dataInfo = dataState[0]; var setDataInfo = dataState[1];
+        var custs=uM(function(){return Array.from(new Set(units.map(function(u){return u.c;}))).sort();},[(units||[]).length]);
+        var svcs=uM(function(){var s=[];units.forEach(function(u){(u.s||[]).forEach(function(sv){if(s.indexOf(sv.n)<0)s.push(sv.n);});});return s.sort();},[units.length]);
 
-        // Build all events from fleet data
-        var allEvents = useMemo(function() {
-          var evts = [];
-          units.forEach(function(u) {
-            (u.s || []).forEach(function(s) {
-              if (!s.d) return;
-              var days = daysBetween(s.d);
-              evts.push({ date: s.d, svc: s.n, customer: u.c, vehicle: u.v,
-                unitNum: u.u, meter: u.m, days: days, color: colorClass(days),
-                status: days < 0 ? 'overdue' : days <= 30 ? 'soon' : days <= 90 ? 'upcoming' : 'future',
-                unitObj: u, svcObj: s });
+        var allEvts=uM(function(){
+          var ev=[];
+          units.forEach(function(u){
+            (u.s||[]).forEach(function(s){
+              if(!s.d)return;
+              var d=daysOut(s.d);
+              ev.push({date:s.d,svc:s.n,cust:u.c,veh:u.v,unit:u.u,meter:u.m,days:d,col:cc(d),stat:cs(d)});
             });
           });
-          return evts;
-        }, [units.length, dataInfo.count]);
+          return ev;
+        },[units.length,revR[0]]);
 
-        // Customer and service type lists
-        var customers = useMemo(function() {
-          return Array.from(new Set(units.map(function(u){return u.c;}))).sort();
-        }, [units.length]);
-        var svcTypes = useMemo(function() {
-          return Array.from(new Set(units.flatMap ? units.flatMap(function(u){return (u.s||[]).map(function(s){return s.n;});}) : [].concat.apply([], units.map(function(u){return (u.s||[]).map(function(s){return s.n;});})))).sort();
-        }, [units.length]);
-
-        // Filtered events
-        var filtered = useMemo(function() {
-          return allEvents.filter(function(e) {
-            if (custFilter && e.customer !== custFilter) return false;
-            if (svcFilter && e.svc !== svcFilter) return false;
-            if (statusFilter) {
-              if (statusFilter === 'overdue' && e.status !== 'overdue') return false;
-              if (statusFilter === 'soon' && e.status !== 'soon') return false;
-              if (statusFilter === 'upcoming' && e.status !== 'upcoming') return false;
-            }
+        var filtered=uM(function(){
+          return allEvts.filter(function(e){
+            if(custF&&e.cust!==custF)return false;
+            if(svcF&&e.svc!==svcF)return false;
+            if(statF==='overdue'&&e.stat!=='overdue')return false;
+            if(statF==='soon'&&e.stat!=='soon')return false;
+            if(statF==='upcoming'&&e.stat!=='upcoming')return false;
             return true;
           });
-        }, [allEvents, custFilter, svcFilter, statusFilter]);
+        },[allEvts,custF,svcF,statF]);
 
-        // Stats
-        var od = filtered.filter(function(e){return e.status==='overdue';}).length;
-        var s30 = filtered.filter(function(e){return e.status==='soon';}).length;
-        var s90 = filtered.filter(function(e){return e.status==='upcoming';}).length;
-        var ok = filtered.filter(function(e){return e.status==='future';}).length;
+        var od=filtered.filter(function(e){return e.stat==='overdue';}).length;
+        var s30=filtered.filter(function(e){return e.stat==='soon';}).length;
+        var s90=filtered.filter(function(e){return e.stat==='upcoming';}).length;
+        var ok=filtered.filter(function(e){return e.stat==='future';}).length;
 
-        // Calendar event map
-        var evMap = useMemo(function() {
-          var m = {};
-          filtered.forEach(function(e) { if (!m[e.date]) m[e.date] = []; m[e.date].push(e); });
+        var evMap=uM(function(){
+          var m={};
+          filtered.forEach(function(e){if(!m[e.date])m[e.date]=[];m[e.date].push(e);});
           return m;
-        }, [filtered]);
+        },[filtered]);
 
-        function navMonth(dir) {
-          setCal(function(c) {
-            var nm = c.m + dir, ny = c.y;
-            if (dir === 0) return { y: _today.getFullYear(), m: _today.getMonth() };
-            if (nm > 11) { nm = 0; ny++; } if (nm < 0) { nm = 11; ny--; }
-            return { y: ny, m: nm };
+        function navMo(dir){
+          setCal(function(c){
+            if(dir===0)return{y:t0.getFullYear(),m:t0.getMonth()};
+            var nm=c.m+dir,ny=c.y;
+            if(nm>11){nm=0;ny++;}if(nm<0){nm=11;ny--;}
+            return{y:ny,m:nm};
           });
         }
 
-        function buildCalDays() {
-          var first = new Date(cal.y, cal.m, 1).getDay();
-          var dim = new Date(cal.y, cal.m+1, 0).getDate();
-          var dip = new Date(cal.y, cal.m, 0).getDate();
-          var cells = [];
-          for (var d = first-1; d >= 0; d--) {
-            var dd = dip-d;
-            var pm = cal.m===0?12:cal.m, py = cal.m===0?cal.y-1:cal.y;
-            cells.push({day:dd, other:true, key:py+'-'+String(pm).padStart(2,'0')+'-'+String(dd).padStart(2,'0')});
-          }
-          for (var d2 = 1; d2 <= dim; d2++) {
-            var key = cal.y+'-'+String(cal.m+1).padStart(2,'0')+'-'+String(d2).padStart(2,'0');
-            var isToday = d2===_today.getDate()&&cal.m===_today.getMonth()&&cal.y===_today.getFullYear();
-            cells.push({day:d2, other:false, key:key, isToday:isToday});
-          }
-          var rem = cells.length%7===0?0:7-cells.length%7;
-          for (var d3 = 1; d3 <= rem; d3++) {
-            var nm2 = cal.m===11?1:cal.m+2, ny2 = cal.m===11?cal.y+1:cal.y;
-            cells.push({day:d3, other:true, key:ny2+'-'+String(nm2).padStart(2,'0')+'-'+String(d3).padStart(2,'0')});
-          }
+        function calCells(){
+          var first=new Date(cal.y,cal.m,1).getDay(),dim=new Date(cal.y,cal.m+1,0).getDate(),dip=new Date(cal.y,cal.m,0).getDate(),cells=[];
+          for(var d=first-1;d>=0;d--){var dd=dip-d,pm=cal.m===0?12:cal.m,py=cal.m===0?cal.y-1:cal.y;cells.push({day:dd,other:true,key:py+'-'+String(pm).padStart(2,'0')+'-'+String(dd).padStart(2,'0')});}
+          for(var d2=1;d2<=dim;d2++){var k=cal.y+'-'+String(cal.m+1).padStart(2,'0')+'-'+String(d2).padStart(2,'0'),isTod=d2===t0.getDate()&&cal.m===t0.getMonth()&&cal.y===t0.getFullYear();cells.push({day:d2,other:false,key:k,isTod:isTod});}
+          var rem=cells.length%7===0?0:7-cells.length%7;
+          for(var d3=1;d3<=rem;d3++){var nm2=cal.m===11?1:cal.m+2,ny2=cal.m===11?cal.y+1:cal.y;cells.push({day:d3,other:true,key:ny2+'-'+String(nm2).padStart(2,'0')+'-'+String(d3).padStart(2,'0')});}
           return cells;
         }
 
-        // CSV import
-        function handleFile(file) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            try {
-              var parsed = parseFleetCSV(e.target.result);
-              var data = {asOf: new Date().toISOString().slice(0,10), units: parsed};
-              localStorage.setItem('uptimeFleetData', JSON.stringify(data));
-              _fleetData = data;
-              setDataInfo({asOf: data.asOf, count: parsed.length});
-              window.dispatchEvent(new CustomEvent('anvil-data-imported', {detail: '✓ Fleet data imported: ' + parsed.length + ' units'}));
-            } catch(err) { window.dispatchEvent(new CustomEvent('anvil-data-imported', {detail: '✗ Fleet import failed: ' + err.message})); }
+        var unitRows=uM(function(){
+          var m={};
+          filtered.forEach(function(e){var k=e.cust+'||'+e.veh+'||'+(e.unit||'');if(!m[k])m[k]={cust:e.cust,veh:e.veh,unit:e.unit,meter:e.meter,ev:[]};m[k].ev.push(e);});
+          return Object.values(m).sort(function(a,b){return Math.min.apply(null,a.ev.map(function(x){return x.days;}))-Math.min.apply(null,b.ev.map(function(x){return x.days;}));});
+        },[filtered]);
+
+        function handleFile(file){
+          var fr=new FileReader();
+          fr.onload=function(ev){
+            try{
+              var u2=importCSV(ev.target.result);
+              var data={asOf:new Date().toISOString().slice(0,10),units:u2};
+              localStorage.setItem('uptimeFleetData',JSON.stringify(data));
+              _fleetCache=data;
+              setRev(function(x){return x+1;});
+            }catch(e2){alert('Fleet CSV import failed: '+e2.message);}
           };
-          reader.readAsText(file);
-        }
-        function parseFleetCSV(text) {
-          var rows=[],row=[],field='',inQ=false;
-          for(var i=0;i<text.length;i++){var c=text[i];if(inQ){if(c==='"'&&text[i+1]==='"'){field+='"';i++;}else if(c==='"'){inQ=false;}else field+=c;}else if(c==='"'){inQ=true;}else if(c===','){row.push(field);field='';}else if(c==='
-'||c===''){if(field||row.length){row.push(field);rows.push(row);}row=[];field='';}else field+=c;}
-          if(field||row.length){row.push(field);rows.push(row);}
-          var header=rows[0]; var svcs=[];
-          for(var ii=9;ii<header.length;ii+=2){var sn=(header[ii]||'').trim();if(!sn||sn.endsWith('- Next Due')){ii-=1;continue;}svcs.push({name:sn,col:ii});}
-          var out=[];
-          for(var r=1;r<rows.length;r++){var rw=rows[r];var cu=(rw[3]||'').trim();var ve=(rw[7]||'').trim();if(!cu||!ve)continue;var ss=[];
-          for(var j=0;j<svcs.length;j++){var col=svcs[j].col;var lr=(rw[col]||'').trim();var nr=(rw[col+1]||'').trim();if(!lr||lr==='Never Performed')continue;var nd=null;var dm=nr.match(/^(\d+\/\d+\/\d+)$/);if(dm){try{nd=new Date(dm[1]).toISOString().slice(0,10);}catch(e){}}if(!nd)continue;ss.push({n:svcs[j].name,d:nd,l:null,i:null});}
-          if(!ss.length)continue;out.push({c:cu,v:ve,vin:(rw[6]||'').trim(),u:(rw[4]||'').trim(),n:(rw[5]||'').trim(),m:(rw[8]||'').trim(),s:ss});}
-          return out;
+          fr.readAsText(file);
         }
 
-        var cells = buildCalDays();
-        var DOW = ['S','M','T','W','T','F','S'];
-        var monthLabel = MONTHS[cal.m] + ' ' + cal.y;
+        var cells=calCells();
+        var DOW=['S','M','T','W','T','F','S'];
+        var popEvts=popDay?(evMap[popDay]||[]):[];
+        var popLabel=popDay?new Date(popDay+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}):'';
 
-        // Popup content
-        var popEvents = popDay ? (evMap[popDay] || []) : [];
-        var popDateLabel = '';
-        if (popDay) { var pd = new Date(popDay+'T00:00:00'); popDateLabel = pd.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}); }
-
-        // Table: units sorted by nearest due date
-        var unitMap = useMemo(function() {
-          var m = {};
-          filtered.forEach(function(e) {
-            var key = e.customer+'||'+e.vehicle+'||'+(e.unitNum||'');
-            if (!m[key]) m[key] = {customer:e.customer,vehicle:e.vehicle,unitNum:e.unitNum,meter:e.meter,events:[]};
-            m[key].events.push(e);
-          });
-          return Object.values(m).sort(function(a,b) {
-            return Math.min.apply(null,a.events.map(function(e){return e.days;})) - Math.min.apply(null,b.events.map(function(e){return e.days;}));
-          });
-        }, [filtered]);
-
-        return R.createElement(R.Fragment, null,
-          // Page header
-          R.createElement('div', {className:'dx-page-head'},
-            R.createElement('div', null,
-              R.createElement('div', {className:'dx-page-title'}, 'Fleet ', R.createElement('em',null,'PM')),
-              R.createElement('div', {className:'dx-page-sub'}, dataInfo.count + ' tracked units · data as of ' + dataInfo.asOf + ' · ' + od + ' overdue · ' + s30 + ' due within 30 days')
+        return R.createElement(R.Fragment,null,
+          R.createElement('div',{className:'dx-page-head'},
+            R.createElement('div',null,
+              R.createElement('div',{className:'dx-page-title'},'Fleet ',R.createElement('em',null,'PM')),
+              R.createElement('div',{className:'dx-page-sub'},units.length+' tracked units · '+fleet.asOf+' · '+od+' overdue · '+s30+' due ≤30d')
             ),
-            R.createElement('div', {className:'dx-pagebar'},
-              R.createElement('button', {className:'dx-tab'+(view==='cal'?' active':''), onClick:function(){setView('cal');}}, 'Calendar'),
-              R.createElement('button', {className:'dx-tab'+(view==='tbl'?' active':''), onClick:function(){setView('tbl');}}, 'Units'),
-              R.createElement('label', {className:'dx-btn', style:{cursor:'pointer',margin:0},
+            R.createElement('div',{className:'dx-pagebar'},
+              R.createElement('button',{className:'dx-tab'+(view==='cal'?' active':''),onClick:function(){setView('cal');}}, 'Calendar'),
+              R.createElement('button',{className:'dx-tab'+(view==='tbl'?' active':''),onClick:function(){setView('tbl');}}, 'Units'),
+              R.createElement('label',{className:'dx-btn',style:{cursor:'pointer',margin:0},
                 onDragOver:function(e){e.preventDefault();},
                 onDrop:function(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f)handleFile(f);}},
                 'Update CSV',
-                R.createElement('input', {type:'file', accept:'.csv', style:{display:'none'}, onChange:function(e){if(e.target.files[0])handleFile(e.target.files[0]);}})
+                R.createElement('input',{type:'file',accept:'.csv',style:{display:'none'},onChange:function(e){if(e.target.files[0])handleFile(e.target.files[0]);}})
               )
             )
           ),
-          // Stat strip
-          R.createElement('div', {className:'dx-strip'},
-            R.createElement('div', {className:'dx-strip-cell hero'},
-              R.createElement('div', {className:'dx-strip-label'}, 'Overdue'),
-              R.createElement('div', {className:'dx-strip-value', style:{color:'var(--neg)'}}, od),
-              R.createElement('div', {className:'dx-strip-delta up'}, 'services past due')
-            ),
-            R.createElement('div', {className:'dx-strip-cell'},
-              R.createElement('div', {className:'dx-strip-label'}, 'Due ≤ 30 Days'),
-              R.createElement('div', {className:'dx-strip-value'}, s30),
-              R.createElement('div', {className:'dx-strip-delta flat'}, 'coming up soon')
-            ),
-            R.createElement('div', {className:'dx-strip-cell'},
-              R.createElement('div', {className:'dx-strip-label'}, 'Due 31–90 Days'),
-              R.createElement('div', {className:'dx-strip-value'}, s90),
-              R.createElement('div', {className:'dx-strip-delta flat'}, 'plan ahead')
-            ),
-            R.createElement('div', {className:'dx-strip-cell'},
-              R.createElement('div', {className:'dx-strip-label'}, 'Scheduled OK'),
-              R.createElement('div', {className:'dx-strip-value'}, ok),
-              R.createElement('div', {className:'dx-strip-delta down'}, 'no action needed')
-            ),
-            R.createElement('div', {className:'dx-strip-cell'},
-              R.createElement('div', {className:'dx-strip-label'}, 'Customers'),
-              R.createElement('div', {className:'dx-strip-value'}, customers.length),
-              R.createElement('div', {className:'dx-strip-delta flat'}, 'in fleet')
-            ),
-            R.createElement('div', {className:'dx-strip-cell'},
-              R.createElement('div', {className:'dx-strip-label'}, 'Units'),
-              R.createElement('div', {className:'dx-strip-value'}, dataInfo.count),
-              R.createElement('div', {className:'dx-strip-delta flat'}, 'tracked')
-            )
+          R.createElement('div',{className:'dx-strip'},
+            R.createElement('div',{className:'dx-strip-cell hero'},R.createElement('div',{className:'dx-strip-label'},'Overdue'),R.createElement('div',{className:'dx-strip-value',style:{color:'var(--neg)'}},od),R.createElement('div',{className:'dx-strip-delta up'},'services')),
+            R.createElement('div',{className:'dx-strip-cell'},R.createElement('div',{className:'dx-strip-label'},'Due \u226430d'),R.createElement('div',{className:'dx-strip-value'},s30),R.createElement('div',{className:'dx-strip-delta flat'},'soon')),
+            R.createElement('div',{className:'dx-strip-cell'},R.createElement('div',{className:'dx-strip-label'},'Due 31\u201390d'),R.createElement('div',{className:'dx-strip-value'},s90),R.createElement('div',{className:'dx-strip-delta flat'},'plan ahead')),
+            R.createElement('div',{className:'dx-strip-cell'},R.createElement('div',{className:'dx-strip-label'},'OK'),R.createElement('div',{className:'dx-strip-value'},ok),R.createElement('div',{className:'dx-strip-delta down'},'scheduled')),
+            R.createElement('div',{className:'dx-strip-cell'},R.createElement('div',{className:'dx-strip-label'},'Customers'),R.createElement('div',{className:'dx-strip-value'},custs.length),R.createElement('div',{className:'dx-strip-delta flat'},'in fleet')),
+            R.createElement('div',{className:'dx-strip-cell'},R.createElement('div',{className:'dx-strip-label'},'Units'),R.createElement('div',{className:'dx-strip-value'},units.length),R.createElement('div',{className:'dx-strip-delta flat'},'tracked'))
           ),
-          // Filters
-          R.createElement('div', {className:'dx-filterbar', style:{flexWrap:'wrap', gap:6}},
-            R.createElement('select', {className:'dx-finput', value:custFilter, style:{minWidth:180}, onChange:function(e){setCust(e.target.value);}},
-              R.createElement('option', {value:''},'All Customers'),
-              customers.map(function(c){return R.createElement('option',{key:c,value:c},c);})),
-            R.createElement('select', {className:'dx-finput', value:svcFilter, style:{minWidth:200}, onChange:function(e){setSvc(e.target.value);}},
-              R.createElement('option', {value:''},'All Service Types'),
-              svcTypes.map(function(s){return R.createElement('option',{key:s,value:s},s);})),
-            R.createElement('button', {className:'dx-fchip'+(statusFilter===''?' active':''), onClick:function(){setStatus('');}}, 'All'),
-            R.createElement('button', {className:'dx-fchip'+(statusFilter==='overdue'?' active':''), onClick:function(){setStatus('overdue');}}, 'Overdue'),
-            R.createElement('button', {className:'dx-fchip'+(statusFilter==='soon'?' active':''), onClick:function(){setStatus('soon');}}, '≤ 30 Days'),
-            R.createElement('button', {className:'dx-fchip'+(statusFilter==='upcoming'?' active':''), onClick:function(){setStatus('upcoming');}}, '31–90 Days'),
-            (custFilter||svcFilter||statusFilter)?R.createElement('button',{className:'dx-freset',onClick:function(){setCust('');setSvc('');setStatus('');}}, '× Reset'):null,
-            R.createElement('div', {className:'dx-fcount'}, filtered.length + ' services')
+          R.createElement('div',{className:'dx-filterbar'},
+            R.createElement('select',{className:'dx-finput',value:custF,style:{minWidth:160},onChange:function(e){setCustF(e.target.value);}},
+              R.createElement('option',{value:''},'All Customers'),
+              custs.map(function(c){return R.createElement('option',{key:c,value:c},c);})),
+            R.createElement('select',{className:'dx-finput',value:svcF,style:{minWidth:190},onChange:function(e){setSvcF(e.target.value);}},
+              R.createElement('option',{value:''},'All Service Types'),
+              svcs.map(function(s){return R.createElement('option',{key:s,value:s},s);})),
+            R.createElement('button',{className:'dx-fchip'+(statF===''?' active':''),onClick:function(){setStatF('');}}, 'All'),
+            R.createElement('button',{className:'dx-fchip'+(statF==='overdue'?' active':''),onClick:function(){setStatF('overdue');}}, 'Overdue'),
+            R.createElement('button',{className:'dx-fchip'+(statF==='soon'?' active':''),onClick:function(){setStatF('soon');}}, '\u226430 Days'),
+            R.createElement('button',{className:'dx-fchip'+(statF==='upcoming'?' active':''),onClick:function(){setStatF('upcoming');}}, '31\u201390 Days'),
+            (custF||svcF||statF)?R.createElement('button',{className:'dx-freset',onClick:function(){setCustF('');setSvcF('');setStatF('');}},'\u00d7 Reset'):null,
+            R.createElement('div',{className:'dx-fcount'},filtered.length+' services')
           ),
-          // CALENDAR VIEW
-          view === 'cal' ? R.createElement('div', {className:'dx-cal-wrap'},
-            R.createElement('div', {className:'dx-panel'},
-              R.createElement('div', {className:'dx-cal-head'},
-                R.createElement('div', {className:'dx-cal-month'}, monthLabel),
-                R.createElement('div', {className:'dx-cal-controls'},
-                  R.createElement('button', {className:'dx-cal-btn', onClick:function(){navMonth(-1);}}, '‹'),
-                  R.createElement('button', {className:'dx-cal-btn', onClick:function(){navMonth(0);}}, 'Today'),
-                  R.createElement('button', {className:'dx-cal-btn', onClick:function(){navMonth(1);}}, '›')
+          view==='cal'?R.createElement('div',{className:'dx-cal-wrap'},
+            R.createElement('div',{className:'dx-panel'},
+              R.createElement('div',{className:'dx-cal-head'},
+                R.createElement('div',{className:'dx-cal-month'},MONTHS[cal.m]+' '+cal.y),
+                R.createElement('div',{className:'dx-cal-controls'},
+                  R.createElement('button',{className:'dx-cal-btn',onClick:function(){navMo(-1);}},'\u2039'),
+                  R.createElement('button',{className:'dx-cal-btn',onClick:function(){navMo(0);}},'Today'),
+                  R.createElement('button',{className:'dx-cal-btn',onClick:function(){navMo(1);}},'\u203a')
                 )
               ),
-              R.createElement('div', {className:'dx-cal-grid'},
+              R.createElement('div',{className:'dx-cal-grid'},
                 DOW.map(function(d,i){return R.createElement('div',{key:i,className:'dx-cal-dow'},d);}),
-                cells.map(function(cell, i) {
-                  var evts = evMap[cell.key] || [];
-                  var shown = evts.slice(0, 3);
-                  var more = evts.length - 3;
-                  return R.createElement('div', {key:i,
-                    className:'dx-cal-day '+(cell.other?'other-month ':'')+(cell.isToday?'today ':'')+(evts.length?'selected':''),
-                    onClick: evts.length ? function(){setPopDay(cell.key);} : undefined},
-                    R.createElement('div', {className:'dx-cal-day-num'}, cell.day),
-                    shown.map(function(e,j){return R.createElement('div',{key:j,className:'dx-cal-evt '+e.color},
-                      e.days<0?'OVR':e.days<=30?e.days+'d':'',
-                      ' ',
-                      (e.vehicle||'').split(' ').slice(0,2).join(' ')
-                    );}),
-                    more > 0 ? R.createElement('div',{className:'dx-cal-day-more'},'+'+more+' more') : null
+                cells.map(function(cell,i){
+                  var ev=evMap[cell.key]||[];
+                  var shown=ev.slice(0,3),more=ev.length-3;
+                  return R.createElement('div',{key:i,
+                    className:'dx-cal-day '+(cell.other?'other-month ':'')+(cell.isTod?'today ':'')+(ev.length?'selected':''),
+                    onClick:ev.length?function(){setPop(cell.key);}:undefined},
+                    R.createElement('div',{className:'dx-cal-day-num'},cell.day),
+                    shown.map(function(e,j){return R.createElement('div',{key:j,className:'dx-cal-evt '+e.col},e.days<0?'OVR':e.days<=30?e.days+'d':'','\u00a0',(e.veh||'').split(' ').slice(0,2).join(' '));}),
+                    more>0?R.createElement('div',{className:'dx-cal-day-more'},'+'+more+' more'):null
                   );
                 })
               )
             ),
-            // Day panel popup
-            popDay ? R.createElement('div', {className:'dx-day-panel'},
-              R.createElement('div', {className:'dx-day-panel-head'},
-                R.createElement('div', {className:'dx-day-panel-date'}, popDateLabel),
-                R.createElement('div', {className:'dx-day-panel-sum'}, popEvents.length + ' service' + (popEvents.length===1?'':'s') + ' due',
-                  R.createElement('button', {className:'dx-cal-btn', style:{marginLeft:8}, onClick:function(){setPopDay(null);}}, '✕')
-                )
+            popDay?R.createElement('div',{className:'dx-day-panel'},
+              R.createElement('div',{className:'dx-day-panel-head'},
+                R.createElement('div',{className:'dx-day-panel-date'},popLabel),
+                R.createElement('div',{className:'dx-day-panel-sum'},popEvts.length+' service'+(popEvts.length===1?'':'s'),
+                  R.createElement('button',{className:'dx-cal-btn',style:{marginLeft:8},onClick:function(){setPop(null);}},'\u2715'))
               ),
-              R.createElement('div', {className:'dx-day-panel-list'},
-                popEvents.length === 0 ? R.createElement('div', {className:'dx-day-panel-empty'}, 'Nothing scheduled') :
-                popEvents.map(function(e, i) {
-                  return R.createElement('div', {key:i, className:'dx-day-panel-row'},
-                    R.createElement('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'baseline'}},
-                      R.createElement('div', {className:'dx-row-title'}, e.vehicle + (e.unitNum?' · Unit '+e.unitNum:'')),
-                      R.createElement('span', {style:{fontFamily:"'JetBrains Mono',monospace",fontSize:10,padding:'2px 7px',borderRadius:3,fontWeight:700,background:e.status==='overdue'?'var(--neg)':e.status==='soon'?'#f59e0b':'var(--accent-bg)',color:e.status==='overdue'?'#fff':e.status==='soon'?'#1c1a16':'var(--accent)',textTransform:'uppercase',letterSpacing:'0.05em'}},
-                        e.days<0?Math.abs(e.days)+'d OVR':e.days===0?'TODAY':e.days+'d'
-                      )
+              R.createElement('div',{className:'dx-day-panel-list'},
+                popEvts.length===0?R.createElement('div',{className:'dx-day-panel-empty'},'Nothing scheduled'):
+                popEvts.map(function(e,i){
+                  return R.createElement('div',{key:i,className:'dx-day-panel-row'},
+                    R.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline'}},
+                      R.createElement('div',{className:'dx-row-title'},e.veh+(e.unit?' \u00b7 Unit '+e.unit:'')),
+                      R.createElement('span',{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:10,padding:'2px 7px',borderRadius:3,fontWeight:700,background:e.stat==='overdue'?'var(--neg)':e.stat==='soon'?'#f59e0b':'var(--accent-bg)',color:e.stat==='overdue'?'#fff':e.stat==='soon'?'#1c1a16':'var(--accent)',textTransform:'uppercase',letterSpacing:'0.05em'}},e.days<0?Math.abs(e.days)+'d OVR':e.days===0?'TODAY':e.days+'d')
                     ),
-                    R.createElement('div', {className:'dx-row-meta'}, e.customer),
-                    R.createElement('div', {style:{fontSize:11,color:'var(--muted)',marginTop:4}}, e.svc)
+                    R.createElement('div',{className:'dx-row-meta'},e.cust),
+                    R.createElement('div',{style:{fontSize:11,color:'var(--muted)',marginTop:4}},e.svc)
                   );
                 })
               )
-            ) : null
-          ) : null,
-          // TABLE VIEW
-          view === 'tbl' ? R.createElement('div', {className:'dx-panel'},
-            R.createElement('div', {className:'dx-panel-head'},
-              R.createElement('div', {className:'dx-panel-h-title'}, 'Units — sorted by urgency'),
-              R.createElement('div', {className:'dx-panel-h-meta'}, unitMap.length + ' units')
+            ):null
+          ):null,
+          view==='tbl'?R.createElement('div',{className:'dx-panel'},
+            R.createElement('div',{className:'dx-panel-head'},
+              R.createElement('div',{className:'dx-panel-h-title'},'Units \u2014 sorted by urgency'),
+              R.createElement('div',{className:'dx-panel-h-meta'},unitRows.length+' units')
             ),
-            R.createElement('table', {className:'dx-tbl'},
-              R.createElement('thead', null, R.createElement('tr', null,
-                R.createElement('th', null, 'Vehicle'),
-                R.createElement('th', null, 'Customer'),
-                R.createElement('th', null, 'Next Service'),
-                R.createElement('th', null, 'Services Due'),
-                R.createElement('th', {style:{width:30}})
+            R.createElement('table',{className:'dx-tbl'},
+              R.createElement('thead',null,R.createElement('tr',null,
+                R.createElement('th',null,'Vehicle'),
+                R.createElement('th',null,'Customer'),
+                R.createElement('th',null,'Next Service'),
+                R.createElement('th',null,'Services'),
+                R.createElement('th',{style:{width:28}},null)
               )),
-              R.createElement('tbody', null,
-                unitMap.length === 0 ? R.createElement('tr', null, R.createElement('td', {colSpan:'5', style:{padding:30,textAlign:'center',color:'var(--faint)',fontStyle:'italic'}}, 'No units match current filters.')) :
-                unitMap.map(function(u, idx) {
-                  var minDays = Math.min.apply(null, u.events.map(function(e){return e.days;}));
-                  var topEvt = u.events.reduce(function(a,b){return a.days<b.days?a:b;});
-                  var open = expandIdx === idx;
-                  var badges = u.events.slice(0,4).map(function(e){
-                    return R.createElement('span',{key:e.date+e.svc,className:'dx-cal-evt '+e.color,style:{marginRight:3,fontSize:10,padding:'1px 5px',borderRadius:3}},
-                      e.days<0?'OVR':e.days+'d');
-                  });
+              R.createElement('tbody',null,
+                unitRows.length===0?R.createElement('tr',null,R.createElement('td',{colSpan:'5',style:{padding:30,textAlign:'center',color:'var(--faint)',fontStyle:'italic'}},'No units match filters.')):
+                unitRows.map(function(u,idx){
+                  var minD=Math.min.apply(null,u.ev.map(function(e){return e.days;}));
+                  var top=u.ev.reduce(function(a,b){return a.days<b.days?a:b;});
+                  var open=exIdx===idx;
+                  var badges=u.ev.slice(0,4).map(function(e){return R.createElement('span',{key:e.date+e.svc,className:'dx-cal-evt '+e.col,style:{marginRight:3,fontSize:10,padding:'1px 5px',borderRadius:3}},e.days<0?'OVR':e.days+'d');});
                   return [
-                    R.createElement('tr', {key:'r'+idx, style:{cursor:'pointer'}, onClick:function(){setExpand(open?null:idx);}},
-                      R.createElement('td', null,
-                        R.createElement('div', {className:'dx-row-title'}, u.vehicle),
-                        u.unitNum ? R.createElement('div', {className:'dx-row-meta'}, 'Unit '+u.unitNum+(u.meter?' · '+u.meter:'')) : null
-                      ),
-                      R.createElement('td', {style:{fontSize:11.5,maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}, u.customer),
-                      R.createElement('td', null,
-                        R.createElement('span', {className:'dx-cal-evt '+topEvt.color, style:{fontSize:11,padding:'2px 8px',borderRadius:3}},
-                          fmtDate(topEvt.date))
-                      ),
-                      R.createElement('td', null, R.createElement('div', {style:{display:'flex',flexWrap:'wrap',gap:3}}, badges,
-                        u.events.length>4 ? R.createElement('span',{style:{fontSize:10,color:'var(--muted)'}},'+',u.events.length-4,' more') : null
-                      )),
-                      R.createElement('td', {style:{color:'var(--faint)'}}, open?'▾':'▸')
+                    R.createElement('tr',{key:'r'+idx,style:{cursor:'pointer'},onClick:function(){setEx(open?null:idx);}},
+                      R.createElement('td',null,R.createElement('div',{className:'dx-row-title'},u.veh),u.unit?R.createElement('div',{className:'dx-row-meta'},'Unit '+u.unit+(u.meter?' \u00b7 '+u.meter:'')):null),
+                      R.createElement('td',{style:{fontSize:11.5,maxWidth:180,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},u.cust),
+                      R.createElement('td',null,R.createElement('span',{className:'dx-cal-evt '+top.col,style:{fontSize:11,padding:'2px 8px',borderRadius:3}},fmt(top.date))),
+                      R.createElement('td',null,R.createElement('div',{style:{display:'flex',flexWrap:'wrap',gap:3}},badges,u.ev.length>4?R.createElement('span',{style:{fontSize:10,color:'var(--muted)'}},'+',u.ev.length-4,' more'):null)),
+                      R.createElement('td',{style:{color:'var(--faint)'}},open?'\u25be':'\u25b8')
                     ),
-                    open ? R.createElement('tr', {key:'x'+idx},
-                      R.createElement('td', {colSpan:'5', style:{padding:0}},
-                        R.createElement('div', {style:{background:'var(--surface-warm)',padding:'8px 16px 12px',borderBottom:'1px solid var(--hairline)'}},
-                          u.events.sort(function(a,b){return a.days-b.days;}).map(function(e,j) {
-                            return R.createElement('div', {key:j, style:{display:'flex',alignItems:'center',gap:10,padding:'4px 0',borderBottom:j<u.events.length-1?'1px dotted var(--hairline-soft)':'none'}},
-                              R.createElement('span', {className:'dx-cal-evt '+e.color, style:{fontSize:10,padding:'1px 6px',borderRadius:3,flexShrink:0}},
-                                e.days<0?'OVERDUE':e.days===0?'TODAY':e.days+'d'),
-                              R.createElement('div', {style:{flex:1,fontSize:11.5,color:'var(--ink-soft)'}}, e.svc),
-                              R.createElement('div', {style:{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:'var(--muted)',whiteSpace:'nowrap'}}, 'Due: '+fmtDate(e.date))
+                    open?R.createElement('tr',{key:'x'+idx},
+                      R.createElement('td',{colSpan:'5',style:{padding:0}},
+                        R.createElement('div',{style:{background:'var(--surface-warm)',padding:'8px 16px 12px',borderBottom:'1px solid var(--hairline)'}},
+                          u.ev.sort(function(a,b){return a.days-b.days;}).map(function(e,j){
+                            return R.createElement('div',{key:j,style:{display:'flex',alignItems:'center',gap:10,padding:'4px 0',borderBottom:j<u.ev.length-1?'1px dotted var(--hairline-soft)':'none'}},
+                              R.createElement('span',{className:'dx-cal-evt '+e.col,style:{fontSize:10,padding:'1px 6px',borderRadius:3,flexShrink:0}},e.days<0?'OVERDUE':e.days===0?'TODAY':e.days+'d'),
+                              R.createElement('div',{style:{flex:1,fontSize:11.5,color:'var(--ink-soft)'}},e.svc),
+                              R.createElement('div',{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:'var(--muted)',whiteSpace:'nowrap'}},'Due: '+fmt(e.date))
                             );
                           })
                         )
                       )
-                    ) : null
+                    ):null
                   ];
                 })
               )
             )
-          ) : null,
-          // Import drop zone
-          R.createElement('div', {
+          ):null,
+          R.createElement('div',{
             style:{border:'2px dashed var(--hairline)',borderRadius:10,padding:'1.2rem',textAlign:'center',cursor:'pointer',marginTop:16,color:'var(--muted)',fontSize:12},
             onDragOver:function(e){e.preventDefault();e.currentTarget.style.borderColor='var(--accent)';},
             onDragLeave:function(e){e.currentTarget.style.borderColor='var(--hairline)';},
             onDrop:function(e){e.preventDefault();e.currentTarget.style.borderColor='var(--hairline)';var f=e.dataTransfer.files[0];if(f)handleFile(f);},
-            onClick:function(){document.getElementById('fleet-csv-hidden').click();}
+            onClick:function(){document.getElementById('_fleetHiddenIn').click();}
           },
-            R.createElement('strong', null, '📂 Update Fleet Data'),
-            R.createElement('div', null, 'Drop a new Fleet Report CSV or click to import. Updates stored data immediately.'),
-            R.createElement('input', {id:'fleet-csv-hidden', type:'file', accept:'.csv', style:{display:'none'}, onChange:function(e){if(e.target.files[0])handleFile(e.target.files[0]);}})
+            R.createElement('strong',null,'\ud83d\udcc2 Update Fleet Data'),
+            R.createElement('br',null),
+            R.createElement('span',null,'Drop a new Fleet Report CSV or click to import'),
+            R.createElement('input',{id:'_fleetHiddenIn',type:'file',accept:'.csv',style:{display:'none'},onChange:function(e){if(e.target.files[0])handleFile(e.target.files[0]);}})
           )
         );
       };
-      console.log('[Fleet PM] ✓ SchedulingPage override installed · ' + getFleetData().units.length + ' units loaded');
+      console.log('[Fleet PM] SchedulingPage override OK, '+getFleet().units.length+' units');
     })();
 
     console.log('[Uptime OS patch] ✓ Tech/rep/status dropdowns · Role nav · Score tips · Call sheet · C360 writer · Auto snapshot · Sparklines');
