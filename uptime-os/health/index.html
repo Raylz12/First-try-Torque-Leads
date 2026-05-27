@@ -12,10 +12,10 @@ body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height
 .tl-logo span:first-child{color:#2563eb;}
 .tl-logo span:last-child{color:#cc1f1f;}
 
-.topbar-nav a{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;text-decoration:none;}
-.topbar-nav a:hover,.topbar-nav a.active{color:#fff;}
 
-.logout-btn:hover{border-color:#cc1f1f;color:#cc1f1f;}
+
+
+
 .container{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
 .page-header{margin-bottom:2rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
 .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#0f172a;}
@@ -82,40 +82,38 @@ body{font-family:'Barlow',sans-serif;-webkit-font-smoothing:antialiased;}
 .tl-logo{font-family:'Bebas Neue',sans-serif!important;font-size:1.5rem!important;letter-spacing:4px!important;}
 .tl-logo .tq{color:#2563eb;}
 .tl-logo .tl{color:#cc1f1f;}
-.topbar-nav a,.tl-nav-item a{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2.5px!important;font-weight:700!important;}
+
 h1,h2,.page-title{font-family:'Bebas Neue',sans-serif!important;letter-spacing:3px!important;}
 .section-label,.card-title,.tl-lbl,.tl-label,.metric-name,.int-status,.role-badge,.badge{font-family:'Barlow Condensed',sans-serif!important;letter-spacing:2px!important;}
 .btn,.btn-primary,.tl-btn,.tl-ob-btn,
 </style>
+
 <style id="tl-bottom-nav">
 #tl-portal-bottom{
-  position:fixed;bottom:0;left:0;right:0;height:56px;
+  position:fixed;bottom:0;left:0;right:0;height:48px;
   background:rgba(4,4,6,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
   border-top:1px solid rgba(255,255,255,0.08);
   display:flex;align-items:center;justify-content:center;
   z-index:500;
 }
 .pb-item{
-  flex:1;max-width:130px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:3px;
-  padding:6px 4px;text-decoration:none;
+  flex:1;max-width:110px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;
+  padding:5px 4px;text-decoration:none;
   color:rgba(255,255,255,0.4);transition:color 0.2s;
   cursor:pointer;border:none;background:transparent;font-family:inherit;
 }
 .pb-item:hover,.pb-item.pb-active{color:#fff;}
-.pb-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;}
+.pb-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;}
 .pb-item span{
-  font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;
+  font-family:'Barlow Condensed',sans-serif;font-size:0.55rem;
   font-weight:700;letter-spacing:2px;text-transform:uppercase;
 }
-.pb-sep{width:1px;height:26px;background:rgba(255,255,255,0.07);flex-shrink:0;}
-body{padding-bottom:56px;} /* prevent content hiding behind nav */
+.pb-sep{width:1px;height:22px;background:rgba(255,255,255,0.07);flex-shrink:0;}
+body{padding-bottom:52px;}
 </style>
 </head>
 <body>
-
-
-</div>
 
 <div class="container" id="main-container">
   <div class="page-header">
@@ -350,6 +348,31 @@ function renderHealth() {
 }
 
 renderHealth();
+</script>
+<div id="tl-portal-bottom">
+  <a href="/uptime-os/" class="pb-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a>
+  <div class="pb-sep"></div>
+  <a href="/uptime-os/health/" class="pb-item pb-active"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Health</span></a>
+  <div class="pb-sep"></div>
+  <a href="/uptime-os/integrations/" class="pb-item"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Integrations</span></a>
+  <div class="pb-sep" id="pb-admin-sep" style="display:none"></div>
+  <a href="/uptime-os/admin/" class="pb-item" id="pb-admin-btn" style="display:none"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Admin</span></a>
+  <div class="pb-sep"></div>
+  <button class="pb-item" onclick="(function(){try{sessionStorage.removeItem('uptime_auth_v1');}catch(e){}window.location.href='/uptime-os/';})();"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Sign Out</span></button>
+</div>
+<script>
+(function(){
+  var K='uptime_auth_v1';
+  var u='';
+  try{u=sessionStorage.getItem(K)||'';}catch(e){}
+  if(!u){window.location.href='/uptime-os/';return;}
+  if(u==='rhett'||u==='admin'){
+    var ab=document.getElementById('pb-admin-btn');
+    var as=document.getElementById('pb-admin-sep');
+    if(ab)ab.style.display='flex';
+    if(as)as.style.display='block';
+  }
+})();
 </script>
 </body>
 </html>
