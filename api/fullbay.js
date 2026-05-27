@@ -15,14 +15,19 @@ const FALLBACK_IP = process.env.FULLBAY_SERVER_IP || '32.196.231.106';
 // Always fetch real outbound IP — Vercel IPs rotate between invocations.
 // 3s hard timeout so we never hang the whole function on ipify.
 async function getServerIp() {
-  // Race ipify against a 2.5s fallback — avoids hanging the function
+  // If env var is set and looks like an IP, use it immediately (fast path)
+  // ipify is slow (~2s) and Vercel budget is 30s
+  if (FALLBACK_IP && /^\d+\.\d+\.\d+\.\d+$/.test(FALLBACK_IP)) {
+    return FALLBACK_IP;
+  }
+  // Fallback: try ipify
   try {
     const result = await Promise.race([
       fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => d.ip),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('ipify timeout')), 2500)),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('ipify timeout')), 4000)),
     ]);
     if (result && typeof result === 'string') return result;
-  } catch(e) { /* fall through to env var */ }
+  } catch(e) { /* fall through */ }
   return FALLBACK_IP;
 }
 
@@ -123,11 +128,11 @@ export default async function handler(req, res) {
 
     switch (action) {
       case 'getStatus': {
-        // Use a known-small date range to avoid timeout
-        const testDate = daysAgo(400); // ~1 year ago, small result set
+        // Ping with a 1-day range from 2 years ago — tiny result set, fast response
+        const testDate = daysAgo(730);
         const d = await callFullbay('getInvoices.php', key, serverIp, { startDate: testDate, endDate: testDate });
         if (d.status === 'FAIL') return res.json({ ok: false, error: d.message });
-        return res.json({ ok: true, serverIp: serverIp, message: 'Connected' });
+        return res.json({ ok: true, serverIp, message: 'Connected', records: d.resultSet ? d.resultSet.length : 0 });
       }
 
       case 'getInvoices':
