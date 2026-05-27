@@ -64,9 +64,12 @@ async function callFullbay(phpFile, key, serverIp, extraParams = {}) {
 
 async function fetchRange(phpFile, key, serverIp, startDate, endDate, extra = {}) {
   const chunks = chunkDates(startDate, endDate);
+  // Parallel — all chunks fire at once instead of sequentially
+  const results = await Promise.all(
+    chunks.map(([s, e]) => callFullbay(phpFile, key, serverIp, { startDate: s, endDate: e, ...extra }))
+  );
   const all = [];
-  for (const [s, e] of chunks) {
-    const data = await callFullbay(phpFile, key, serverIp, { startDate: s, endDate: e, ...extra });
+  for (const data of results) {
     if (data.status === 'FAIL') throw new Error(data.message || 'Fullbay API error');
     if (data.resultSet) all.push(...data.resultSet);
   }
@@ -110,7 +113,7 @@ export default async function handler(req, res) {
 
   // Default: last 30 days (manageable, ~5 chunks)
   const defaultEnd   = today();
-  const defaultStart = daysAgo(30);
+  const defaultStart = daysAgo(14);
   const start = startDate || defaultStart;
   const end   = endDate   || defaultEnd;
 
@@ -147,7 +150,7 @@ export default async function handler(req, res) {
 
       case 'fullSync': {
         // Pull 30 days of invoices + payments in parallel
-        const syncStart = daysAgo(30);
+        const syncStart = daysAgo(14);
         const [invoices, payments] = await Promise.all([
           fetchRange('getInvoices.php', key, serverIp, syncStart, defaultEnd),
           fetchRange('getCustomerPayments.php', key, serverIp, syncStart, defaultEnd),
