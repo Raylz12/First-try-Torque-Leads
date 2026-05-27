@@ -98,7 +98,7 @@ body{margin:0;padding:0;font-family:'Barlow',sans-serif;-webkit-font-smoothing:a
 <style id="tl-nav-float">
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap');
 #tl-fab{
-  position:fixed;bottom:18px;right:18px;z-index:9000;
+  position:fixed!important;bottom:18px!important;right:18px!important;z-index:2147483647!important;
 }
 #tl-fab-btn{
   width:48px;height:48px;border-radius:50%;
@@ -455,6 +455,28 @@ window.addEventListener('load', function() {
     var records = await proxyCall('getPayments', startDate, endDate);
     if(onProgress) onProgress({stage:'payments_done', count:records.length});
     return records;
+  };
+
+  // ── Override fullSync to cap date range at 7 days ──
+  // The private fullSync defaults to 3 months (13 chunks × 13s = timeout).
+  // We intercept at the exported level and pass a 7-day range so the internal
+  // weekChunks creates exactly 1 chunk per endpoint → 2 total calls → ~26s total.
+  var _origFullSync = orig.fullSync.bind(orig);
+  orig.fullSync = async function(startDate, endDate, onProgress) {
+    var now = new Date();
+    var end = endDate || now.toISOString().slice(0,10);
+    var start;
+    if (!startDate) {
+      // Default: last 7 days instead of 3 months
+      start = new Date(now - 7*86400000).toISOString().slice(0,10);
+    } else {
+      // If caller provides a range > 7 days, cap it to last 7
+      var diffDays = (new Date(end) - new Date(startDate)) / 86400000;
+      start = diffDays > 7
+        ? new Date(now - 7*86400000).toISOString().slice(0,10)
+        : startDate;
+    }
+    return _origFullSync(start, end, onProgress);
   };
 })();
 </script>
