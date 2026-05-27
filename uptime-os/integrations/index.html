@@ -343,10 +343,10 @@ function toast(msg, ok = true) {
 }
 
 // Init
-document.getElementById('shop-name').textContent = user;
+var _sn=document.getElementById('shop-name');if(_sn)_sn.textContent=user;
 const role = sessionStorage.getItem('tlos_role');
 if (role === 'admin' || user === 'rhett' || user === 'admin') {
-  document.getElementById('admin-link').style.display = 'block';
+  var _al=document.getElementById('admin-link');if(_al)_al.style.display='block';
 }
 renderAll();
 </script>

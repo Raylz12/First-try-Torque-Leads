@@ -155,7 +155,7 @@ const SESSION_KEY = 'uptime_auth_v1';
 const user = sessionStorage.getItem(SESSION_KEY);
 if (!user) window.location.href = '/uptime-os/';
 function logout() { sessionStorage.removeItem(SESSION_KEY); window.location.href = '/uptime-os/'; }
-if (user === 'rhett' || user === 'admin') document.getElementById('admin-link').style.display = 'block';
+var _al=document.getElementById('admin-link');if((user==='rhett'||user==='admin')&&_al)_al.style.display='block';
 
 // Help content for each metric
 const HELP = {
