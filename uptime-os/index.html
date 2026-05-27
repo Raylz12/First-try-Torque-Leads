@@ -358,5 +358,31 @@ window.addEventListener('load', function() {
   });
 });
 </script>
+<script id="tl-fullbay-override">
+// Patch AnvilFullbay so proxy URL and server IP are always set — no manual config needed.
+// The key still comes from localStorage (user can change it), but proxy routes are fixed.
+(function patch(){
+  if(!window.AnvilFullbay){ 
+    setTimeout(patch, 100); // retry until bundle loads
+    return;
+  }
+  var orig = window.AnvilFullbay;
+  var _getCfg = orig.getCfg.bind(orig);
+  var _setCfg = orig.setCfg.bind(orig);
+
+  orig.getCfg = function(){
+    var cfg = _getCfg();
+    cfg.proxy    = '/api/fullbay';
+    cfg.serverIp = '54.208.31.211'; // proxy regenerates token server-side; this is just a placeholder
+    return cfg;
+  };
+
+  // Also force-write proxy + serverIp into localStorage so the UI shows them as set
+  try {
+    localStorage.setItem('uptimeFullbayProxy',   '/api/fullbay');
+    localStorage.setItem('uptimeFullbayServerIp', '54.208.31.211');
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
