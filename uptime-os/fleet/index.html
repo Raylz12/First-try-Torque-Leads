@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TorqueLeads OS — Fleet PM Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height:100vh;}
+.container{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 6rem;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#0f172a;}
+.sub{font-size:13px;color:#64748b;margin-top:2px;margin-bottom:1.5rem;}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem;}
+.tile{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;}
+.tile-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;}
+.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-top:2px;}
+.t-red{border-left:3px solid #ef4444;}.t-red .tile-val{color:#ef4444;}
+.t-amber{border-left:3px solid #f59e0b;}.t-amber .tile-val{color:#d97706;}
+.t-blue{border-left:3px solid #2563eb;}.t-blue .tile-val{color:#2563eb;}
+.t-green{border-left:3px solid #22c55e;}.t-green .tile-val{color:#16a34a;}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.2rem;align-items:center;}
+.filter-select{background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;padding:8px 12px;font-size:13px;color:#0f172a;font-family:'Barlow',sans-serif;outline:none;min-width:200px;}
+.filter-select:focus{border-color:#2563eb;}
+.view-toggle{display:flex;background:#f1f5f9;border-radius:7px;padding:3px;gap:2px;}
+.view-btn{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 14px;border:none;border-radius:5px;cursor:pointer;color:#64748b;background:transparent;transition:all 0.15s;}
+.view-btn.active{background:#fff;color:#0f172a;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.calendar-wrap{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:1.5rem;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:1px solid #f1f5f9;}
+.cal-month{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;}
+.cal-nav{display:flex;gap:6px;}
+.cal-nav-btn{width:32px;height:32px;border:1.5px solid #e2e8f0;border-radius:6px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.cal-nav-btn:hover{border-color:#2563eb;color:#2563eb;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-dow{padding:6px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;color:#94a3b8;text-transform:uppercase;border-bottom:1px solid #f1f5f9;}
+.cal-cell{border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;padding:6px;min-height:80px;cursor:pointer;transition:background 0.1s;position:relative;}
+.cal-cell:nth-child(7n){border-right:none;}
+.cal-cell:hover{background:#f8fafc;}
+.cal-cell.other-month{background:#fafafa;}
+.cal-cell.other-month .cal-day-num{color:#d1d5db;}
+.cal-cell.today{background:#eff6ff;}
+.cal-cell.today .cal-day-num{background:#2563eb;color:#fff;border-radius:50%;}
+.cal-day-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;font-size:12px;font-weight:600;color:#374151;}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:3px;}
+.cal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.cal-count{font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;margin-top:2px;}
+.dot-red{background:#ef4444;}.dot-amber{background:#f59e0b;}.dot-blue{background:#3b82f6;}.dot-green{background:#22c55e;}
+.table-wrap{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:1.5rem;}
+.tbl-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:1px solid #f1f5f9;}
+.tbl-title{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#64748b;}
+.fleet-table{width:100%;border-collapse:collapse;}
+.fleet-table th{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#94a3b8;padding:0.6rem 1rem;text-align:left;border-bottom:1px solid #f1f5f9;white-space:nowrap;}
+.fleet-table td{padding:0.65rem 1rem;border-bottom:1px solid #f8fafc;font-size:12px;vertical-align:middle;cursor:pointer;}
+.fleet-table tr:hover td{background:#f8fafc;}
+.unit-name{font-weight:600;font-size:13px;color:#0f172a;}
+.unit-sub{font-size:11px;color:#94a3b8;margin-top:1px;}
+.svc-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;}
+.badge-red{background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,0.2);}
+.badge-amber{background:#fef3c7;color:#d97706;border:1px solid rgba(217,119,6,0.2);}
+.badge-blue{background:#dbeafe;color:#1d4ed8;border:1px solid rgba(37,99,235,0.2);}
+.badge-green{background:#dcfce7;color:#15803d;border:1px solid rgba(34,197,94,0.2);}
+.svc-list{display:flex;flex-wrap:wrap;gap:4px;}
+.expand-inner{display:none;padding:0.75rem 1rem 1rem 2.5rem;border-bottom:1px solid #f1f5f9;background:#fafafa;}
+.expand-inner.open{display:block;}
+.svc-row{display:flex;align-items:center;gap:0.75rem;padding:5px 0;border-bottom:1px dotted #f1f5f9;}
+.svc-row:last-child{border:none;}
+.svc-row-name{flex:1;font-size:12px;color:#374151;}
+.svc-row-dates{font-family:'JetBrains Mono',monospace;font-size:10px;color:#94a3b8;min-width:160px;text-align:right;}
+.popup-bg{display:none;position:fixed;inset:0;z-index:100;}
+.popup{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:1.2rem;width:90%;max-width:440px;z-index:101;max-height:65vh;overflow-y:auto;top:50%;left:50%;transform:translate(-50%,-50%);}
+.popup-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;margin-bottom:0.75rem;color:#0f172a;padding-right:30px;}
+.popup-close{position:absolute;top:1rem;right:1rem;width:24px;height:24px;border:none;background:#f1f5f9;border-radius:4px;cursor:pointer;font-size:12px;}
+.popup-item{padding:0.5rem 0;border-bottom:1px solid #f1f5f9;}
+.popup-item:last-child{border:none;}
+.popup-item-svc{font-size:12px;color:#374151;margin-bottom:3px;}
+.popup-item-unit{font-size:11px;color:#94a3b8;}
+.import-zone{border:2px dashed #e2e8f0;border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.15s;margin-bottom:0.75rem;}
+.import-zone:hover,.import-zone.drag{border-color:#2563eb;background:#eff6ff;}
+.import-zone h3{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;color:#374151;margin-bottom:4px;}
+.import-zone p{font-size:12px;color:#94a3b8;}
+.import-note{font-size:11px;color:#64748b;padding:8px 12px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0;min-height:20px;}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#6b7280;}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+@media(max-width:700px){.tiles{grid-template-columns:repeat(2,1fr);}.cal-cell{min-height:55px;padding:3px;}.fleet-table th:nth-child(n+3),.fleet-table td:nth-child(n+3){display:none;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Fleet PM Calendar</h1>
+  <p class="sub" id="sub-line">Loading fleet data…</p>
+  <div class="tiles" id="tiles"></div>
+  <div class="filters">
+    <select class="filter-select" id="cust-filter"><option value="">All Customers</option></select>
+    <select class="filter-select" id="svc-filter"><option value="">All Service Types</option></select>
+    <select class="filter-select" id="status-filter">
+      <option value="">All Statuses</option>
+      <option value="overdue">Overdue</option>
+      <option value="soon">Due within 30 Days</option>
+      <option value="upcoming">Due 31–90 Days</option>
+    </select>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-cal" onclick="setView('cal')">Calendar</button>
+      <button class="view-btn" id="btn-tbl" onclick="setView('tbl')">Units</button>
+    </div>
+  </div>
+  <div class="legend">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#94a3b8;margin-right:4px;">STATUS:</span>
+    <div class="legend-item"><div class="legend-dot dot-red"></div>Overdue</div>
+    <div class="legend-item"><div class="legend-dot dot-amber"></div>Due ≤ 30 days</div>
+    <div class="legend-item"><div class="legend-dot dot-blue"></div>Due 31–90 days</div>
+    <div class="legend-item"><div class="legend-dot dot-green"></div>Due > 90 days</div>
+  </div>
+  <div id="cal-view">
+    <div class="calendar-wrap">
+      <div class="cal-header">
+        <div class="cal-month" id="cal-month-label"></div>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="navMonth(-1)">&#8249;</button>
+          <button class="cal-nav-btn" onclick="navMonth(0)">Today</button>
+          <button class="cal-nav-btn" onclick="navMonth(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid">
+        <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div>
+        <div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
+        <div id="cal-cells" style="display:contents"></div>
+      </div>
+    </div>
+  </div>
+  <div id="tbl-view" style="display:none">
+    <div class="table-wrap">
+      <div class="tbl-header"><span class="tbl-title" id="tbl-count">Units</span></div>
+      <table class="fleet-table">
+        <thead><tr><th>Unit / Vehicle</th><th>Customer</th><th>Next Service</th><th>Services Due</th></tr></thead>
+        <tbody id="unit-rows"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="import-zone" id="import-zone">
+    <h3>&#128194; Update Fleet Data</h3>
+    <p>Drop a new Fleet Report CSV here, or click to choose file</p>
+    <p style="margin-top:5px;font-size:11px;color:#94a3b8">Overwrites stored data. Export from Fullbay: Reports &#8594; Fleet Report</p>
+    <input type="file" id="file-input" accept=".csv" style="display:none">
+  </div>
+  <div class="import-note" id="import-status"></div>
+</div>
+
+<div class="popup-bg" id="popup-bg" onclick="closePopup()"></div>
+<div class="popup" id="popup" style="display:none">
+  <button class="popup-close" onclick="closePopup()">&#10005;</button>
+  <div class="popup-title" id="popup-title"></div>
+  <div id="popup-body"></div>
+</div>
+
+<script>
+const SESSION_KEY = 'uptime_auth_v1';
+const FLEET_LS_KEY = 'uptimeFleetData';
+const user = sessionStorage.getItem(SESSION_KEY);
+if (!user) window.location.href = '/uptime-os/';
+
+const today = new Date(); today.setHours(0,0,0,0);
+let calYear = today.getFullYear(), calMonth = today.getMonth();
+let activeView = 'cal';
+let allUnits = [];
+let filteredEvents = [];
+let custFilter='', svcFilter='', statusFilter='';
+
+function loadFleetData() {
+  try {
+    const stored = localStorage.getItem(FLEET_LS_KEY);
+    if (stored) {
+      const d = JSON.parse(stored);
+      document.getElementById('sub-line').textContent = d.units.length + ' tracked units · Last imported ' + d.asOf + ' (local)';
+      return d.units;
+    }
+  } catch(e) {}
+  if (window.__UPTIME_SEED__ && window.__UPTIME_SEED__.fleet) {
+    try {
+      const d = JSON.parse(window.__UPTIME_SEED__.fleet);
+      document.getElementById('sub-line').textContent = d.units.length + ' tracked units · Data as of ' + d.asOf;
+      return d.units;
+    } catch(e) {}
+  }
+  document.getElementById('sub-line').textContent = 'No fleet data. Drop a CSV below.';
+  return [];
+}
+
+function init() {
+  allUnits = loadFleetData();
+  buildFilters();
+  applyFilters();
+  setupImport();
+}
+
+function buildFilters() {
+  const custs = [...new Set(allUnits.map(u => u.c))].sort();
+  const svcs  = [...new Set(allUnits.flatMap(u => u.s.map(s => s.n)))].sort();
+  const cf = document.getElementById('cust-filter');
+  const sf = document.getElementById('svc-filter');
+  custs.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; cf.appendChild(o); });
+  svcs.forEach(s => { const o=document.createElement('option'); o.value=s; o.textContent=s; sf.appendChild(o); });
+  cf.onchange = () => { custFilter=cf.value; applyFilters(); };
+  sf.onchange = () => { svcFilter=sf.value; applyFilters(); };
+  document.getElementById('status-filter').onchange = e => { statusFilter=e.target.value; applyFilters(); };
+}
+
+function statusOf(d) { if(d<0)return'overdue'; if(d<=30)return'soon'; if(d<=90)return'upcoming'; return'future'; }
+function colorOf(d)  { if(d<0)return'red'; if(d<=30)return'amber'; if(d<=90)return'blue'; return'green'; }
+
+function applyFilters() {
+  filteredEvents = [];
+  for (const u of allUnits) {
+    if (custFilter && u.c !== custFilter) continue;
+    for (const s of u.s) {
+      if (svcFilter && s.n !== svcFilter) continue;
+      const nd = new Date(s.d + 'T00:00:00');
+      const daysOut = Math.round((nd - today) / 86400000);
+      const status = statusOf(daysOut);
+      if (statusFilter) {
+        if (statusFilter==='overdue' && status!=='overdue') continue;
+        if (statusFilter==='soon' && status!=='soon') continue;
+        if (statusFilter==='upcoming' && status!=='upcoming') continue;
+      }
+      filteredEvents.push({ date:s.d, svc:s.n, unit:u.u||u.vin, customer:u.c,
+        vehicle:u.v, meter:u.m, daysOut, color:colorOf(daysOut), status, unitObj:u, svcObj:s });
+    }
+  }
+  renderTiles();
+  if (activeView==='cal') renderCalendar(); else renderTable();
+}
+
+function renderTiles() {
+  const od=filteredEvents.filter(e=>e.status==='overdue').length;
+  const s30=filteredEvents.filter(e=>e.status==='soon').length;
+  const s90=filteredEvents.filter(e=>e.status==='upcoming').length;
+  const ok=filteredEvents.filter(e=>e.status==='future').length;
+  document.getElementById('tiles').innerHTML =
+    '<div class="tile t-red"><div class="tile-val">'+od+'</div><div class="tile-lbl">Overdue Services</div></div>'+
+    '<div class="tile t-amber"><div class="tile-val">'+s30+'</div><div class="tile-lbl">Due &le; 30 Days</div></div>'+
+    '<div class="tile t-blue"><div class="tile-val">'+s90+'</div><div class="tile-lbl">Due 31&ndash;90 Days</div></div>'+
+    '<div class="tile t-green"><div class="tile-val">'+ok+'</div><div class="tile-lbl">Scheduled OK</div></div>';
+}
+
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function navMonth(dir) {
+  if(dir===0){calYear=today.getFullYear();calMonth=today.getMonth();}
+  else{calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}}
+  renderCalendar();
+}
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = MONTHS[calMonth]+' '+calYear;
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+  const evMap={};
+  for(const e of filteredEvents){if(!evMap[e.date])evMap[e.date]=[];evMap[e.date].push(e);}
+  let html='';
+  for(let d=firstDay-1;d>=0;d--){
+    const dd=daysInPrev-d;
+    const py=calMonth===0?calYear-1:calYear,pm=calMonth===0?12:calMonth;
+    const key=py+'-'+String(pm).padStart(2,'0')+'-'+String(dd).padStart(2,'0');
+    html+=cellHtml(dd,key,evMap[key]||[],true);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const key=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const isToday=d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
+    html+=cellHtml(d,key,evMap[key]||[],false,isToday);
+  }
+  const total=firstDay+daysInMonth,rem=total%7===0?0:7-total%7;
+  for(let d=1;d<=rem;d++){
+    const nm=calMonth===11?1:calMonth+2,ny=calMonth===11?calYear+1:calYear;
+    const key=ny+'-'+String(nm).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    html+=cellHtml(d,key,evMap[key]||[],true);
+  }
+  document.getElementById('cal-cells').innerHTML=html;
+}
+
+function cellHtml(day,key,events,other,isToday=false){
+  const cls=['cal-cell',other?'other-month':'',isToday?'today':''].filter(Boolean).join(' ');
+  const dots=[...new Set(events.map(e=>e.color))].slice(0,9).map(c=>'<div class="cal-dot dot-'+c+'"></div>').join('');
+  const count=events.length>0?'<div class="cal-count">'+events.length+'</div>':'';
+  const click=events.length?'onclick="showDay(\'"+key+"\')"':'';
+  return '<div class="'+cls+'" '+click+'><div class="cal-day-num">'+day+'</div><div class="cal-dots">'+dots+'</div>'+count+'</div>';
+}
+
+function showDay(key){
+  const events=filteredEvents.filter(e=>e.date===key);
+  if(!events.length)return;
+  const d=new Date(key+'T00:00:00');
+  document.getElementById('popup-title').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('popup-body').innerHTML=events.map(e=>
+    '<div class="popup-item"><div class="popup-item-svc"><span class="svc-badge badge-'+e.color+'">'+
+    (e.daysOut<0?'OVERDUE':e.daysOut===0?'TODAY':e.daysOut+'d')+
+    '</span> '+e.svc+'</div><div class="popup-item-unit">'+e.customer+' &middot; '+e.vehicle+(e.unit?' &middot; Unit '+e.unit:'')+'</div></div>'
+  ).join('');
+  document.getElementById('popup').style.display='block';
+  document.getElementById('popup-bg').style.display='block';
+}
+function closePopup(){document.getElementById('popup').style.display='none';document.getElementById('popup-bg').style.display='none';}
+
+function renderTable(){
+  const unitMap={};
+  for(const e of filteredEvents){
+    const key=e.customer+'||'+e.vehicle+'||'+e.unit;
+    if(!unitMap[key])unitMap[key]={customer:e.customer,vehicle:e.vehicle,unit:e.unit,meter:e.meter,events:[]};
+    unitMap[key].events.push(e);
+  }
+  const units=Object.values(unitMap).sort((a,b)=>Math.min(...a.events.map(e=>e.daysOut))-Math.min(...b.events.map(e=>e.daysOut)));
+  document.getElementById('tbl-count').textContent=units.length+' Units';
+  let html='';
+  units.forEach((u,idx)=>{
+    const topSvc=u.events.reduce((a,b)=>a.daysOut<b.daysOut?a:b);
+    const nextDue=new Date(topSvc.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const badges=u.events.slice(0,5).map(e=>'<span class="svc-badge badge-'+e.color+'">'+
+      (e.daysOut<0?'OVERDUE':e.daysOut+'d')+'</span>').join(' ');
+    html+='<tr onclick="toggleExpand('+idx+')"><td><div class="unit-name">'+u.vehicle+'</div>'+
+      (u.unit||u.meter?'<div class="unit-sub">'+[u.unit&&'Unit '+u.unit,u.meter].filter(Boolean).join(' · ')+'</div>':'')+
+      '</td><td style="font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+u.customer+'</td>'+
+      '<td><span class="svc-badge badge-'+topSvc.color+'">'+nextDue+'</span></td>'+
+      '<td><div class="svc-list">'+badges+(u.events.length>5?'<span style="font-size:11px;color:#94a3b8">+'+(u.events.length-5)+' more</span>':'')
+      +'</div></td></tr>'+
+      '<tr><td colspan="4" style="padding:0"><div class="expand-inner" id="expand-'+idx+'">'+
+      u.events.sort((a,b)=>a.daysOut-b.daysOut).map(e=>
+        '<div class="svc-row"><span class="svc-badge badge-'+e.color+'" style="flex-shrink:0">'+
+        (e.daysOut<0?'OVERDUE':e.daysOut===0?'TODAY':e.daysOut+'d')+'</span>'+
+        '<div class="svc-row-name">'+e.svc+'</div>'+
+        '<div class="svc-row-dates">Due: '+new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div></div>'
+      ).join('')+'</div></td></tr>';
+  });
+  document.getElementById('unit-rows').innerHTML=html;
+}
+function toggleExpand(idx){document.getElementById('expand-'+idx).classList.toggle('open');}
+
+function setView(v){
+  activeView=v;
+  document.getElementById('cal-view').style.display=v==='cal'?'':'none';
+  document.getElementById('tbl-view').style.display=v==='tbl'?'':'none';
+  document.getElementById('btn-cal').classList.toggle('active',v==='cal');
+  document.getElementById('btn-tbl').classList.toggle('active',v==='tbl');
+  if(v==='tbl')renderTable(); else renderCalendar();
+}
+
+function setupImport(){
+  const zone=document.getElementById('import-zone');
+  const input=document.getElementById('file-input');
+  zone.onclick=()=>input.click();
+  input.onchange=e=>{if(e.target.files[0])processCSV(e.target.files[0]);};
+  zone.ondragover=e=>{e.preventDefault();zone.classList.add('drag');};
+  zone.ondragleave=()=>zone.classList.remove('drag');
+  zone.ondrop=e=>{e.preventDefault();zone.classList.remove('drag');if(e.dataTransfer.files[0])processCSV(e.dataTransfer.files[0]);};
+}
+
+function processCSV(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const units=parseFleetCSV(e.target.result);
+      const data={asOf:new Date().toISOString().split('T')[0],units};
+      localStorage.setItem(FLEET_LS_KEY,JSON.stringify(data));
+      document.getElementById('import-status').textContent='\u2713 Imported '+units.length+' tracked units from "'+file.name+'"';
+      allUnits=units;
+      document.getElementById('cust-filter').innerHTML='<option value="">All Customers</option>';
+      document.getElementById('svc-filter').innerHTML='<option value="">All Service Types</option>';
+      buildFilters();
+      applyFilters();
+      document.getElementById('sub-line').textContent=units.length+' tracked units · Imported just now';
+    }catch(err){document.getElementById('import-status').textContent='\u2717 Import failed: '+err.message;}
+  };
+  reader.readAsText(file);
+}
+
+function parseFleetCSV(text){
+  // Parse CSV rows
+  const rows=[];let row=[],field='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){if(c==='"' &&text[i+1]==='"'){field+='"';i++;}else if(c==='"'){inQ=false;}else field+=c;}
+    else if(c==='"'){inQ=true;}
+    else if(c===','){row.push(field);field='';}
+    else if(c==='\n'||c==='\r'){if(field||row.length){row.push(field);rows.push(row);}row=[];field='';}
+    else field+=c;
+  }
+  if(field||row.length){row.push(field);rows.push(row);}
+  const header=rows[0];
+  const services=[];
+  for(let i=9;i<header.length;i+=2){
+    const svc=(header[i]||'.').trim();
+    if(!svc||svc.endsWith('- Next Due')){i-=1;continue;}
+    services.push({name:svc,col:i});
+  }
+  const units=[];
+  for(let r=1;r<rows.length;r++){
+    const row=rows[r];
+    const customer=(row[3]||'.').trim();
+    const vehicle=(row[7]||'.').trim();
+    if(!customer||!vehicle)continue;
+    const svcs=[];
+    for(const svc of services){
+      const c=svc.col;
+      const lastRaw=(row[c]||'.').trim();
+      const nextRaw=(row[c+1]||'.').trim();
+      if(!lastRaw||lastRaw==='Never Performed')continue;
+      let nextDue=null;
+      const dm=nextRaw.match(/^(\d+\/\d+\/\d+)$/);
+      if(dm){try{nextDue=new Date(dm[1]).toISOString().split('T')[0];}catch(e){}}
+      let lastDate=null;
+      const lm=lastRaw.match(/(\d+\/\d+\/\d+)/);
+      if(lm){try{lastDate=new Date(lm[1]).toISOString().split('T')[0];}catch(e){}}
+      if(!nextDue)continue;
+      svcs.push({n:svc.name,d:nextDue,l:lastDate,i:null});
+    }
+    if(!svcs.length)continue;
+    units.push({c:customer,v:vehicle,vin:(row[6]||'.').trim(),u:(row[4]||'.').trim(),n:(row[5]||'.').trim(),m:(row[8]||'.').trim(),s:svcs});
+  }
+  return units;
+}
+
+init();
+</script>
+
+<div id="tl-fab">
+  <div id="tl-fab-menu">
+    <a href="/uptime-os/" class="tl-fm-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+    <a href="/uptime-os/fleet/" class="tl-fm-item active"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16,8 20,8 23,13 23,16 16,16"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Fleet</a>
+    <a href="/uptime-os/health/" class="tl-fm-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Health</a>
+    <a href="/uptime-os/integrations/" class="tl-fm-item"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Integrations</a>
+    <div class="tl-fm-sep"></div>
+    <a href="/uptime-os/admin/" class="tl-fm-item" id="tl-fm-admin" style="display:none"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Admin</a>
+    <button class="tl-fm-item" id="tl-fm-signout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+  <div id="tl-fab-btn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+</div>
+<script>
+(function(){
+  var K='uptime_auth_v1',u='';try{u=sessionStorage.getItem(K)||'';}catch(e){}
+  if(!u){window.location.href='/uptime-os/';return;}
+  if(u==='rhett'||u==='admin'){var adm=document.getElementById('tl-fm-admin');if(adm)adm.style.display='flex';}
+  var so=document.getElementById('tl-fm-signout');
+  if(so)so.onclick=function(){try{sessionStorage.removeItem(K);}catch(e){}window.location.href='/uptime-os/';};
+  var btn=document.getElementById('tl-fab-btn'),menu=document.getElementById('tl-fab-menu');
+  btn.onclick=function(e){e.stopPropagation();menu.classList.toggle('open');};
+  document.addEventListener('click',function(){menu.classList.remove('open');});
+})();
+</script>
+</body>
+</html>
