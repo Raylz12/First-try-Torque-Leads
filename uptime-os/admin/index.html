@@ -188,8 +188,14 @@ function toast(msg, ok = true) {
 }
 
 async function loadShops() {
-  const data = await api('GET', '/api/shops');
   const container = document.getElementById('shops-container');
+  container.innerHTML = '<div class="empty-state">Loading...</div>';
+  let data;
+  try { data = await api('GET', '/api/shops'); } catch(e) { data = {}; }
+  if (data.error) {
+    container.innerHTML = `<div class="empty-state" style="color:#f87171">API error: ${data.error}<br><small style="color:#64748b">Check that env vars are set in Vercel dashboard</small></div>`;
+    return;
+  }
   const shops = data.shops || {};
   const entries = Object.values(shops);
   if (!entries.length) { container.innerHTML = '<div class="empty-state">No shops yet. Add one above.</div>'; return; }
@@ -201,7 +207,7 @@ async function loadShops() {
       <td><strong>${s.shopName}</strong></td>
       <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#94a3b8">${s.username}</span></td>
       <td><span class="role-badge ${s.role === 'admin' ? 'role-admin' : 'role-client'}">${s.role}</span></td>
-      <td>${s.fullbayKey ? '<span class="dot dot-green"></span>Connected' : '<span class="dot dot-gray"></span>None'}</td>
+      <td>${s.fullbayKey && s.fullbayKey !== '••••' ? '<span class="dot dot-green"></span>Connected' : (s.fullbayKey === '••••' ? '<span class="dot dot-green"></span>Connected' : '<span class="dot dot-gray"></span>None')}</td>
       <td>${s.payrollProvider ? '<span class="dot dot-green"></span>' + s.payrollProvider : '<span class="dot dot-gray"></span>None'}</td>
       <td style="color:#64748b;font-size:12px">${s.createdAt || ''}</td>
       <td style="display:flex;gap:6px">

@@ -150,7 +150,10 @@ body{margin:0;padding:0;background:#0b1628;}
     try{sessionStorage.setItem(K,u)}catch(e){}
     var g=document.getElementById("tl-gate");if(g)g.classList.add("gone");
     var r=document.getElementById("root");if(r)r.style.display="";
-    var n=document.getElementById("tl-nav");if(n)n.style.display="flex";
+    document.body.style.background="";
+    document.body.style.minHeight="";
+    // Nav shown by post-load script (DOM not ready yet here)
+    window.__TL_AUTHED_USER = u;
   }
   try{var s=sessionStorage.getItem(K);if(s&&U[s]){unlock(s);return;}else if(s){sessionStorage.removeItem(K);}}catch(e){}
   var ui=document.getElementById("tl-u"),pi=document.getElementById("tl-p"),btn=document.getElementById("tl-go"),er=document.getElementById("tl-err");
@@ -242,6 +245,11 @@ window.addEventListener('load', function() {
   var user = '';
   try { user = sessionStorage.getItem('uptime_auth_v1') || ''; } catch(e) {}
   if (!user) return;
+  // Show nav bar
+  var nav = document.getElementById('tl-nav');
+  if (nav) nav.style.display = 'flex';
+  // Clear body bg in case unlock ran before nav was in DOM
+  document.body.style.background = '';
   // Show admin links for admins
   if (user === 'rhett' || user === 'admin') {
     var ab = document.getElementById('tl-admin-btn');
