@@ -15,12 +15,14 @@ const FALLBACK_IP = process.env.FULLBAY_SERVER_IP || '32.196.231.106';
 // Always fetch real outbound IP — Vercel IPs rotate between invocations.
 // 3s hard timeout so we never hang the whole function on ipify.
 async function getServerIp() {
+  // Race ipify against a 2.5s fallback — avoids hanging the function
   try {
-    const res = await fetch('https://api.ipify.org?format=json',
-      { signal: AbortSignal.timeout(3000) });
-    const { ip } = await res.json();
-    if (ip) return ip;
-  } catch(e) { /* fall through */ }
+    const result = await Promise.race([
+      fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => d.ip),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('ipify timeout')), 2500)),
+    ]);
+    if (result && typeof result === 'string') return result;
+  } catch(e) { /* fall through to env var */ }
   return FALLBACK_IP;
 }
 
@@ -53,10 +55,7 @@ async function callFullbay(phpFile, key, serverIp, extraParams = {}) {
   const token = makeToken(key, serverIp);
   const params = new URLSearchParams({ key, token, ...extraParams });
   const url = `${BASE}/${phpFile}?${params}`;
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(8000), // 8s per chunk, well under 30s function limit
-  });
+  const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) throw new Error(`Fullbay HTTP ${res.status}`);
   const text = await res.text();
   try { return JSON.parse(text); }
