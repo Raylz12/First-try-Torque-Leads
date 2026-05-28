@@ -96,6 +96,30 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
 .btn-cancel-pm{padding:10px 20px;background:#f1f5f9;color:#374151;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
 .done-checkmark{display:inline-block;width:16px;height:16px;background:#16a34a;border-radius:50%;color:#fff;text-align:center;line-height:16px;font-size:10px;font-weight:900;flex-shrink:0;}
 .svc-row-done{display:flex;align-items:center;gap:0.5rem;font-size:10px;color:#15803d;font-weight:600;margin-top:2px;}
+/* Email button */
+.btn-email{padding:9px 16px;background:#fff;color:#2563eb;border:1.5px solid #bfdbfe;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s;white-space:nowrap;}
+.btn-email:hover{background:#eff6ff;border-color:#2563eb;}
+.btn-email-sm{padding:6px 12px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.5px;cursor:pointer;transition:all 0.15s;}
+.btn-email-sm:hover{background:#dbeafe;}
+/* Email report modal */
+.email-modal{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:1.5rem;width:95%;max-width:600px;z-index:300;top:50%;left:50%;transform:translate(-50%,-50%);display:none;max-height:85vh;overflow-y:auto;}
+.email-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:299;backdrop-filter:blur(2px);}
+.email-modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:#0f172a;margin-bottom:0.25rem;}
+.email-modal-sub{font-size:12px;color:#64748b;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #f1f5f9;}
+.email-field{margin-bottom:0.75rem;}
+.email-field label{display:block;font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:3px;}
+.email-field input{width:100%;padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;}
+.email-field input:focus{border-color:#2563eb;}
+.email-body-preview{width:100%;min-height:200px;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:12px;font-family:'Barlow',sans-serif;resize:vertical;outline:none;color:#374151;line-height:1.6;}
+.email-body-preview:focus{border-color:#2563eb;}
+.email-actions{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap;}
+.btn-open-mail{flex:1;padding:10px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.btn-open-mail:hover{background:#1d4ed8;}
+.btn-copy-email{padding:10px 18px;background:#f1f5f9;color:#374151;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-copy-email:hover{background:#e2e8f0;}
+.email-cust-section{background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid #f1f5f9;}
+.email-cust-name{font-weight:700;font-size:13px;color:#0f172a;margin-bottom:4px;}
+.email-cust-row{font-size:11px;color:#64748b;padding:2px 0;}
 .import-zone{border:2px dashed #e2e8f0;border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.15s;margin-bottom:0.75rem;}
 .import-zone:hover,.import-zone.drag{border-color:#2563eb;background:#eff6ff;}
 .import-zone h3{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;color:#374151;margin-bottom:4px;}
@@ -125,6 +149,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
       <button class="view-btn active" id="btn-cal" onclick="setView('cal')">Calendar</button>
       <button class="view-btn" id="btn-tbl" onclick="setView('tbl')">Units</button>
     </div>
+    <button class="btn-email" onclick="openEmailReport('all')">📧 Email Report</button>
   </div>
   <div class="legend">
     <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#94a3b8;margin-right:4px;">STATUS:</span>
@@ -139,8 +164,9 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
         <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:#0f172a;">PM Schedule</div>
         <div style="font-size:11px;color:#64748b;margin-top:1px;">Click any day with PMs to view details and mark services complete</div>
       </div>
-      <div id="sched-alert" style="display:none;background:#fee2e2;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;color:#dc2626;letter-spacing:1px;cursor:pointer;" onclick="scrollToOverdue()">
-        ⚠ OVERDUE — CLICK TO REVIEW
+      <div id="sched-alert" style="display:none;display:flex;gap:8px;align-items:center;">
+        <div style="background:#fee2e2;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;color:#dc2626;letter-spacing:1px;cursor:pointer;" onclick="scrollToOverdue()">⚠ OVERDUE — VIEW</div>
+        <div style="background:#fff;border:1.5px solid #bfdbfe;border-radius:8px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;color:#2563eb;letter-spacing:1px;cursor:pointer;" onclick="openEmailReport('urgent')">📧 EMAIL OVERDUE</div>
       </div>
     </div>
     <div class="calendar-wrap">
@@ -177,6 +203,29 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
   <div class="import-note" id="import-status"></div>
 </div>
 
+<!-- Email Report Modal -->
+<div class="email-modal-bg" id="email-modal-bg" onclick="closeEmailModal()"></div>
+<div class="email-modal" id="email-modal">
+  <h3 id="email-modal-title">PM Service Email</h3>
+  <div class="email-modal-sub" id="email-modal-sub"></div>
+  <div class="email-field">
+    <label>To</label>
+    <input type="email" id="email-to" placeholder="customer@example.com (optional)">
+  </div>
+  <div class="email-field">
+    <label>Subject</label>
+    <input type="text" id="email-subject">
+  </div>
+  <div class="email-field" style="margin-bottom:0;">
+    <label>Body (editable)</label>
+    <textarea class="email-body-preview" id="email-body"></textarea>
+  </div>
+  <div class="email-actions">
+    <button class="btn-copy-email" onclick="closeEmailModal()">Close</button>
+    <button class="btn-copy-email" onclick="copyEmailBody()">📋 Copy Body</button>
+    <button class="btn-open-mail" onclick="openMailto()">📧 Open in Email App</button>
+  </div>
+</div>
 <!-- PM Mark-Done Modal -->
 <div class="pm-modal-bg" id="pm-modal-bg" onclick="closePMModal()"></div>
 <div class="pm-modal" id="pm-modal">
@@ -193,6 +242,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
   <div id="pm-modal-next" style="font-size:12px;color:#64748b;margin-bottom:0.5rem;"></div>
   <div class="pm-actions">
     <button class="btn-cancel-pm" onclick="closePMModal()">Cancel</button>
+    <button class="btn-email-sm" onclick="emailSinglePM()">📧 Email</button>
     <button class="btn-done" onclick="confirmMarkDone()">✓ Mark Done</button>
   </div>
 </div>
@@ -308,7 +358,7 @@ function renderTiles() {
     (doneCount>0?'<div class="tile" style="border-left:4px solid #16a34a;background:linear-gradient(135deg,#fff 85%,#dcfce7)"><div class="tile-val" style="color:#16a34a;font-size:2rem">'+doneCount+'</div><div class="tile-lbl">Marked Done ✓</div></div>':'');
   // Show overdue alert banner
   const alertEl=document.getElementById('sched-alert');
-  if(alertEl){alertEl.style.display=od>0?'block':'none';}
+  if(alertEl){alertEl.style.display=od>0?'flex':'none';}
 }
 
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -525,6 +575,118 @@ function setView(v){
   document.getElementById('btn-tbl').classList.toggle('active',v==='tbl');
   if(v==='tbl')renderTable(); else renderCalendar();
 }
+
+/* ───── EMAIL FUNCTIONS ───── */
+function buildEmailReport(eventsToReport, title){
+  const completions=loadCompletions();
+  // Group by customer
+  const byCustomer={};
+  for(const e of eventsToReport){
+    const ck=getCompletionKey(e.unitObj,e.svcObj);
+    if(completions[ck])continue; // skip already done
+    if(!byCustomer[e.customer])byCustomer[e.customer]=[];
+    byCustomer[e.customer].push(e);
+  }
+  const customers=Object.keys(byCustomer).sort();
+  if(!customers.length)return null;
+  const totalCount=eventsToReport.filter(e=>!completions[getCompletionKey(e.unitObj,e.svcObj)]).length;
+  const dateStr=today.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  let subject=title||('Fleet PM Alert — '+totalCount+' Service'+(totalCount!==1?'s':'')+' Requiring Attention');
+  let body='Hello,\n\nThis is your Fleet PM service alert as of '+dateStr+'. The following vehicles require attention:\n\n';
+  for(const cust of customers){
+    const events=byCustomer[cust];
+    body+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+    body+=cust.toUpperCase()+'\n';
+    body+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+    events.sort((a,b)=>a.daysOut-b.daysOut);
+    for(const e of events){
+      const status=e.daysOut<0?'OVERDUE by '+Math.abs(e.daysOut)+' days':(e.daysOut===0?'DUE TODAY':'Due in '+e.daysOut+' days ('+new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+')');
+      body+='• '+e.vehicle+(e.unit?' (Unit '+e.unit+')':'')+'\n';
+      body+='  Service: '+e.svc+'\n';
+      body+='  Status: '+status+'\n';
+      if(e.meter)body+='  Meter: '+e.meter+'\n';
+      body+='\n';
+    }
+  }
+  body+='Please contact us to schedule service appointments.\n\nThank you,\nSuperior Equipment Repair';
+  return {subject, body, totalCount, customers};
+}
+
+function openEmailReport(mode){
+  let eventsToReport=filteredEvents;
+  if(mode==='urgent'){
+    eventsToReport=filteredEvents.filter(e=>e.status==='overdue'||e.status==='soon');
+  }
+  const completions=loadCompletions();
+  const openEvents=eventsToReport.filter(e=>!completions[getCompletionKey(e.unitObj,e.svcObj)]);
+  if(!openEvents.length){
+    alert('No open services in current filter to email.');
+    return;
+  }
+  const report=buildEmailReport(openEvents);
+  if(!report)return;
+  document.getElementById('email-modal-title').textContent='PM Service Email Report';
+  document.getElementById('email-modal-sub').textContent=report.totalCount+' open service'+(report.totalCount!==1?'s':'')+' across '+report.customers.length+' customer'+(report.customers.length!==1?'s':'')+' — current filter applied';
+  document.getElementById('email-to').value='';
+  document.getElementById('email-subject').value=report.subject;
+  document.getElementById('email-body').value=report.body;
+  document.getElementById('email-modal').style.display='block';
+  document.getElementById('email-modal-bg').style.display='block';
+}
+
+function emailSinglePM(){
+  if(!pendingPM)return;
+  const e=pendingPM;
+  const dueDate=new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const status=e.daysOut<0?'OVERDUE by '+Math.abs(e.daysOut)+' days':(e.daysOut===0?'due TODAY':'due in '+e.daysOut+' days');
+  const subject='Service Due — '+e.vehicle+(e.unit?' Unit '+e.unit:'')+' — '+e.svc;
+  const body='Hello,\n\nThis is a service reminder for the following vehicle:\n\n'+
+    'Customer: '+e.customer+'\n'+
+    'Vehicle: '+e.vehicle+(e.unit?' (Unit '+e.unit+')':'')+'\n'+
+    (e.meter?'Meter: '+e.meter+'\n':'')+
+    '\nService Required: '+e.svc+'\n'+
+    'Due Date: '+dueDate+'\n'+
+    'Status: '+status.toUpperCase()+'\n\n'+
+    'Please contact us to schedule this service at your earliest convenience.\n\n'+
+    'Thank you,\nSuperior Equipment Repair';
+  document.getElementById('email-modal-title').textContent='Service Reminder';
+  document.getElementById('email-modal-sub').textContent=e.customer+' · '+e.vehicle+(e.unit?' · Unit '+e.unit:'');
+  document.getElementById('email-to').value='';
+  document.getElementById('email-subject').value=subject;
+  document.getElementById('email-body').value=body;
+  document.getElementById('email-modal').style.display='block';
+  document.getElementById('email-modal-bg').style.display='block';
+}
+
+function closeEmailModal(){
+  document.getElementById('email-modal').style.display='none';
+  document.getElementById('email-modal-bg').style.display='none';
+}
+
+function openMailto(){
+  const to=document.getElementById('email-to').value.trim();
+  const subject=encodeURIComponent(document.getElementById('email-subject').value);
+  const body=encodeURIComponent(document.getElementById('email-body').value);
+  const mailto='mailto:'+to+'?subject='+subject+'&body='+body;
+  window.location.href=mailto;
+}
+
+function copyEmailBody(){
+  const text=document.getElementById('email-subject').value+'\n\n'+document.getElementById('email-body').value;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.btn-copy-email');
+    const orig=btn.textContent;
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>{btn.textContent=orig;},2000);
+  }).catch(()=>{
+    // fallback
+    const ta=document.getElementById('email-body');
+    ta.select();
+    document.execCommand('copy');
+  });
+}
+
+/* ───── END EMAIL FUNCTIONS ───── */
 
 function setupImport(){
   const zone=document.getElementById('import-zone');
