@@ -10,14 +10,17 @@ body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height
 .container{max-width:1200px;margin:0 auto;padding:2rem 1.5rem 6rem;}
 h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#0f172a;}
 .sub{font-size:13px;color:#64748b;margin-top:2px;margin-bottom:1.5rem;}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem;}
-.tile{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;}
-.tile-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px;}
-.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-top:2px;}
-.t-red{border-left:3px solid #ef4444;}.t-red .tile-val{color:#ef4444;}
-.t-amber{border-left:3px solid #f59e0b;}.t-amber .tile-val{color:#d97706;}
-.t-blue{border-left:3px solid #2563eb;}.t-blue .tile-val{color:#2563eb;}
-.t-green{border-left:3px solid #22c55e;}.t-green .tile-val{color:#16a34a;}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:1.5rem;}
+.tile{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem 1.4rem;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform 0.15s;}
+.tile:hover{transform:translateY(-2px);}
+.tile-val{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:1px;line-height:1;}
+.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-top:4px;}
+.t-red{border-left:4px solid #ef4444;background:linear-gradient(135deg,#fff 85%,#fee2e2);}.t-red .tile-val{color:#ef4444;}
+.t-red.has-items{animation:pulse-red 2s ease-in-out infinite;}
+@keyframes pulse-red{0%,100%{box-shadow:0 1px 4px rgba(0,0,0,0.04);}50%{box-shadow:0 0 0 4px rgba(239,68,68,0.15);}}
+.t-amber{border-left:4px solid #f59e0b;background:linear-gradient(135deg,#fff 85%,#fef3c7);}.t-amber .tile-val{color:#d97706;}
+.t-blue{border-left:4px solid #2563eb;background:linear-gradient(135deg,#fff 85%,#dbeafe);}.t-blue .tile-val{color:#2563eb;}
+.t-green{border-left:4px solid #22c55e;background:linear-gradient(135deg,#fff 85%,#dcfce7);}.t-green .tile-val{color:#16a34a;}
 .filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.2rem;align-items:center;}
 .filter-select{background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;padding:8px 12px;font-size:13px;color:#0f172a;font-family:'Barlow',sans-serif;outline:none;min-width:200px;}
 .filter-select:focus{border-color:#2563eb;}
@@ -32,7 +35,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
 .cal-nav-btn:hover{border-color:#2563eb;color:#2563eb;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
 .cal-dow{padding:6px 4px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;color:#94a3b8;text-transform:uppercase;border-bottom:1px solid #f1f5f9;}
-.cal-cell{border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;padding:6px;min-height:80px;cursor:pointer;transition:background 0.1s;position:relative;}
+.cal-cell{border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;padding:6px;min-height:90px;cursor:pointer;transition:background 0.1s;position:relative;}
 .cal-cell:nth-child(7n){border-right:none;}
 .cal-cell:hover{background:#f8fafc;}
 .cal-cell.other-month{background:#fafafa;}
@@ -69,10 +72,30 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
 .popup{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:1.2rem;width:90%;max-width:440px;z-index:101;max-height:65vh;overflow-y:auto;top:50%;left:50%;transform:translate(-50%,-50%);}
 .popup-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;margin-bottom:0.75rem;color:#0f172a;padding-right:30px;}
 .popup-close{position:absolute;top:1rem;right:1rem;width:24px;height:24px;border:none;background:#f1f5f9;border-radius:4px;cursor:pointer;font-size:12px;}
-.popup-item{padding:0.5rem 0;border-bottom:1px solid #f1f5f9;}
-.popup-item:last-child{border:none;}
-.popup-item-svc{font-size:12px;color:#374151;margin-bottom:3px;}
+.popup-item{padding:0.6rem 0.75rem;border-radius:8px;margin-bottom:6px;background:#f8fafc;border:1px solid #f1f5f9;cursor:pointer;transition:all 0.15s;position:relative;}
+.popup-item:hover{background:#eff6ff;border-color:#bfdbfe;}
+.popup-item-svc{font-size:12px;font-weight:600;color:#374151;margin-bottom:3px;display:flex;align-items:center;gap:6px;}
 .popup-item-unit{font-size:11px;color:#94a3b8;}
+.popup-item-action{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:700;color:#2563eb;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;opacity:0;transition:opacity 0.15s;}
+.popup-item:hover .popup-item-action{opacity:1;}
+.popup-item.done-state{background:#f0fdf4;border-color:#bbf7d0;}
+.popup-item.done-state .popup-item-svc{color:#15803d;}
+.badge-done{background:#dcfce7;color:#15803d;border:1px solid rgba(34,197,94,0.3);}
+/* PM detail modal */
+.pm-modal{position:fixed;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:1.5rem;width:90%;max-width:420px;z-index:200;top:50%;left:50%;transform:translate(-50%,-50%);display:none;}
+.pm-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:199;backdrop-filter:blur(2px);}
+.pm-modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:#0f172a;margin-bottom:4px;}
+.pm-modal-sub{font-size:12px;color:#64748b;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #f1f5f9;}
+.pm-field{margin-bottom:1rem;}
+.pm-field label{display:block;font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-bottom:4px;}
+.pm-field input{width:100%;padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:14px;font-family:'Barlow',sans-serif;outline:none;}
+.pm-field input:focus{border-color:#2563eb;}
+.pm-actions{display:flex;gap:8px;margin-top:1.25rem;}
+.btn-done{flex:1;padding:10px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.btn-done:hover{background:#15803d;}
+.btn-cancel-pm{padding:10px 20px;background:#f1f5f9;color:#374151;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.done-checkmark{display:inline-block;width:16px;height:16px;background:#16a34a;border-radius:50%;color:#fff;text-align:center;line-height:16px;font-size:10px;font-weight:900;flex-shrink:0;}
+.svc-row-done{display:flex;align-items:center;gap:0.5rem;font-size:10px;color:#15803d;font-weight:600;margin-top:2px;}
 .import-zone{border:2px dashed #e2e8f0;border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.15s;margin-bottom:0.75rem;}
 .import-zone:hover,.import-zone.drag{border-color:#2563eb;background:#eff6ff;}
 .import-zone h3{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;color:#374151;margin-bottom:4px;}
@@ -111,6 +134,15 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
     <div class="legend-item"><div class="legend-dot dot-green"></div>Due > 90 days</div>
   </div>
   <div id="cal-view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:#0f172a;">PM Schedule</div>
+        <div style="font-size:11px;color:#64748b;margin-top:1px;">Click any day with PMs to view details and mark services complete</div>
+      </div>
+      <div id="sched-alert" style="display:none;background:#fee2e2;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;color:#dc2626;letter-spacing:1px;cursor:pointer;" onclick="scrollToOverdue()">
+        ⚠ OVERDUE — CLICK TO REVIEW
+      </div>
+    </div>
     <div class="calendar-wrap">
       <div class="cal-header">
         <div class="cal-month" id="cal-month-label"></div>
@@ -145,6 +177,25 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
   <div class="import-note" id="import-status"></div>
 </div>
 
+<!-- PM Mark-Done Modal -->
+<div class="pm-modal-bg" id="pm-modal-bg" onclick="closePMModal()"></div>
+<div class="pm-modal" id="pm-modal">
+  <h3 id="pm-modal-svc"></h3>
+  <div class="pm-modal-sub" id="pm-modal-unit"></div>
+  <div class="pm-field">
+    <label>Completion Date</label>
+    <input type="date" id="pm-done-date">
+  </div>
+  <div class="pm-field">
+    <label>Notes (optional)</label>
+    <input type="text" id="pm-done-note" placeholder="Mileage, technician, etc.">
+  </div>
+  <div id="pm-modal-next" style="font-size:12px;color:#64748b;margin-bottom:0.5rem;"></div>
+  <div class="pm-actions">
+    <button class="btn-cancel-pm" onclick="closePMModal()">Cancel</button>
+    <button class="btn-done" onclick="confirmMarkDone()">✓ Mark Done</button>
+  </div>
+</div>
 <div class="popup-bg" id="popup-bg" onclick="closePopup()"></div>
 <div class="popup" id="popup" style="display:none">
   <button class="popup-close" onclick="closePopup()">&#10005;</button>
@@ -156,6 +207,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#
 <script>
 const SESSION_KEY = 'uptime_auth_v1';
 const FLEET_LS_KEY = 'uptimeFleetData';
+const COMPLETIONS_KEY = 'uptimeCompletions_v1';
 const user = sessionStorage.getItem(SESSION_KEY);
 if (!user) window.location.href = '/uptime-os/';
 
@@ -165,6 +217,17 @@ let activeView = 'cal';
 let allUnits = [];
 let filteredEvents = [];
 let custFilter='', svcFilter='', statusFilter='';
+let pendingPM = null; // { unitObj, svcObj, eventIndex }
+
+function getCompletionKey(unitObj, svcObj) {
+  return (unitObj.vin||unitObj.u||'unknown') + '||' + svcObj.n;
+}
+function loadCompletions() {
+  try { return JSON.parse(localStorage.getItem(COMPLETIONS_KEY)||'{}'); } catch(e) { return {}; }
+}
+function saveCompletions(c) {
+  localStorage.setItem(COMPLETIONS_KEY, JSON.stringify(c));
+}
 
 function loadFleetData() {
   try {
@@ -231,15 +294,21 @@ function applyFilters() {
 }
 
 function renderTiles() {
-  const od=filteredEvents.filter(e=>e.status==='overdue').length;
-  const s30=filteredEvents.filter(e=>e.status==='soon').length;
-  const s90=filteredEvents.filter(e=>e.status==='upcoming').length;
-  const ok=filteredEvents.filter(e=>e.status==='future').length;
+  const completions = loadCompletions();
+  const od=filteredEvents.filter(e=>e.status==='overdue'&&!completions[getCompletionKey(e.unitObj,e.svcObj)]).length;
+  const s30=filteredEvents.filter(e=>e.status==='soon'&&!completions[getCompletionKey(e.unitObj,e.svcObj)]).length;
+  const s90=filteredEvents.filter(e=>e.status==='upcoming'&&!completions[getCompletionKey(e.unitObj,e.svcObj)]).length;
+  const ok=filteredEvents.filter(e=>e.status==='future'&&!completions[getCompletionKey(e.unitObj,e.svcObj)]).length;
+  const doneCount=filteredEvents.filter(e=>completions[getCompletionKey(e.unitObj,e.svcObj)]).length;
   document.getElementById('tiles').innerHTML =
-    '<div class="tile t-red"><div class="tile-val">'+od+'</div><div class="tile-lbl">Overdue Services</div></div>'+
+    '<div class="tile t-red'+(od>0?' has-items':'')+'"><div class="tile-val">'+od+'</div><div class="tile-lbl">Overdue Services</div></div>'+
     '<div class="tile t-amber"><div class="tile-val">'+s30+'</div><div class="tile-lbl">Due &le; 30 Days</div></div>'+
     '<div class="tile t-blue"><div class="tile-val">'+s90+'</div><div class="tile-lbl">Due 31&ndash;90 Days</div></div>'+
-    '<div class="tile t-green"><div class="tile-val">'+ok+'</div><div class="tile-lbl">Scheduled OK</div></div>';
+    '<div class="tile t-green"><div class="tile-val">'+ok+'</div><div class="tile-lbl">Scheduled OK</div></div>'+
+    (doneCount>0?'<div class="tile" style="border-left:4px solid #16a34a;background:linear-gradient(135deg,#fff 85%,#dcfce7)"><div class="tile-val" style="color:#16a34a;font-size:2rem">'+doneCount+'</div><div class="tile-lbl">Marked Done ✓</div></div>':'');
+  // Show overdue alert banner
+  const alertEl=document.getElementById('sched-alert');
+  if(alertEl){alertEl.style.display=od>0?'block':'none';}
 }
 
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -278,27 +347,115 @@ function renderCalendar() {
 }
 
 function cellHtml(day,key,events,other,isToday=false){
+  const completions=loadCompletions();
+  const openEvents=events.filter(e=>!completions[getCompletionKey(e.unitObj,e.svcObj)]);
+  const hasOverdue=openEvents.some(e=>e.status==='overdue');
+  const hasSoon=openEvents.some(e=>e.status==='soon');
+  let extraStyle='';
+  if(hasOverdue&&!other)extraStyle='border-top:3px solid #ef4444;';
+  else if(hasSoon&&!other)extraStyle='border-top:3px solid #f59e0b;';
   const cls=['cal-cell',other?'other-month':'',isToday?'today':''].filter(Boolean).join(' ');
-  const dots=[...new Set(events.map(e=>e.color))].slice(0,9).map(c=>'<div class="cal-dot dot-'+c+'"></div>').join('');
-  const count=events.length>0?'<div class="cal-count">'+events.length+'</div>':'';
-  const click=events.length?'onclick="showDay(\'"+key+"\')"':'';
-  return '<div class="'+cls+'" '+click+'><div class="cal-day-num">'+day+'</div><div class="cal-dots">'+dots+'</div>'+count+'</div>';
+  const dots=[...new Set(openEvents.map(e=>e.color))].slice(0,9).map(c=>'<div class="cal-dot dot-'+c+'"></div>').join('');
+  const doneCount=events.length-openEvents.length;
+  const doneStr=doneCount>0?'<div style="font-size:8px;color:#16a34a;margin-top:1px;">✓'+doneCount+'</div>':'';
+  const count=openEvents.length>0?'<div class="cal-count">'+openEvents.length+(openEvents.length!==events.length?' open':'')+'</div>':'';
+  const click=events.length?'onclick="showDay(\''+key+'\')"':'';
+  return '<div class="'+cls+'" style="'+extraStyle+'" '+click+'><div class="cal-day-num">'+day+'</div><div class="cal-dots">'+dots+'</div>'+count+doneStr+'</div>';
 }
 
 function showDay(key){
   const events=filteredEvents.filter(e=>e.date===key);
   if(!events.length)return;
   const d=new Date(key+'T00:00:00');
+  const completions=loadCompletions();
+  // Store day events globally for mark-done access
+  window._dayEvents=events;
   document.getElementById('popup-title').textContent=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
-  document.getElementById('popup-body').innerHTML=events.map(e=>
-    '<div class="popup-item"><div class="popup-item-svc"><span class="svc-badge badge-'+e.color+'">'+
-    (e.daysOut<0?'OVERDUE':e.daysOut===0?'TODAY':e.daysOut+'d')+
-    '</span> '+e.svc+'</div><div class="popup-item-unit">'+e.customer+' &middot; '+e.vehicle+(e.unit?' &middot; Unit '+e.unit:'')+'</div></div>'
-  ).join('');
+  document.getElementById('popup-body').innerHTML=events.map((e,i)=>{
+    const ck=getCompletionKey(e.unitObj,e.svcObj);
+    const comp=completions[ck];
+    const doneClass=comp?' done-state':'';
+    const badgeCls=comp?'badge-done':('badge-'+e.color);
+    const badgeTxt=comp?'✓ DONE':(e.daysOut<0?'OVERDUE':e.daysOut===0?'TODAY':e.daysOut+'d');
+    const compNote=comp?'<div style="font-size:10px;color:#15803d;margin-top:3px;">Done '+comp.date+(comp.note?' · '+comp.note:'')+'</div>':'';
+    return '<div class="popup-item'+doneClass+'" onclick="openPMModal('+i+')">'+
+      '<div class="popup-item-svc"><span class="svc-badge '+badgeCls+'">'+badgeTxt+'</span> '+e.svc+'</div>'+
+      '<div class="popup-item-unit">'+e.customer+' &middot; '+e.vehicle+(e.unit?' &middot; Unit '+e.unit:'')+'</div>'+
+      compNote+
+      '<div class="popup-item-action">'+(comp?'Edit ✎':'Mark Done →')+'</div>'+
+      '</div>';
+  }).join('');
   document.getElementById('popup').style.display='block';
   document.getElementById('popup-bg').style.display='block';
 }
 function closePopup(){document.getElementById('popup').style.display='none';document.getElementById('popup-bg').style.display='none';}
+
+function openPMModal(idx){
+  const e=window._dayEvents[idx];
+  if(!e)return;
+  pendingPM=e;
+  const completions=loadCompletions();
+  const ck=getCompletionKey(e.unitObj,e.svcObj);
+  const existing=completions[ck];
+  document.getElementById('pm-modal-svc').textContent=e.svc;
+  document.getElementById('pm-modal-unit').textContent=e.customer+' · '+e.vehicle+(e.unit?' · Unit '+e.unit:'');
+  // Default date: existing completion or today
+  const todayStr=today.toISOString().split('T')[0];
+  document.getElementById('pm-done-date').value=existing?existing.date:todayStr;
+  document.getElementById('pm-done-note').value=existing?existing.note:'';
+  updateNextDuePreview();
+  document.getElementById('pm-done-date').oninput=updateNextDuePreview;
+  document.getElementById('pm-modal').style.display='block';
+  document.getElementById('pm-modal-bg').style.display='block';
+}
+function updateNextDuePreview(){
+  if(!pendingPM)return;
+  const interval=pendingPM.svcObj.i;
+  const dateVal=document.getElementById('pm-done-date').value;
+  if(!dateVal||!interval){
+    document.getElementById('pm-modal-next').textContent=interval?'':'(No fixed interval — will clear flag only)';
+    return;
+  }
+  const d=new Date(dateVal+'T00:00:00');
+  d.setDate(d.getDate()+interval);
+  const nextStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('pm-modal-next').innerHTML='<strong>Next due will be:</strong> '+nextStr+' (+'+interval+' days)';
+}
+function closePMModal(){
+  document.getElementById('pm-modal').style.display='none';
+  document.getElementById('pm-modal-bg').style.display='none';
+  pendingPM=null;
+}
+function confirmMarkDone(){
+  if(!pendingPM)return;
+  const dateVal=document.getElementById('pm-done-date').value;
+  if(!dateVal){alert('Please enter a completion date.');return;}
+  const note=document.getElementById('pm-done-note').value.trim();
+  const completions=loadCompletions();
+  const ck=getCompletionKey(pendingPM.unitObj,pendingPM.svcObj);
+  completions[ck]={date:dateVal,note};
+  // Also update the svcObj last date and recalculate next due in allUnits
+  const interval=pendingPM.svcObj.i;
+  if(interval){
+    const d=new Date(dateVal+'T00:00:00');
+    d.setDate(d.getDate()+interval);
+    pendingPM.svcObj.l=dateVal;
+    pendingPM.svcObj.d=d.toISOString().split('T')[0];
+    // Persist updated allUnits to localStorage
+    const stored=localStorage.getItem(FLEET_LS_KEY);
+    if(stored){
+      try{const data=JSON.parse(stored);data.units=allUnits;localStorage.setItem(FLEET_LS_KEY,JSON.stringify(data));}catch(e){}
+    }
+  }
+  const savedDate=pendingPM?pendingPM.date:null;
+  saveCompletions(completions);
+  closePMModal();
+  applyFilters();
+  // Re-open day popup to show updated state
+  if(savedDate){
+    setTimeout(()=>showDay(savedDate),50);
+  }
+}
 
 function renderTable(){
   const unitMap={};
@@ -322,16 +479,43 @@ function renderTable(){
       '<td><div class="svc-list">'+badges+(u.events.length>5?'<span style="font-size:11px;color:#94a3b8">+'+(u.events.length-5)+' more</span>':'')
       +'</div></td></tr>'+
       '<tr><td colspan="4" style="padding:0"><div class="expand-inner" id="expand-'+idx+'">'+
-      u.events.sort((a,b)=>a.daysOut-b.daysOut).map(e=>
-        '<div class="svc-row"><span class="svc-badge badge-'+e.color+'" style="flex-shrink:0">'+
-        (e.daysOut<0?'OVERDUE':e.daysOut===0?'TODAY':e.daysOut+'d')+'</span>'+
-        '<div class="svc-row-name">'+e.svc+'</div>'+
-        '<div class="svc-row-dates">Due: '+new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div></div>'
-      ).join('')+'</div></td></tr>';
+      u.events.sort((a,b)=>a.daysOut-b.daysOut).map(e=>{
+        const completions=loadCompletions();
+        const ck=getCompletionKey(e.unitObj,e.svcObj);
+        const comp=completions[ck];
+        const badgeCls=comp?'badge-done':('badge-'+e.color);
+        const badgeTxt=comp?'✓ DONE':(e.daysOut<0?'OVERDUE':e.daysOut===0?'TODAY':e.daysOut+'d');
+        const doneInfo=comp?'<div class="svc-row-done">✓ Done '+comp.date+(comp.note?' · '+comp.note:'')+'</div>':'';
+        return '<div class="svc-row" style="'+(comp?'opacity:0.6;':'')+'" onclick="openPMFromRow(event,\''+e.date+'\')">'+
+          '<span class="svc-badge '+badgeCls+'" style="flex-shrink:0">'+badgeTxt+'</span>'+
+          '<div class="svc-row-name">'+e.svc+doneInfo+'</div>'+
+          '<div class="svc-row-dates">Due: '+new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'<br><span style="color:#2563eb;font-size:9px;cursor:pointer">Mark Done →</span></div>'+
+          '</div>';
+      }).join('')+'</div></td></tr>';
   });
   document.getElementById('unit-rows').innerHTML=html;
 }
+function scrollToOverdue(){
+  // Navigate calendar to first overdue month and open the first overdue day
+  const completions=loadCompletions();
+  const overdue=filteredEvents.filter(e=>e.status==='overdue'&&!completions[getCompletionKey(e.unitObj,e.svcObj)]);
+  if(!overdue.length)return;
+  overdue.sort((a,b)=>a.date.localeCompare(b.date));
+  const first=overdue[0];
+  const d=new Date(first.date+'T00:00:00');
+  calYear=d.getFullYear();calMonth=d.getMonth();
+  renderCalendar();
+  setTimeout(()=>showDay(first.date),100);
+}
 function toggleExpand(idx){document.getElementById('expand-'+idx).classList.toggle('open');}
+function openPMFromRow(ev,dateKey){
+  ev.stopPropagation();
+  // Find event in filteredEvents matching this date and the clicked unit context
+  const events=filteredEvents.filter(e=>e.date===dateKey);
+  if(!events.length)return;
+  window._dayEvents=events;
+  openPMModal(0);
+}
 
 function setView(v){
   activeView=v;
