@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TorqueLeads OS — Fleet PM Campaigns</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px;}
+
+/* BRAND */
+.topbar{background:#fff;border-bottom:2px solid #0f172a;padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:3px;color:#0f172a;}
+.brand-leads{color:#cc1f1f;}
+.brand-os{font-size:0.9rem;color:#94a3b8;letter-spacing:2px;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#64748b;border-left:2px solid #e2e8f0;padding-left:12px;margin-left:4px;}
+
+.container{max-width:1400px;margin:0 auto;padding:1.5rem 1.5rem 0;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#0f172a;margin-bottom:2px;}
+.sub{font-size:13px;color:#64748b;margin-bottom:1.25rem;}
+
+/* TILES */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:1.5rem;}
+.tile{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem 1.4rem;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:transform 0.15s;}
+.tile:hover{transform:translateY(-2px);}
+.tile-val{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:1px;line-height:1;}
+.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-top:4px;}
+.t-red{border-left:4px solid #ef4444;background:linear-gradient(135deg,#fff 85%,#fee2e2);}.t-red .tile-val{color:#ef4444;}
+.t-amber{border-left:4px solid #f59e0b;background:linear-gradient(135deg,#fff 85%,#fef3c7);}.t-amber .tile-val{color:#d97706;}
+.t-blue{border-left:4px solid #2563eb;background:linear-gradient(135deg,#fff 85%,#dbeafe);}.t-blue .tile-val{color:#2563eb;}
+.t-green{border-left:4px solid #22c55e;background:linear-gradient(135deg,#fff 85%,#dcfce7);}.t-green .tile-val{color:#16a34a;}
+.t-purple{border-left:4px solid #7c3aed;background:linear-gradient(135deg,#fff 85%,#ede9fe);}.t-purple .tile-val{color:#7c3aed;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap;}
+.search-box{flex:1;min-width:240px;max-width:400px;}
+.search-box input{width:100%;padding:8px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;color:#0f172a;}
+.search-box input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
+.filter-select{background:#fff;border:1.5px solid #e2e8f0;border-radius:7px;padding:8px 12px;font-size:13px;color:#0f172a;font-family:'Barlow',sans-serif;outline:none;min-width:160px;}
+.filter-select:focus{border-color:#2563eb;}
+.toolbar-spacer{flex:1;}
+.btn-create{padding:8px 18px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.btn-create:hover{background:#1d4ed8;}
+
+/* TABLE */
+.table-wrap{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.camp-table{width:100%;border-collapse:collapse;}
+.camp-table th{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#94a3b8;padding:0.75rem 1rem;text-align:left;border-bottom:2px solid #f1f5f9;background:#fafafa;white-space:nowrap;}
+.camp-table td{padding:0.9rem 1rem;border-bottom:1px solid #f8fafc;font-size:13px;vertical-align:middle;}
+.camp-table tbody tr{cursor:pointer;transition:background 0.1s;}
+.camp-table tbody tr:hover{background:#f8fafc;}
+.cust-name{font-weight:700;font-size:14px;color:#0f172a;margin-bottom:2px;}
+.cust-sub{font-size:11px;color:#94a3b8;}
+.unit-count{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#374151;}
+.svc-count{display:inline-flex;align-items:center;justify-content:center;min-width:32px;padding:4px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+.sc-red{background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,0.2);}
+.sc-amber{background:#fef3c7;color:#b45309;border:1px solid rgba(180,83,9,0.2);}
+.sc-blue{background:#dbeafe;color:#1d4ed8;border:1px solid rgba(37,99,235,0.2);}
+.sc-zero{background:#f1f5f9;color:#cbd5e1;border:1px solid #e2e8f0;}
+.rev-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;color:#16a34a;line-height:1;}
+.action-btns{display:flex;gap:6px;align-items:center;}
+.btn-preview{padding:6px 14px;background:#fff;color:#2563eb;border:1.5px solid #bfdbfe;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.btn-preview:hover{background:#eff6ff;border-color:#2563eb;}
+.btn-schedule{padding:6px 14px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;white-space:nowrap;}
+.btn-schedule:hover{background:#1d4ed8;}
+.status-tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;}
+.tag-draft{background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;}
+.tag-ready{background:#dbeafe;color:#1d4ed8;border:1px solid rgba(37,99,235,0.2);}
+.tag-sent{background:#dcfce7;color:#15803d;border:1px solid rgba(34,197,94,0.2);}
+.tag-scheduled{background:#ede9fe;color:#7c3aed;border:1px solid rgba(124,58,237,0.2);}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;backdrop-filter:blur(3px);}
+.modal-bg.open{display:flex;align-items:center;justify-content:center;}
+.modal{background:#fff;border-radius:14px;padding:1.75rem;width:94%;max-width:700px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.25);}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:#0f172a;margin-bottom:3px;}
+.modal-sub{font-size:13px;color:#64748b;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid #f1f5f9;}
+.modal-section{margin-bottom:1.5rem;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;}
+.unit-list{display:grid;gap:6px;}
+.unit-item{background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:10px;}
+.unit-check{width:18px;height:18px;cursor:pointer;accent-color:#2563eb;}
+.unit-info{flex:1;}
+.unit-name{font-size:12px;font-weight:700;color:#0f172a;}
+.unit-svc{font-size:10px;color:#64748b;margin-top:2px;}
+.svc-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;margin-right:3px;}
+.badge-red{background:#fee2e2;color:#dc2626;}
+.badge-amber{background:#fef3c7;color:#b45309;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.msg-preview{background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.25rem;font-size:13px;line-height:1.6;color:#374151;white-space:pre-wrap;font-family:'Barlow',sans-serif;margin-top:10px;}
+.msg-placeholder{color:#94a3b8;font-style:italic;}
+.form-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.form-field label{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;}
+.form-field input,.form-field select,.form-field textarea{padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;background:#fff;color:#0f172a;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
+.form-field textarea{resize:vertical;min-height:90px;}
+.modal-actions{display:flex;gap:8px;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f1f5f9;}
+.btn-modal-cancel{padding:11px 24px;background:#f1f5f9;color:#374151;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-modal-save{flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.btn-modal-save:hover{background:#1d4ed8;}
+.btn-modal-send{flex:1;padding:11px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.btn-modal-send:hover{background:#15803d;}
+.empty-state{text-align:center;padding:4rem 2rem;color:#94a3b8;}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.4;}
+.empty-msg{font-size:15px;font-weight:600;color:#64748b;margin-bottom:6px;}
+.empty-hint{font-size:12px;color:#94a3b8;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid #0f172a;display:flex;align-items:stretch;z-index:40;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 2px;text-decoration:none;color:#6b7280;transition:all 0.15s;border:none;background:transparent;cursor:pointer;font-family:inherit;}
+.nav-item:hover{color:#0f172a;background:#f8fafc;}
+.nav-item.active{color:#2563eb;border-top:2px solid #2563eb;margin-top:-2px;}
+.nav-icon{font-size:16px;line-height:1;}
+.nav-label{font-family:'Barlow Condensed',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.nav-signout:hover{color:#ef4444;}
+</style>
+</head>
+<body>
+<script>
+(function(){const s=sessionStorage.getItem('uptime_auth_v1');if(!s)window.location.href='/uptime-os/';})();
+</script>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">TORQUE<span class="brand-leads">LEADS</span> <span class="brand-os">OS</span></div>
+  <div class="page-title">Fleet PM Campaigns</div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+  <h1>PM OUTREACH CAMPAIGNS</h1>
+  <div class="sub">Proactive revenue recovery — group overdue fleet services by customer, generate outreach, schedule blocks.</div>
+
+  <!-- TILES -->
+  <div class="tiles">
+    <div class="tile t-red"><div class="tile-val" id="t-overdue">0</div><div class="tile-lbl">Overdue Services</div></div>
+    <div class="tile t-amber"><div class="tile-val" id="t-30d">0</div><div class="tile-lbl">Due ≤30 Days</div></div>
+    <div class="tile t-blue"><div class="tile-val" id="t-custs">0</div><div class="tile-lbl">Customers</div></div>
+    <div class="tile t-green"><div class="tile-val" id="t-potential">$0</div><div class="tile-lbl">Potential Revenue</div></div>
+    <div class="tile t-purple"><div class="tile-val" id="t-campaigns">0</div><div class="tile-lbl">Active Campaigns</div></div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-box"><input type="text" id="search" placeholder="Search customers…" oninput="filterTable()"></div>
+    <select class="filter-select" id="filter-urgency" onchange="filterTable()">
+      <option value="all">All Customers</option>
+      <option value="critical">Critical (≥10 overdue)</option>
+      <option value="high">High Priority (≥5 overdue)</option>
+      <option value="medium">Medium (1-4 overdue)</option>
+      <option value="upcoming">Upcoming Only</option>
+    </select>
+    <div class="toolbar-spacer"></div>
+    <button class="btn-create" onclick="createBulkCampaign()">🎯 BULK CAMPAIGN</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table class="camp-table">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Units</th>
+          <th>Overdue</th>
+          <th>≤30d</th>
+          <th>31–90d</th>
+          <th>Est. Revenue</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="bgClose(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="m-title">Campaign Preview</h3>
+    <div class="modal-sub" id="m-sub">—</div>
+    <div id="m-body"></div>
+    <div class="modal-actions" id="m-actions"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/uptime-os/" class="nav-item"><span class="nav-icon">◈</span><span class="nav-label">Dashboard</span></a>
+  <a href="/uptime-os/schedule/" class="nav-item"><span class="nav-icon">📅</span><span class="nav-label">Schedule</span></a>
+  <a href="/uptime-os/pm-campaigns/" class="nav-item active"><span class="nav-icon">📣</span><span class="nav-label">PM Campaigns</span></a>
+  <a href="/uptime-os/fleet/" class="nav-item"><span class="nav-icon">🚛</span><span class="nav-label">Fleet PM</span></a>
+  <a href="/uptime-os/health/" class="nav-item"><span class="nav-icon">♥</span><span class="nav-label">Health</span></a>
+  <a href="/uptime-os/admin/" class="nav-item"><span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  <button class="nav-item nav-signout" onclick="signOut()"><span class="nav-icon">↩</span><span class="nav-label">Sign Out</span></button>
+</nav>
+
+<script>
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let fleetData = [];
+let customers = [];
+let campaigns = [];
+let filter = 'all';
+let search = '';
+
+// ─────────────────────────────────────────────
+//  BOOT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  render();
+});
+
+function loadData() {
+  // Load fleet data from seed or localStorage
+  try {
+    const stored = localStorage.getItem('uptimeFleetData');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      fleetData = parsed.units || [];
+    } else if (window.__UPTIME_SEED__ && window.__UPTIME_SEED__.fleet) {
+      const seed = JSON.parse(window.__UPTIME_SEED__.fleet);
+      fleetData = seed.units || [];
+    }
+  } catch (e) {}
+
+  // Load campaigns from localStorage
+  try {
+    const c = localStorage.getItem('uptime_campaigns_v1');
+    if (c) campaigns = JSON.parse(c);
+    if (!Array.isArray(campaigns)) campaigns = [];
+  } catch (e) { campaigns = []; }
+
+  // Group by customer
+  groupCustomers();
+}
+
+function groupCustomers() {
+  const map = {};
+  fleetData.forEach(u => {
+    const c = u.c || 'Unknown';
+    if (!map[c]) map[c] = { customer: c, units: [], overdue: 0, d30: 0, d90: 0 };
+    map[c].units.push(u);
+    (u.s || []).forEach(s => {
+      if (!s.d) return;
+      const days = daysDiff(s.d);
+      if (days < 0) map[c].overdue++;
+      else if (days <= 30) map[c].d30++;
+      else if (days <= 90) map[c].d90++;
+    });
+  });
+  customers = Object.values(map).sort((a, b) => b.overdue - a.overdue || b.d30 - a.d30);
+}
+
+function daysDiff(d) {
+  const t = new Date(d);
+  const now = new Date();
+  return Math.floor((t - now) / 86400000);
+}
+
+function saveCampaigns() { localStorage.setItem('uptime_campaigns_v1', JSON.stringify(campaigns)); }
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+function render() {
+  updateTiles();
+  renderTable();
+}
+
+function updateTiles() {
+  let overdue = 0, d30 = 0, potential = 0;
+  customers.forEach(c => {
+    overdue += c.overdue;
+    d30 += c.d30;
+    potential += (c.overdue * 350) + (c.d30 * 280); // avg service value
+  });
+  document.getElementById('t-overdue').textContent = overdue;
+  document.getElementById('t-30d').textContent = d30;
+  document.getElementById('t-custs').textContent = customers.length;
+  document.getElementById('t-potential').textContent = potential >= 1000 ? `$${(potential / 1000).toFixed(0)}K` : `$${potential}`;
+  document.getElementById('t-campaigns').textContent = campaigns.filter(c => c.status !== 'draft').length;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  let filtered = customers;
+
+  // Search
+  if (search) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter(c => c.customer.toLowerCase().includes(q));
+  }
+
+  // Urgency filter
+  if (filter === 'critical') filtered = filtered.filter(c => c.overdue >= 10);
+  else if (filter === 'high') filtered = filtered.filter(c => c.overdue >= 5);
+  else if (filter === 'medium') filtered = filtered.filter(c => c.overdue >= 1 && c.overdue < 5);
+  else if (filter === 'upcoming') filtered = filtered.filter(c => c.overdue === 0 && c.d30 > 0);
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-msg">No customers match your filters</div><div class="empty-hint">Try adjusting your search or filter settings</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(c => {
+    const camp = campaigns.find(x => x.customer === c.customer);
+    const status = camp ? camp.status : 'draft';
+    const tagClass = status === 'draft' ? 'tag-draft' : status === 'ready' ? 'tag-ready' : status === 'sent' ? 'tag-sent' : 'tag-scheduled';
+    const tagText = status.toUpperCase();
+    const rev = (c.overdue * 350 + c.d30 * 280);
+    const revStr = rev >= 1000 ? `$${(rev / 1000).toFixed(1)}K` : `$${rev}`;
+
+    return `<tr onclick="openCampaign('${esc(c.customer)}')">
+      <td><div class="cust-name">${esc(c.customer)}</div><div class="cust-sub">${c.units.length} units tracked</div></td>
+      <td><span class="unit-count">${c.units.length}</span></td>
+      <td><span class="svc-count ${c.overdue > 0 ? 'sc-red' : 'sc-zero'}">${c.overdue}</span></td>
+      <td><span class="svc-count ${c.d30 > 0 ? 'sc-amber' : 'sc-zero'}">${c.d30}</span></td>
+      <td><span class="svc-count ${c.d90 > 0 ? 'sc-blue' : 'sc-zero'}">${c.d90}</span></td>
+      <td><div class="rev-val">${revStr}</div></td>
+      <td><span class="status-tag ${tagClass}">${tagText}</span></td>
+      <td onclick="event.stopPropagation()"><div class="action-btns">
+        <button class="btn-preview" onclick="openCampaign('${esc(c.customer)}')">PREVIEW</button>
+        ${status === 'draft' ? `<button class="btn-schedule" onclick="scheduleCampaign('${esc(c.customer)}')">SCHEDULE</button>` : ''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable() {
+  search = document.getElementById('search').value;
+  filter = document.getElementById('filter-urgency').value;
+  renderTable();
+}
+
+// ─────────────────────────────────────────────
+//  CAMPAIGN MODAL
+// ─────────────────────────────────────────────
+function openCampaign(custName) {
+  const c = customers.find(x => x.customer === custName);
+  if (!c) return;
+
+  const camp = campaigns.find(x => x.customer === custName);
+  const msg = camp ? camp.message : generateMessage(c);
+  const selUnits = camp ? camp.units : c.units.filter(u => (u.s || []).some(s => s.d && daysDiff(s.d) < 30)).map(u => u.u);
+
+  document.getElementById('m-title').textContent = 'PM CAMPAIGN';
+  document.getElementById('m-sub').textContent = `${custName} — ${c.overdue} overdue, ${c.d30} due ≤30d`;
+
+  let html = `<div class="modal-section">
+    <div class="section-title">Units & Services</div>
+    <div class="unit-list">`;
+
+  c.units.forEach(u => {
+    const urgent = (u.s || []).filter(s => s.d && daysDiff(s.d) < 30);
+    if (!urgent.length) return;
+    const checked = selUnits.includes(u.u) ? 'checked' : '';
+    html += `<div class="unit-item">
+      <input type="checkbox" class="unit-check" data-unit="${esc(u.u)}" ${checked}>
+      <div class="unit-info">
+        <div class="unit-name">${esc(u.v || u.u)}</div>
+        <div class="unit-svc">`;
+    urgent.forEach(s => {
+      const days = daysDiff(s.d);
+      const bc = days < 0 ? 'badge-red' : days <= 30 ? 'badge-amber' : 'badge-blue';
+      html += `<span class="svc-badge ${bc}">${s.n} (${days < 0 ? Math.abs(days) + 'd late' : days + 'd'})</span>`;
+    });
+    html += `</div></div></div>`;
+  });
+
+  html += `</div></div>
+    <div class="modal-section">
+      <div class="section-title">Outreach Message</div>
+      <div class="form-field"><label>Message Template</label><textarea id="f-msg" rows="6">${esc(msg)}</textarea></div>
+      <div class="msg-preview" id="msg-preview">${esc(msg)}</div>
+    </div>
+    <div class="modal-section">
+      <div class="section-title">Delivery</div>
+      <div class="form-field">
+        <label>Send Method</label>
+        <select id="f-method">
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+          <option value="call">Phone Call (manual)</option>
+        </select>
+      </div>
+    </div>`;
+
+  document.getElementById('m-body').innerHTML = html;
+
+  document.getElementById('f-msg').addEventListener('input', e => {
+    document.getElementById('msg-preview').textContent = e.target.value;
+  });
+
+  const actions = camp && camp.status === 'ready'
+    ? `<button class="btn-modal-cancel" onclick="closeModal()">Close</button><button class="btn-modal-send" onclick="sendCampaign('${esc(custName)}')">📤 SEND NOW</button>`
+    : `<button class="btn-modal-cancel" onclick="closeModal()">Cancel</button><button class="btn-modal-save" onclick="saveCampaign('${esc(custName)}')">💾 SAVE DRAFT</button>`;
+
+  document.getElementById('m-actions').innerHTML = actions;
+  openModal();
+}
+
+function generateMessage(c) {
+  const shop = 'Your Shop Name'; // Pull from config in real implementation
+  const overdue = c.overdue;
+  const upcoming = c.d30;
+  let msg = `Hi ${c.customer} team,\n\nThis is ${shop}. We're reaching out about preventive maintenance for your fleet.\n\n`;
+  if (overdue > 0) msg += `We noticed ${overdue} service${overdue > 1 ? 's are' : ' is'} currently overdue. `;
+  if (upcoming > 0) msg += `Additionally, ${upcoming} service${upcoming > 1 ? 's' : ''} ${upcoming > 1 ? 'are' : 'is'} due in the next 30 days.\n\n`;
+  msg += `We'd love to get these scheduled and keep your fleet running smoothly. Can we find a time this week to bring in your units?\n\nLet me know what works!\n\nBest,\n${shop}`;
+  return msg;
+}
+
+function saveCampaign(custName) {
+  const msg = document.getElementById('f-msg').value;
+  const method = document.getElementById('f-method').value;
+  const units = Array.from(document.querySelectorAll('.unit-check:checked')).map(el => el.dataset.unit);
+  let camp = campaigns.find(x => x.customer === custName);
+  if (!camp) {
+    camp = { id: 'c' + Date.now(), customer: custName, status: 'draft', created: new Date().toISOString() };
+    campaigns.push(camp);
+  }
+  camp.message = msg;
+  camp.method = method;
+  camp.units = units;
+  camp.updated = new Date().toISOString();
+  saveCampaigns();
+  closeModal();
+  render();
+  alert(`Campaign saved for ${custName}`);
+}
+
+function scheduleCampaign(custName) {
+  let camp = campaigns.find(x => x.customer === custName);
+  if (!camp) {
+    const c = customers.find(x => x.customer === custName);
+    camp = {
+      id: 'c' + Date.now(),
+      customer: custName,
+      status: 'ready',
+      message: generateMessage(c),
+      method: 'email',
+      units: c.units.filter(u => (u.s || []).some(s => s.d && daysDiff(s.d) < 30)).map(u => u.u),
+      created: new Date().toISOString()
+    };
+    campaigns.push(camp);
+  } else {
+    camp.status = 'ready';
+    camp.updated = new Date().toISOString();
+  }
+  saveCampaigns();
+  render();
+  alert(`✅ Campaign for ${custName} is ready to send!`);
+}
+
+function sendCampaign(custName) {
+  const camp = campaigns.find(x => x.customer === custName);
+  if (!camp) return;
+  camp.status = 'sent';
+  camp.sentAt = new Date().toISOString();
+  saveCampaigns();
+  closeModal();
+  render();
+  alert(`📧 Campaign sent to ${custName}!`);
+}
+
+function createBulkCampaign() {
+  const critical = customers.filter(c => c.overdue >= 5);
+  if (!critical.length) {
+    alert('No customers with ≥5 overdue services found.');
+    return;
+  }
+  const conf = confirm(`Create ready-to-send campaigns for ${critical.length} critical customers?`);
+  if (!conf) return;
+  critical.forEach(c => {
+    let camp = campaigns.find(x => x.customer === c.customer);
+    if (!camp) {
+      camp = {
+        id: 'c' + Date.now() + Math.random().toString(36).slice(2, 5),
+        customer: c.customer,
+        status: 'ready',
+        message: generateMessage(c),
+        method: 'email',
+        units: c.units.filter(u => (u.s || []).some(s => s.d && daysDiff(s.d) < 30)).map(u => u.u),
+        created: new Date().toISOString()
+      };
+      campaigns.push(camp);
+    } else {
+      camp.status = 'ready';
+      camp.updated = new Date().toISOString();
+    }
+  });
+  saveCampaigns();
+  render();
+  alert(`🎯 ${critical.length} bulk campaigns created and ready to send!`);
+}
+
+// ─────────────────────────────────────────────
+//  MODAL
+// ─────────────────────────────────────────────
+function openModal() { document.getElementById('modal-bg').classList.add('open'); }
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function bgClose(ev) { if (ev.target === document.getElementById('modal-bg')) closeModal(); }
+
+// ─────────────────────────────────────────────
+//  UTILS
+// ─────────────────────────────────────────────
+function esc(s) { return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+function signOut() { sessionStorage.removeItem('uptime_auth_v1'); window.location.href = '/uptime-os/'; }
+</script>
+</body>
+</html>

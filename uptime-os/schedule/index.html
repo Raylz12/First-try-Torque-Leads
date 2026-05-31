@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TorqueLeads OS — Bay Scheduler</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#f4f5f7;color:#111827;font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px;}
+
+/* BRAND */
+.topbar{background:#fff;border-bottom:2px solid #0f172a;padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:3px;color:#0f172a;}
+.brand-leads{color:#cc1f1f;}
+.brand-os{font-size:0.9rem;color:#94a3b8;letter-spacing:2px;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#64748b;border-left:2px solid #e2e8f0;padding-left:12px;margin-left:4px;}
+
+/* TILES */
+.tiles{display:flex;gap:10px;padding:14px 20px;overflow-x:auto;scrollbar-width:none;}
+.tiles::-webkit-scrollbar{display:none;}
+.tile{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px 16px;min-width:150px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.tile-val{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:1px;line-height:1;}
+.tile-lbl{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;margin-top:2px;}
+.t-blue{border-left:4px solid #2563eb;}.t-blue .tile-val{color:#2563eb;}
+.t-amber{border-left:4px solid #f59e0b;}.t-amber .tile-val{color:#d97706;}
+.t-green{border-left:4px solid #22c55e;}.t-green .tile-val{color:#16a34a;}
+.t-red{border-left:4px solid #ef4444;}.t-red .tile-val{color:#ef4444;}
+.t-purple{border-left:4px solid #7c3aed;}.t-purple .tile-val{color:#7c3aed;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;padding:0 20px 12px;flex-wrap:wrap;}
+.date-nav{display:flex;align-items:center;gap:6px;}
+.date-nav-btn{width:30px;height:30px;border:1.5px solid #e2e8f0;border-radius:7px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.date-nav-btn:hover{border-color:#2563eb;color:#2563eb;}
+#date-display{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:#0f172a;min-width:230px;text-align:center;}
+.today-btn{padding:6px 14px;background:#0f172a;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.today-btn:hover{background:#1e293b;}
+.view-toggle{display:flex;background:#f1f5f9;border-radius:7px;padding:3px;gap:2px;}
+.view-btn{font-family:'Barlow Condensed',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border:none;border-radius:5px;cursor:pointer;color:#64748b;background:transparent;transition:all 0.15s;}
+.view-btn.active{background:#fff;color:#0f172a;box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.toolbar-spacer{flex:1;}
+.print-btn{padding:6px 14px;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.add-ro-btn{padding:7px 18px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.add-ro-btn:hover{background:#1d4ed8;}
+
+/* MAIN LAYOUT */
+.scheduler-layout{display:flex;gap:0;padding:0 20px;height:calc(100vh - 220px);min-height:520px;}
+
+/* QUEUE PANEL */
+.queue-panel{width:250px;flex-shrink:0;background:#fff;border:1px solid #e5e7eb;border-radius:10px 0 0 10px;border-right:none;display:flex;flex-direction:column;overflow:hidden;}
+.queue-header{padding:10px 14px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:#fafafa;}
+.queue-title{font-family:'Barlow Condensed',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#374151;}
+.queue-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:#94a3b8;}
+.queue-search{padding:8px 10px;border-bottom:1px solid #f1f5f9;flex-shrink:0;}
+.queue-search input{width:100%;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;outline:none;color:#0f172a;}
+.queue-search input:focus{border-color:#2563eb;}
+.queue-filters{padding:6px 10px;border-bottom:1px solid #f1f5f9;display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;}
+.qf-btn{padding:3px 8px;border:1.5px solid #e2e8f0;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:1px;cursor:pointer;background:#fff;color:#64748b;transition:all 0.15s;}
+.qf-btn.active{background:#0f172a;color:#fff;border-color:#0f172a;}
+.queue-list{flex:1;overflow-y:auto;padding:6px;}
+.queue-card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;margin-bottom:5px;cursor:pointer;transition:all 0.15s;position:relative;}
+.queue-card:hover{border-color:#2563eb;background:#eff6ff;transform:translateX(2px);box-shadow:0 2px 8px rgba(37,99,235,0.1);}
+.queue-card-ro{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:#94a3b8;letter-spacing:0.05em;}
+.queue-card-customer{font-size:12px;font-weight:700;color:#0f172a;margin:2px 0;}
+.queue-card-unit{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.queue-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.status-badge{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;}
+.badge-wip{background:#dbeafe;color:#1d4ed8;border:1px solid rgba(37,99,235,0.2);}
+.badge-rti{background:#dcfce7;color:#15803d;border:1px solid rgba(34,197,94,0.2);}
+.badge-diag{background:#fef3c7;color:#b45309;border:1px solid rgba(180,83,9,0.2);}
+.badge-wfa{background:#fce7f3;color:#be185d;border:1px solid rgba(190,24,93,0.2);}
+.badge-wta{background:#f3e8ff;color:#7c3aed;border:1px solid rgba(124,58,237,0.2);}
+.badge-other{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+.sched-hint{font-size:9px;color:#2563eb;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;}
+.queue-empty{text-align:center;padding:2rem 1rem;color:#94a3b8;font-size:12px;font-style:italic;}
+
+/* SCHEDULER GRID */
+.scheduler-main{flex:1;background:#fff;border:1px solid #e5e7eb;border-radius:0 10px 10px 0;overflow:auto;position:relative;}
+.grid-wrap{display:grid;position:relative;min-width:max-content;}
+.corner-cell{position:sticky;top:0;left:0;z-index:30;background:#fff;border-bottom:2px solid #0f172a;border-right:1px solid #f1f5f9;display:flex;align-items:center;justify-content:center;}
+.bay-col-hdr{font-family:'Barlow Condensed',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#0f172a;padding:8px 10px;text-align:center;border-bottom:2px solid #0f172a;border-right:1px solid #e5e7eb;background:#fff;position:sticky;top:0;z-index:20;line-height:1.2;}
+.bay-col-hdr small{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;color:#94a3b8;font-weight:400;letter-spacing:0;margin-top:3px;}
+.time-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#94a3b8;text-align:right;padding-right:8px;padding-top:3px;position:sticky;left:0;background:#fff;z-index:10;border-right:1px solid #e5e7eb;display:flex;align-items:flex-start;justify-content:flex-end;}
+.grid-cell{border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;position:relative;cursor:pointer;transition:background 0.1s;}
+.grid-cell.half-hr{border-bottom-style:dashed;border-bottom-color:#f8fafc;}
+.grid-cell.on-hr{border-bottom:1px solid #e5e7eb;}
+.grid-cell:hover{background:#f0f9ff;}
+.cell-plus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;}
+.grid-cell:hover .cell-plus{opacity:1;}
+.cell-plus-btn{width:18px;height:18px;background:#2563eb;color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+
+/* SCHEDULED ENTRY CARDS */
+.sched-card{position:absolute;left:3px;right:3px;border-radius:6px;padding:4px 7px;overflow:hidden;cursor:pointer;transition:filter 0.15s,transform 0.15s;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+.sched-card:hover{filter:brightness(1.08);transform:scale(1.01);}
+.sc-ro{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;opacity:0.75;letter-spacing:0.05em;}
+.sc-customer{font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc-service{font-size:9px;opacity:0.8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc-tech{font-size:9px;opacity:0.75;margin-top:2px;display:flex;align-items:center;gap:3px;}
+.tech-dot{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.3);font-size:7px;font-weight:700;flex-shrink:0;}
+.sc-done-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.5);border-radius:0 0 6px 6px;}
+.c-blue{background:linear-gradient(140deg,#2563eb,#1d4ed8);color:#fff;}
+.c-amber{background:linear-gradient(140deg,#f59e0b,#d97706);color:#fff;}
+.c-green{background:linear-gradient(140deg,#16a34a,#15803d);color:#fff;}
+.c-purple{background:linear-gradient(140deg,#7c3aed,#6d28d9);color:#fff;}
+.c-red{background:linear-gradient(140deg,#ef4444,#dc2626);color:#fff;}
+
+/* CURRENT TIME LINE */
+.time-now-line{position:absolute;left:0;right:0;height:2px;background:#ef4444;z-index:15;pointer-events:none;}
+.time-now-line::before{content:'NOW';position:absolute;left:2px;top:-9px;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:#ef4444;background:#fff;padding:0 3px;}
+.time-now-line::after{content:'';position:absolute;left:-3px;top:-4px;width:10px;height:10px;background:#ef4444;border-radius:50%;}
+
+/* WEEK VIEW */
+.week-outer{padding:14px;}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.week-col{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.15s;}
+.week-col:hover{border-color:#2563eb;transform:translateY(-2px);box-shadow:0 4px 14px rgba(37,99,235,0.12);}
+.week-col.is-today{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,0.15);}
+.week-col-hdr{padding:10px;border-bottom:1px solid #f1f5f9;text-align:center;}
+.week-col-hdr.is-today{background:#eff6ff;}
+.wch-dow{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#64748b;}
+.wch-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;color:#0f172a;line-height:1;}
+.is-today .wch-num{color:#2563eb;}
+.wch-count{font-size:10px;color:#94a3b8;margin-top:2px;font-family:'Barlow Condensed',sans-serif;}
+.week-col-body{padding:8px;min-height:90px;}
+.week-mini{background:#eff6ff;border-left:3px solid #2563eb;border-radius:3px;padding:3px 7px;font-size:10px;font-weight:600;color:#1d4ed8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.week-mini.c-amber{background:#fff7ed;border-color:#f59e0b;color:#b45309;}
+.week-mini.c-green{background:#f0fdf4;border-color:#22c55e;color:#15803d;}
+.week-more{font-size:10px;color:#94a3b8;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;padding:2px 0;}
+.week-open{font-size:11px;color:#cbd5e1;text-align:center;padding:16px 8px;font-style:italic;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;backdrop-filter:blur(3px);}
+.modal-bg.open{display:flex;align-items:center;justify-content:center;}
+.modal{background:#fff;border-radius:14px;padding:1.5rem;width:92%;max-width:500px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.2);}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:#0f172a;margin-bottom:2px;}
+.modal-sub{font-size:12px;color:#64748b;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid #f1f5f9;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b7280;}
+.form-field input,.form-field select,.form-field textarea{padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;font-family:'Barlow',sans-serif;outline:none;background:#fff;color:#0f172a;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
+.form-field textarea{resize:vertical;min-height:56px;}
+.modal-actions{display:flex;gap:8px;margin-top:1.25rem;}
+.btn-save{flex:1;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background 0.15s;}
+.btn-save:hover{background:#1d4ed8;}
+.btn-cancel-m{padding:11px 20px;background:#f1f5f9;color:#374151;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-del{padding:11px 14px;background:#fee2e2;color:#dc2626;border:1px solid rgba(220,38,38,0.2);border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-del:hover{background:#fecaca;}
+.status-row{display:flex;gap:6px;margin:0.8rem 0;}
+.status-opt{flex:1;padding:7px 4px;border:1.5px solid #e2e8f0;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:#fff;color:#64748b;text-align:center;transition:all 0.15s;}
+.status-opt.s-scheduled{background:#eff6ff;border-color:#2563eb;color:#1d4ed8;}
+.status-opt.s-inprogress{background:#fff7ed;border-color:#f59e0b;color:#b45309;}
+.status-opt.s-done{background:#f0fdf4;border-color:#22c55e;color:#15803d;}
+.section-label{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin:0.8rem 0 6px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid #0f172a;display:flex;align-items:stretch;z-index:40;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 2px;text-decoration:none;color:#6b7280;transition:all 0.15s;border:none;background:transparent;cursor:pointer;font-family:inherit;}
+.nav-item:hover{color:#0f172a;background:#f8fafc;}
+.nav-item.active{color:#2563eb;border-top:2px solid #2563eb;margin-top:-2px;}
+.nav-icon{font-size:16px;line-height:1;}
+.nav-label{font-family:'Barlow Condensed',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.nav-signout:hover{color:#ef4444;}
+
+/* PRINT */
+@media print{
+  .bottom-nav,.toolbar,.queue-panel,.topbar,.tiles{display:none!important;}
+  .scheduler-layout{display:block;height:auto;padding:0;}
+  .scheduler-main{border:none;border-radius:0;}
+  body{padding:0;}
+}
+</style>
+</head>
+<body>
+<script>
+(function(){const s=sessionStorage.getItem('uptime_auth_v1');if(!s)window.location.href='/uptime-os/';})();
+</script>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">TORQUE<span class="brand-leads">LEADS</span> <span class="brand-os">OS</span></div>
+  <div class="page-title">Bay Scheduler</div>
+</div>
+
+<!-- TILES -->
+<div class="tiles">
+  <div class="tile t-blue"><div class="tile-val" id="t-bays">0/8</div><div class="tile-lbl">Bays Active</div></div>
+  <div class="tile t-amber"><div class="tile-val" id="t-ros">0</div><div class="tile-lbl">ROs Booked</div></div>
+  <div class="tile t-green"><div class="tile-val" id="t-hrs">0</div><div class="tile-lbl">Hours Scheduled</div></div>
+  <div class="tile t-purple"><div class="tile-val" id="t-techs">0</div><div class="tile-lbl">Techs On Clock</div></div>
+  <div class="tile t-red"><div class="tile-val" id="t-queue">0</div><div class="tile-lbl">Unscheduled</div></div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="date-nav">
+    <button class="date-nav-btn" onclick="changeDay(-1)" title="Previous day">‹</button>
+    <div id="date-display">—</div>
+    <button class="date-nav-btn" onclick="changeDay(1)" title="Next day">›</button>
+    <button class="today-btn" onclick="goToday()">TODAY</button>
+  </div>
+  <div class="view-toggle">
+    <button class="view-btn active" id="vb-day" onclick="setView('day')">DAY</button>
+    <button class="view-btn" id="vb-week" onclick="setView('week')">WEEK</button>
+  </div>
+  <div class="toolbar-spacer"></div>
+  <button class="print-btn" onclick="window.print()">⎙ PRINT</button>
+  <button class="add-ro-btn" onclick="openAddModal()">+ SCHEDULE RO</button>
+</div>
+
+<!-- LAYOUT -->
+<div class="scheduler-layout">
+  <!-- Unscheduled Queue -->
+  <div class="queue-panel">
+    <div class="queue-header">
+      <div class="queue-title">Unscheduled Queue</div>
+      <div class="queue-count" id="q-count">0 ROs</div>
+    </div>
+    <div class="queue-search">
+      <input type="text" id="q-search" placeholder="Search customer / RO#…" oninput="filterQueue()">
+    </div>
+    <div class="queue-filters">
+      <button class="qf-btn active" onclick="setQF('all',this)">All</button>
+      <button class="qf-btn" onclick="setQF('wip',this)">WIP</button>
+      <button class="qf-btn" onclick="setQF('rti',this)">RTI</button>
+      <button class="qf-btn" onclick="setQF('diag',this)">Diag</button>
+      <button class="qf-btn" onclick="setQF('other',this)">Other</button>
+    </div>
+    <div class="queue-list" id="queue-list"></div>
+  </div>
+
+  <!-- Scheduler Grid -->
+  <div class="scheduler-main" id="sched-main"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="bgClose(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="m-title">SCHEDULE RO</h3>
+    <div class="modal-sub" id="m-sub">Assign a work order to a bay and technician</div>
+    <div id="m-body"></div>
+    <div class="modal-actions" id="m-actions"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/uptime-os/" class="nav-item"><span class="nav-icon">◈</span><span class="nav-label">Dashboard</span></a>
+  <a href="/uptime-os/schedule/" class="nav-item active"><span class="nav-icon">📅</span><span class="nav-label">Schedule</span></a>
+  <a href="/uptime-os/pm-campaigns/" class="nav-item"><span class="nav-icon">📣</span><span class="nav-label">PM Campaigns</span></a>
+  <a href="/uptime-os/fleet/" class="nav-item"><span class="nav-icon">🚛</span><span class="nav-label">Fleet PM</span></a>
+  <a href="/uptime-os/health/" class="nav-item"><span class="nav-icon">♥</span><span class="nav-label">Health</span></a>
+  <a href="/uptime-os/admin/" class="nav-item"><span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  <button class="nav-item nav-signout" onclick="signOut()"><span class="nav-icon">↩</span><span class="nav-label">Sign Out</span></button>
+</nav>
+
+<script>
+// ─────────────────────────────────────────────
+//  CONSTANTS
+// ─────────────────────────────────────────────
+const BAYS  = ['Bay 1','Bay 2','Bay 3','Bay 4','Bay 5','Bay 6','Bay 7','Bay 8'];
+const S_HR  = 6;   // 6:00 AM
+const E_HR  = 20;  // 8:00 PM
+const SH    = 42;  // px per 30-min slot
+const SLOTS = (E_HR - S_HR) * 2;
+const DAYS  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS= ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const SC    = {scheduled:'c-blue','in-progress':'c-amber',done:'c-green',urgent:'c-red',hold:'c-purple'};
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let cur   = new Date();
+let view  = 'day';
+let sched = {entries:[]};
+let wip   = [];
+let techs = [];
+let qf    = 'all';
+let qs    = '';
+let editing = null;
+let tmpStatus = null;
+
+// ─────────────────────────────────────────────
+//  BOOT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  load();
+  render();
+  setInterval(drawTimeLine, 60000);
+});
+
+function load() {
+  try { sched = JSON.parse(localStorage.getItem('uptime_schedule_v1')) || {entries:[]}; } catch(e){}
+  if(!Array.isArray(sched.entries)) sched.entries = [];
+
+  try {
+    const raw = localStorage.getItem('uptimeStoredData_v2');
+    if(raw) {
+      const d = JSON.parse(raw);
+      if(Array.isArray(d.wip)) wip = d.wip;
+      if(Array.isArray(d.employees)) techs = d.employees.map(e=>e.name||e.tech||e.employee).filter(Boolean);
+    }
+  } catch(e){}
+
+  if(!wip.length)   wip   = sampleROs();
+  if(!techs.length) techs = sampleTechs();
+}
+
+function save() { localStorage.setItem('uptime_schedule_v1', JSON.stringify(sched)); }
+
+// ─────────────────────────────────────────────
+//  SAMPLE FALLBACK DATA
+// ─────────────────────────────────────────────
+function sampleROs() {
+  return [
+    {ro:'WO-10423',customer:'ABC Supply Co.',unit:'2019 International LT #14',status:'Repair In Progress',service:'Engine Overhaul'},
+    {ro:'WO-10398',customer:'Sunbelt Rentals',unit:'2021 Freightliner Cascadia',status:'Diagnose',service:'No Start – Check Engine'},
+    {ro:'WO-10412',customer:'Wright Tree Service',unit:'2018 Peterbilt 367 #7',status:'Ready To Invoice',service:'Annual DOT Inspection'},
+    {ro:'WO-10445',customer:'Brightview',unit:'2020 Kenworth T680',status:'Waiting For Authorization',service:'Brake System Repair'},
+    {ro:'WO-10401',customer:'MasTec Inc.',unit:'2017 Freightliner M2',status:'Repair In Progress',service:'Transmission Rebuild'},
+    {ro:'WO-10389',customer:'Sherwin-Williams',unit:'2022 International MV',status:'Diagnose',service:'Electrical – Battery/Alt'},
+    {ro:'WO-10467',customer:'ABC Supply Co.',unit:'2019 International LT #22',status:'Waiting To Be Assigned',service:'PM Service 90-Day'},
+    {ro:'WO-10471',customer:'Turner Industries',unit:'2020 Peterbilt 579',status:'Repair In Progress',service:'Coolant System Leak'},
+    {ro:'WO-10433',customer:'Sunbelt Rentals',unit:'2018 CAT 320 Excavator',status:'Diagnose',service:'Hydraulic System'},
+    {ro:'WO-10492',customer:'MasTec Inc.',unit:'2021 Kenworth T880',status:'Repair In Progress',service:'DEF/Emissions System'},
+    {ro:'WO-10407',customer:'PG&E',unit:'2017 International 7400',status:'Diagnose',service:'Starter – No Crank'},
+    {ro:'WO-10501',customer:'Amazon DSP',unit:'2022 RAM ProMaster #8',status:'Waiting To Be Assigned',service:'PM 45-Day'},
+  ];
+}
+function sampleTechs() {
+  return ['Chris Galindo','Jeff Silva','Charlie Alvarez','Mike Torres','David Kim','Sarah Chen','James Rodriguez','Tony Nguyen','Bob Martinez','Lisa Thompson'];
+}
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+function render() {
+  updateDisplay();
+  updateTiles();
+  if(view==='day') renderDay(); else renderWeek();
+  renderQueue();
+}
+
+function dk(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function isToday(d) {
+  const t=new Date(); return dk(d)===dk(t);
+}
+function slotToTime(s) {
+  const m=S_HR*60+s*30; const h=Math.floor(m/60); const mm=m%60;
+  return `${h>12?h-12:h||12}:${String(mm).padStart(2,'0')}${h>=12?'pm':'am'}`;
+}
+function timeToSlot(t) {
+  if(!t) return (8-S_HR)*2;
+  const[hh,mm]=t.split(':').map(Number);
+  return Math.round((hh*60+mm-S_HR*60)/30);
+}
+
+function updateDisplay() {
+  document.getElementById('date-display').textContent=`${DAYS[cur.getDay()]}  ${MONTHS[cur.getMonth()]} ${cur.getDate()}, ${cur.getFullYear()}`;
+}
+
+function updateTiles() {
+  const tod=dk(cur);
+  const te=sched.entries.filter(e=>e.date===tod);
+  const baysUsed=new Set(te.map(e=>e.bay)).size;
+  const hrs=te.reduce((s,e)=>s+(e.dur||2)*0.5,0);
+  const techSet=new Set(te.filter(e=>e.tech).map(e=>e.tech));
+  const q=getQueue().length;
+  document.getElementById('t-bays').textContent=`${baysUsed}/${BAYS.length}`;
+  document.getElementById('t-ros').textContent=te.length;
+  document.getElementById('t-hrs').textContent=hrs%1===0?hrs:hrs.toFixed(1);
+  document.getElementById('t-techs').textContent=techSet.size;
+  document.getElementById('t-queue').textContent=q;
+  document.getElementById('q-count').textContent=`${q} ROs`;
+}
+
+// ─── DAY VIEW ─────────────────────────────────
+function renderDay() {
+  const main=document.getElementById('sched-main');
+  const tod=dk(cur);
+  const te=sched.entries.filter(e=>e.date===tod);
+  const nb=BAYS.length;
+  const cols=`56px ${Array(nb).fill('minmax(110px,1fr)').join(' ')}`;
+  const rows=`36px ${Array(SLOTS).fill(SH+'px').join(' ')}`;
+
+  let html=`<div class="grid-wrap" style="display:grid;grid-template-columns:${cols};grid-template-rows:${rows};">`;
+
+  // Corner
+  html+=`<div class="corner-cell" style="grid-row:1;grid-column:1;"></div>`;
+
+  // Bay headers
+  BAYS.forEach((b,i)=>{
+    const bh=te.filter(e=>e.bay===i).reduce((s,e)=>s+(e.dur||2)*0.5,0);
+    html+=`<div class="bay-col-hdr" style="grid-row:1;grid-column:${i+2};">${b}<small>${bh>0?bh.toFixed(1)+'h booked':''}</small></div>`;
+  });
+
+  // Rows: time label + cells
+  for(let s=0;s<SLOTS;s++){
+    const row=s+2;
+    const totM=S_HR*60+s*30;
+    const h=Math.floor(totM/60), m=totM%60;
+    const lbl=m===0?`${h>12?h-12:(h||12)}${h>=12?'p':'a'}m`:'';
+    const onHr=m===0;
+    html+=`<div class="time-label" style="grid-row:${row};grid-column:1;height:${SH}px;">${lbl}</div>`;
+    for(let b=0;b<nb;b++){
+      html+=`<div class="grid-cell ${onHr?'on-hr':'half-hr'}" style="grid-row:${row};grid-column:${b+2};height:${SH}px;" onclick="cellClick(${b},${s})"><div class="cell-plus"><div class="cell-plus-btn">+</div></div></div>`;
+    }
+  }
+
+  // Overlay scheduled entries
+  te.forEach(e=>{
+    const r=e.slot+2; const c=e.bay+2;
+    const dur=e.dur||2;
+    const hpx=dur*SH-5;
+    const cc=SC[e.status]||'c-blue';
+    const init=initials(e.tech||'');
+    html+=`<div class="sched-card ${cc}" style="grid-row:${r}/span ${dur};grid-column:${c};top:2px;height:${hpx}px;" onclick="entryClick(event,'${e.id}')">
+      <div class="sc-ro">${e.ro||''}</div>
+      <div class="sc-customer">${e.customer||'Unassigned'}</div>
+      ${e.service?`<div class="sc-service">${e.service}</div>`:''}
+      ${e.tech?`<div class="sc-tech"><span class="tech-dot">${init}</span>${e.tech.split(' ')[0]}</div>`:''}
+      ${e.status==='done'?'<div class="sc-done-bar"></div>':''}
+    </div>`;
+  });
+
+  html+='</div>';
+  main.innerHTML=html;
+  drawTimeLine();
+}
+
+function drawTimeLine() {
+  document.querySelectorAll('.time-now-line').forEach(el=>el.remove());
+  if(!isToday(cur)) return;
+  const now=new Date();
+  const nm=now.getHours()*60+now.getMinutes();
+  const sm=S_HR*60, em=E_HR*60;
+  if(nm<sm||nm>em) return;
+  const top=36+((nm-sm)/30)*SH;
+  const wrap=document.querySelector('.grid-wrap');
+  if(!wrap) return;
+  const line=document.createElement('div');
+  line.className='time-now-line';
+  line.style.cssText=`top:${top}px;left:56px;`;
+  wrap.appendChild(line);
+}
+
+// ─── WEEK VIEW ────────────────────────────────
+function renderWeek() {
+  const main=document.getElementById('sched-main');
+  const wkStart=new Date(cur);
+  wkStart.setDate(cur.getDate()-cur.getDay());
+  const dows=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  let html=`<div class="week-outer"><div class="week-grid">`;
+  for(let d=0;d<7;d++){
+    const day=new Date(wkStart); day.setDate(wkStart.getDate()+d);
+    const key=dk(day);
+    const ents=sched.entries.filter(e=>e.date===key);
+    const tod=isToday(day)?'is-today':'';
+    html+=`<div class="week-col ${tod}" onclick="drillDay('${key}')">
+      <div class="week-col-hdr ${tod}">
+        <div class="wch-dow">${dows[d]}</div>
+        <div class="wch-num">${day.getDate()}</div>
+        ${ents.length?`<div class="wch-count">${ents.length} booked</div>`:''}
+      </div>
+      <div class="week-col-body">`;
+    if(!ents.length){
+      html+=`<div class="week-open">Open</div>`;
+    } else {
+      ents.slice(0,4).forEach(e=>{
+        const cc=SC[e.status]==='c-amber'?'c-amber':SC[e.status]==='c-green'?'c-green':'';
+        html+=`<div class="week-mini ${cc}" title="${e.customer||''} — ${e.service||''}">${slotToTime(e.slot)} ${e.customer||'RO'}</div>`;
+      });
+      if(ents.length>4) html+=`<div class="week-more">+${ents.length-4} more</div>`;
+    }
+    html+=`</div></div>`;
+  }
+  html+=`</div></div>`;
+  main.innerHTML=html;
+}
+
+function drillDay(key){
+  const[y,m,d]=key.split('-').map(Number);
+  cur=new Date(y,m-1,d);
+  setView('day');
+}
+
+// ─── QUEUE ────────────────────────────────────
+function getQueue(){
+  const tod=dk(cur);
+  const scheduled=new Set(sched.entries.filter(e=>e.date===tod).map(e=>e.ro).filter(Boolean));
+  let ros=wip.filter(r=>!scheduled.has(r.ro||r.roNumber));
+  if(qf!=='all'){
+    const map={wip:'repair in progress',rti:'ready to invoice',diag:'diagnose'};
+    if(qf==='other') ros=ros.filter(r=>!['repair in progress','ready to invoice','diagnose'].some(k=>(r.status||'').toLowerCase().includes(k)));
+    else ros=ros.filter(r=>(r.status||'').toLowerCase().includes(map[qf]||''));
+  }
+  if(qs){const q=qs.toLowerCase();ros=ros.filter(r=>(r.ro||r.roNumber||'').toLowerCase().includes(q)||(r.customer||'').toLowerCase().includes(q)||(r.unit||'').toLowerCase().includes(q));}
+  return ros.slice(0,60);
+}
+
+function renderQueue(){
+  const list=document.getElementById('queue-list');
+  const ros=getQueue();
+  if(!ros.length){list.innerHTML=`<div class="queue-empty">All ROs scheduled for today ✓</div>`;updateTiles();return;}
+  list.innerHTML=ros.map(r=>{
+    const st=(r.status||'').toLowerCase();
+    let bc='badge-other',lb='OTHER';
+    if(st.includes('repair in progress')){bc='badge-wip';lb='WIP';}
+    else if(st.includes('ready to invoice')){bc='badge-rti';lb='RTI';}
+    else if(st.includes('diagnose')){bc='badge-diag';lb='DIAG';}
+    else if(st.includes('waiting for auth')){bc='badge-wfa';lb='WFA';}
+    else if(st.includes('waiting to be')){bc='badge-wta';lb='WTA';}
+    const rjson=JSON.stringify(r).replace(/"/g,'&quot;');
+    return `<div class="queue-card" onclick='schedFromRO(${rjson})'>
+      <div class="queue-card-ro">${r.ro||r.roNumber||'—'}</div>
+      <div class="queue-card-customer">${r.customer||'Unknown'}</div>
+      <div class="queue-card-unit">${r.unit||'—'}</div>
+      <div class="queue-card-footer"><span class="status-badge ${bc}">${lb}</span><span class="sched-hint">SCHEDULE →</span></div>
+    </div>`;
+  }).join('');
+  updateTiles();
+}
+
+function setQF(f,btn){qf=f;document.querySelectorAll('.qf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderQueue();}
+function filterQueue(){qs=document.getElementById('q-search').value;renderQueue();}
+
+// ─── MODAL ───────────────────────────────────
+function cellClick(bay,slot){editing=null;showForm(bay,slot,null);}
+function entryClick(ev,id){ev.stopPropagation();editing=sched.entries.find(e=>e.id===id)||null;if(editing)showDetail(editing);}
+function openAddModal(){editing=null;showForm(0,(8-S_HR)*2,null);}
+function schedFromRO(ro){editing=null;showForm(0,(8-S_HR)*2,ro);}
+
+function bayOpts(sel){return BAYS.map((b,i)=>`<option value="${i}" ${i===sel?'selected':''}>${b}</option>`).join('');}
+function techOpts(sel){return ['—',...techs].map(t=>`<option value="${t==='—'?'':t}" ${(t===sel||(t==='—'&&!sel))?'selected':''}>${t}</option>`).join('');}
+function durOpts(sel){return [0.5,1,1.5,2,2.5,3,3.5,4,5,6,7,8].map(h=>`<option value="${h*2}" ${h*2===(sel||4)?'selected':''}>${h}h</option>`).join('');}
+
+function showForm(bay,slot,ro){
+  const stm=S_HR*60+slot*30;
+  const stStr=`${String(Math.floor(stm/60)).padStart(2,'0')}:${String(stm%60).padStart(2,'0')}`;
+  document.getElementById('m-title').textContent='SCHEDULE RO';
+  document.getElementById('m-sub').textContent=ro?`${ro.customer||''} — ${ro.ro||ro.roNumber||''}`:'Assign a work order to a bay and technician';
+  document.getElementById('m-body').innerHTML=`
+    <div class="form-row">
+      <div class="form-field"><label>RO Number</label><input id="f-ro" value="${ro?.ro||ro?.roNumber||''}" placeholder="WO-XXXXX"></div>
+      <div class="form-field"><label>Date</label><input type="date" id="f-date" value="${dk(cur)}"></div>
+    </div>
+    <div class="form-row full"><div class="form-field"><label>Customer</label><input id="f-cust" value="${ro?.customer||''}" placeholder="Customer name"></div></div>
+    <div class="form-row full"><div class="form-field"><label>Unit / Vehicle</label><input id="f-unit" value="${ro?.unit||''}" placeholder="2019 International LT #14"></div></div>
+    <div class="form-row full"><div class="form-field"><label>Service Description</label><input id="f-svc" value="${ro?.service||ro?.complaint||''}" placeholder="Engine overhaul, PM, brake job…"></div></div>
+    <div class="form-row">
+      <div class="form-field"><label>Bay</label><select id="f-bay">${bayOpts(bay)}</select></div>
+      <div class="form-field"><label>Technician</label><select id="f-tech">${techOpts('')}</select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Start Time</label><input type="time" id="f-start" value="${stStr}" step="1800"></div>
+      <div class="form-field"><label>Duration</label><select id="f-dur">${durOpts(4)}</select></div>
+    </div>
+    <div class="form-row full"><div class="form-field"><label>Notes</label><textarea id="f-notes" placeholder="Parts on order, special instructions…"></textarea></div></div>
+  `;
+  document.getElementById('m-actions').innerHTML=`<button class="btn-cancel-m" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="doSave()">SCHEDULE IT</button>`;
+  openModal();
+}
+
+function showDetail(e){
+  const stm=S_HR*60+e.slot*30;
+  const stStr=`${String(Math.floor(stm/60)).padStart(2,'0')}:${String(stm%60).padStart(2,'0')}`;
+  tmpStatus=e.status;
+  document.getElementById('m-title').textContent='SCHEDULED RO';
+  document.getElementById('m-sub').textContent=`${e.customer||''} — ${e.ro||''}`;
+  document.getElementById('m-body').innerHTML=`
+    <div class="section-label">Status</div>
+    <div class="status-row">
+      <button class="status-opt ${e.status==='scheduled'?'s-scheduled':''}" onclick="setStatus('scheduled',this,'s-scheduled')">Scheduled</button>
+      <button class="status-opt ${e.status==='in-progress'?'s-inprogress':''}" onclick="setStatus('in-progress',this,'s-inprogress')">In Progress</button>
+      <button class="status-opt ${e.status==='done'?'s-done':''}" onclick="setStatus('done',this,'s-done')">Done</button>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>RO Number</label><input id="f-ro" value="${e.ro||''}"></div>
+      <div class="form-field"><label>Date</label><input type="date" id="f-date" value="${e.date}"></div>
+    </div>
+    <div class="form-row full"><div class="form-field"><label>Customer</label><input id="f-cust" value="${e.customer||''}"></div></div>
+    <div class="form-row full"><div class="form-field"><label>Unit / Vehicle</label><input id="f-unit" value="${e.unit||''}"></div></div>
+    <div class="form-row full"><div class="form-field"><label>Service Description</label><input id="f-svc" value="${e.service||''}"></div></div>
+    <div class="form-row">
+      <div class="form-field"><label>Bay</label><select id="f-bay">${bayOpts(e.bay)}</select></div>
+      <div class="form-field"><label>Technician</label><select id="f-tech">${techOpts(e.tech)}</select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>Start Time</label><input type="time" id="f-start" value="${stStr}" step="1800"></div>
+      <div class="form-field"><label>Duration</label><select id="f-dur">${durOpts(e.dur)}</select></div>
+    </div>
+    <div class="form-row full"><div class="form-field"><label>Notes</label><textarea id="f-notes">${e.notes||''}</textarea></div></div>
+  `;
+  document.getElementById('m-actions').innerHTML=`<button class="btn-del" onclick="doDelete()">Remove</button><button class="btn-cancel-m" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="doSave()">SAVE CHANGES</button>`;
+  openModal();
+}
+
+function setStatus(st,btn,cls){
+  tmpStatus=st;
+  document.querySelectorAll('.status-opt').forEach(b=>b.className='status-opt');
+  btn.classList.add(cls);
+}
+
+function doSave(){
+  const ro=v('f-ro'), cust=v('f-cust'), unit=v('f-unit'), svc=v('f-svc');
+  const bay=parseInt(v('f-bay')), tech=v('f-tech'), notes=v('f-notes'), dateStr=v('f-date');
+  const slot=Math.max(0,timeToSlot(v('f-start')));
+  const dur=parseInt(v('f-dur'))||4;
+  if(!cust&&!ro){alert('Enter a customer or RO number');return;}
+  if(editing){
+    Object.assign(editing,{ro,customer:cust,unit,service:svc,bay,tech,slot,dur,notes,date:dateStr,status:tmpStatus||editing.status});
+  } else {
+    sched.entries.push({id:'e'+Date.now()+Math.random().toString(36).slice(2,5),ro,customer:cust,unit,service:svc,bay,tech,slot,dur,notes,date:dateStr,status:'scheduled'});
+  }
+  tmpStatus=null;
+  save();closeModal();
+  const[y,m,d]=dateStr.split('-').map(Number);cur=new Date(y,m-1,d);
+  render();
+}
+
+function doDelete(){
+  if(!editing)return;
+  if(!confirm(`Remove schedule for ${editing.customer||editing.ro}?`))return;
+  sched.entries=sched.entries.filter(e=>e.id!==editing.id);
+  save();closeModal();render();
+}
+
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function openModal(){document.getElementById('modal-bg').classList.add('open');}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');editing=null;tmpStatus=null;}
+function bgClose(ev){if(ev.target===document.getElementById('modal-bg'))closeModal();}
+
+// ─── NAV ─────────────────────────────────────
+function changeDay(n){cur.setDate(cur.getDate()+n);render();}
+function goToday(){cur=new Date();render();}
+function setView(v2){view=v2;document.getElementById('vb-day').classList.toggle('active',v2==='day');document.getElementById('vb-week').classList.toggle('active',v2==='week');render();}
+function signOut(){sessionStorage.removeItem('uptime_auth_v1');window.location.href='/uptime-os/';}
+
+// ─── UTILS ───────────────────────────────────
+function initials(n){if(!n)return'?';const p=n.trim().split(' ');return p.length>=2?p[0][0]+p[1][0]:n.slice(0,2);}
+</script>
+</body>
+</html>
